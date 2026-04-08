@@ -1,7 +1,13 @@
-<script setup></script>
-
 <template>
-  <h1>프로젝트 시자아악!</h1>
+  <OnboardingView />
+  <!-- <Routerview /> -->
 </template>
 
+<script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import OnboardingView from './pages/OnboardingView.vue';
+
+// const route = useRoute();
+</script>
 <style scoped></style>
