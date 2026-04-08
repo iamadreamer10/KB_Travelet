@@ -1,10 +1,27 @@
+/* src/assets/main.css */
+
+/* 1. 대한항공 블루 테마 전역 설정 */
 :root {
-  --color-primary: #0766ff;       /* Primary (Base): 메인 버튼, 로고 */
-  --color-primary-deep: #051766;  /* Deep Primary: 네비게이션 바 배경 */
-  --color-primary-soft: #e6f0ff;  /* Soft Blue: 카드 및 입력창 배경 */
-  
-  --color-accent: #ffae07;        /* Accent: 포인트, 알림, 경고 */
-  
-  --color-surface: #f1f4f9;       /* Surface: 전체 앱 배경색 */
-  --color-text-main: #020817;     /* Text Primary: 제목 및 본문 */
+  --ka-blue: #0766ff;
+  --ka-gradient: linear-gradient(135deg, #1a73e8 0%, #0766ff 50%, #40a9ff 100%);
+}
+
+/* 2. 배경 그라데이션 유틸리티 */
+.bg-ka-gradient {
+  background: var(--ka-gradient);
+}
+
+/* 3. 피그마 스타일의 깊은 라운딩 */
+.rounded-step {
+  border-radius: 1.5rem !important;
+}
+
+/* 4. 기본 버튼 색상 덮어쓰기 (Bootstrap btn-primary 사용 시) */
+.btn-primary {
+  background-color: var(--ka-blue) !important;
+  border: none !important;
+}
+
+.btn-primary:hover {
+  background-color: #0053d9 !important;
 }
