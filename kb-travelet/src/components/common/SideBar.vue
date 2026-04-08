@@ -26,22 +26,37 @@
 
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a
-          href="#"
-          class="nav-link active bg-white text-primary rounded-3 py-3 mb-2 shadow-sm"
-        >
+        <RouterLink to="/main" class="nav-link text-white rounded-3 py-3 mb-2">
           <i class="fas fa-home me-2"></i> 홈
-        </a>
+        </RouterLink>
       </li>
       <li>
-        <a href="#" class="nav-link text-white-50 py-3 mb-2"
-          ><i class="fas fa-cog me-2"></i> 설정</a
+        <RouterLink
+          to="/settings"
+          class="nav-link text-white rounded-3 py-3 mb-2"
         >
+          <i class="fas fa-cog me-2"></i> 설정
+        </RouterLink>
       </li>
     </ul>
-    <p class="mb-0 fw-bold text-white mt-2">
-      예시> 스페인 여행을 위해 하루에 0원씩 사용할 수 있어요
-    </p>
+    <div
+      class="flex-grow-1 rounded-3 p-3 my-3 bg-white d-flex flex-column align-items-center justify-content-center"
+    >
+      <p>
+        <i
+          class="fa-solid fa-money-bill-1-wave fa-2xl"
+          style="color: var(--color-primary)"
+        ></i>
+      </p>
+      <p
+        class="mb-0 fw-bold small text-center"
+        style="color: var(--color-primary-deep); line-height: 1.5"
+      >
+        <i class="fa-solid fa-circle-info me-1"></i>
+        스페인 여행을 위해 <br />하루에 <span class="text-primary">0원</span>씩
+        사용할 수 있어요
+      </p>
+    </div>
 
     <div class="mt-auto border-top border-white-50 pt-3">
       <button class="btn btn-link text-white-50 p-0 text-decoration-none small">

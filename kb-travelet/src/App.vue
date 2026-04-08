@@ -4,14 +4,8 @@
   <div
     class="app-container min-h-screen bg-slate-50 flex flex-col mx-auto max-w-md shadow-2xl overflow-hidden relative"
   >
-    <SideBar v-if="showNavigation" />
-
     <main class="flex-1 overflow-y-auto">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <RouterView/>
     </main>
 
     <div
@@ -29,24 +23,12 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import SideBar from '@/components/common/SideBar.vue';
-// 예시: 전역 로딩 상태를 관리할 스토어가 있다면 가져옵니다.
-// import { useCommonStore } from '@/stores/common';
 
 const route = useRoute();
-// const commonStore = useCommonStore();
-// const { isLoading } = storeToRefs(commonStore);
 
-/**
- * 특정 페이지(예: 랜딩 페이지)에서는 사이드바를 숨기도록 설정합니다.
- */
-const showNavigation = computed(() => {
-  const hideOnRoutes = ['landing'];
-  return !hideOnRoutes.includes(route.name);
-});
 
 // 테스트용 로딩 상태 (실제로는 스토어에서 관리)
-const isLoading = computed(() => false);
+const isLoading = computed(() => true);
 </script>
 
 <style>

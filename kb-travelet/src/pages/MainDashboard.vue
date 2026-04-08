@@ -3,9 +3,7 @@
     class="container-fluid p-0 d-flex min-vh-100"
     style="background-color: var(--color-surface)"
   >
-    <div style="width: 280px">
-      <SideBar />
-    </div>
+    <div style="width: 280px; flex-shrink: 0"><SideBar /></div>
 
     <main class="flex-grow-1 p-4 overflow-auto">
       <div class="mb-2">
