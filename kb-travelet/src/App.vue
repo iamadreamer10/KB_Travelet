@@ -1,3 +1,5 @@
+<script setup></script>
+
 <template>
   <div
     class="app-container min-h-screen bg-slate-50 flex flex-col mx-auto max-w-md shadow-2xl overflow-hidden relative"
