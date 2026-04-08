@@ -1,4 +1,13 @@
-/* src/assets/main.css */
+:root {
+  --color-primary: #0766ff;       /* Primary (Base): 메인 버튼, 로고 */
+  --color-primary-deep: #051766;  /* Deep Primary: 네비게이션 바 배경 */
+  --color-primary-soft: #e6f0ff;  /* Soft Blue: 카드 및 입력창 배경 */
+  
+  --color-accent: #ffae07;        /* Accent: 포인트, 알림, 경고 */
+  
+  --color-surface: #f1f4f9;       /* Surface: 전체 앱 배경색 */
+  --color-text-main: #020817;     /* Text Primary: 제목 및 본문 */
+}
 
 /* 1. 대한항공 블루 테마 전역 설정 */
 :root {
