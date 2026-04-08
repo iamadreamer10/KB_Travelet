@@ -5,12 +5,15 @@
   >
     <div style="width: 280px; flex-shrink: 0"><SideBar /></div>
 
-    <main class="flex-grow-1 p-4 overflow-auto">
-      <div class="mb-2">
+    <main class="flex-grow-1 overflow-auto">
+      <div class="w-100" style="background-color: var(--color-primary-soft)">
         <ProgressBar />
       </div>
-      <div class="bg-white rounded-4 shadow-sm p-4">
-        <CalendarMain />
+
+      <div class="p-4">
+        <div class="bg-white rounded-4 shadow-sm p-4">
+          <CalendarMain />
+        </div>
       </div>
     </main>
   </div>

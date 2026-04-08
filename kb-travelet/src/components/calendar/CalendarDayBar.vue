@@ -4,10 +4,7 @@
     :class="{ 'border-primary border-2 shadow-sm': isToday(date) }"
     @click="viewDailyledger"
   >
-    <span
-      class="text-center fw-bold small"
-      :class="{ 'text-primary': isToday(date) }"
-    >
+    <span class="text-center fw-bold small" :style="getDateColor(date)">
       {{ date }}
     </span>
     <div class="mt-auto"></div>
@@ -15,7 +12,11 @@
 </template>
 
 <script setup>
-const props = defineProps(['date']);
+const props = defineProps({
+  date: Number,
+  year: Number,
+  month: Number,
+});
 
 // 오늘 날짜인지 확인하는 로직 (예시)
 const isToday = (date) => {
@@ -27,10 +28,21 @@ const isToday = (date) => {
   );
 };
 
+// 요일별 색상 결정 함수
+const getDateColor = (date) => {
+  // 오늘 날짜 강조가 최우선이라면?
+  if (isToday(date)) return { color: 'var(--color-primary)' };
+
+  const dayOfWeek = new Date(props.year, props.month - 1, date).getDay();
+
+  if (dayOfWeek === 0) return { color: '#dc3545' }; // 일요일: Red
+  if (dayOfWeek === 6) return { color: '#0d6efd' }; // 토요일: Blue
+  return { color: '#212529' }; // 평일: Dark
+};
+
 const viewDailyledger = () => {
   console.log('오늘의 가계부 등장! :', props.date, '일');
 };
-
 </script>
 
 <style scoped>
