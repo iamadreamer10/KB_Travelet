@@ -5,16 +5,13 @@
     :class="{ 'border-primary border-2 shadow-sm': isToday() }"
     @click="viewDailyLedger"
   >
-    <span
-      class="text-center fw-bold small"
-      :style="getDateColor()"
-    >
+    <span class="text-center fw-bold small" :style="getDateColor()">
       {{ calendarDate.date }}
     </span>
     <div class="mt-auto"></div>
   </div>
 
-  <div v-else class="h-100" style="min-height: 75px; opacity: 0;"></div>
+  <div v-else class="h-100" style="min-height: 75px; opacity: 0"></div>
 </template>
 
 <script setup>
@@ -24,7 +21,7 @@ const props = defineProps({
     type: Object,
     required: true,
     // 기대 구조: { year: Number, month: Number, date: Number | null }
-  }
+  },
 });
 
 // 오늘 날짜 확인 (date가 null이면 false 반환)
@@ -54,10 +51,19 @@ const getDateColor = () => {
   return { color: '#212529' }; // 평일
 };
 
+/*-----------------------------------------
+날짜 클릭시 모달 띄우기 위한 코드
+(클릭 발생 알림)
+*/
+
+const emit = defineEmits(['selectDate']);
+
 const viewDailyLedger = () => {
   const { year, month, date } = props.calendarDate;
   if (date) {
-    console.log(`${year}-${month}-${date} 상세 보기`);
+    const formatted = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+    emit('selectDate', formatted);
   }
 };
 </script>

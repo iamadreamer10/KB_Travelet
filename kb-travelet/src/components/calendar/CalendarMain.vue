@@ -78,16 +78,26 @@
         :key="index"
         class="col-1-7"
       >
-        <CalendarDayBar v-if="dayObj.date" :calendar-date="dayObj" />
+        <CalendarDayBar
+          v-if="dayObj.date"
+          :calendar-date="dayObj"
+          @selectDate="handleClickDate"
+        />
         <div v-else class="h-100 p-2 opacity-25"></div>
       </div>
     </div>
   </div>
+  <TransactionModal
+    v-if="selectedDate"
+    :date="selectedDate"
+    @close="selectedDate = null"
+  />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import CalendarDayBar from './CalendarDayBar.vue';
+import TransactionModal from '../modal/TransactionModal.vue';
 
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const today = new Date();
@@ -133,6 +143,15 @@ const nextMonth = () => {
   } else {
     currentMonth.value++;
   }
+};
+
+/* ---------------------------------------------------------
+캘린더와 모달 연결
+*/
+const selectedDate = ref(null);
+
+const handleClickDate = (date) => {
+  selectedDate.value = date;
 };
 </script>
 
