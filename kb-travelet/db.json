@@ -1,36 +1,5 @@
 {
-  "members": [
-    {
-      "name": "asdf",
-      "email": "asdf@asdf.com",
-      "createdAt": "2026. 04. 08. 17:16:48",
-      "id": "1ie_wT98RT4"
-    },
-    {
-      "name": "123",
-      "email": "123@gmail.com",
-      "createdAt": "2026. 04. 09. 13:46:49",
-      "id": "KLI_U4q"
-    },
-    {
-      "name": "123",
-      "email": "123@gmail.com",
-      "createdAt": "2026. 04. 09. 13:46:59",
-      "id": "ria3cTI"
-    },
-    {
-      "name": "최윤호",
-      "email": "123@gmail.com",
-      "createdAt": "2026. 04. 09. 13:49:46",
-      "id": "WZxGBK6"
-    },
-    {
-      "name": "123",
-      "email": "123@123.com",
-      "createdAt": "2026. 04. 09. 13:53:30",
-      "id": "DrHX_iM"
-    }
-  ],
+  "members": [],
   "continents": {
     "Asia": [
       {
@@ -121,42 +90,18 @@
         "name": "필리핀",
         "code": "PH",
         "levels": {
-          "eco": [
-            3,
-            3,
-            30
-          ],
-          "std": [
-            8,
-            9,
-            52
-          ],
-          "lux": [
-            20,
-            30,
-            125
-          ]
+          "eco": [3, 3, 30],
+          "std": [8, 9, 52],
+          "lux": [20, 30, 125]
         }
       },
       {
         "name": "베트남",
         "code": "VN",
         "levels": {
-          "eco": [
-            3,
-            2,
-            33
-          ],
-          "std": [
-            7,
-            8,
-            55
-          ],
-          "lux": [
-            20,
-            30,
-            135
-          ]
+          "eco": [3, 2, 33],
+          "std": [7, 8, 55],
+          "lux": [20, 30, 135]
         }
       },
       {
