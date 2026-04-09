@@ -2,7 +2,7 @@
 
 <template>
   <div :class="appContainerClasses">
-    <main class="flex-1 overflow-y-auto">
+    <main :class="mainContainerClasses">
       <RouterView />
     </main>
 
@@ -36,6 +36,10 @@ const appContainerClasses = computed(() => [
     ? 'onboarding-shell'
     : 'max-w-md shadow-2xl overflow-hidden',
 ]);
+const mainContainerClasses = computed(() => [
+  'flex-1',
+  isOnboardingRoute.value ? 'onboarding-main' : 'overflow-y-auto',
+]);
 
 const isLoading = computed(() => true);
 </script>
@@ -68,9 +72,15 @@ const isLoading = computed(() => true);
 .onboarding-shell {
   width: 100%;
   max-width: none;
-  overflow: visible;
+  overflow: hidden;
   box-shadow: none;
   border-left: 0;
   border-right: 0;
+}
+
+.onboarding-main {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

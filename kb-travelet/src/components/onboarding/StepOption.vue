@@ -61,9 +61,6 @@ const selectOption = () => {
 }
 
 .onboarding-card {
-  --color-primary: #0766ff;
-  --color-primary-deep: #051766;
-  --color-primary-soft: #e6f0ff;
   --color-text-muted: #64748b;
 
   width: 100%;
