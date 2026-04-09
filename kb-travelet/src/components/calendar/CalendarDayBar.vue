@@ -1,47 +1,64 @@
 <template>
   <div
+    v-if="calendarDate.date"
     class="date-card d-flex flex-column p-2 rounded-3 border h-100 bg-white"
-    :class="{ 'border-primary border-2 shadow-sm': isToday(date) }"
-    @click="viewDailyledger"
+    :class="{ 'border-primary border-2 shadow-sm': isToday() }"
+    @click="viewDailyLedger"
   >
-    <span class="text-center fw-bold small" :style="getDateColor(date)">
-      {{ date }}
+    <span
+      class="text-center fw-bold small"
+      :style="getDateColor()"
+    >
+      {{ calendarDate.date }}
     </span>
     <div class="mt-auto"></div>
   </div>
+
+  <div v-else class="h-100" style="min-height: 75px; opacity: 0;"></div>
 </template>
 
 <script setup>
+// Props 정의: calendarDate 객체 하나로 깔끔하게!
 const props = defineProps({
-  date: Number,
-  year: Number,
-  month: Number,
+  calendarDate: {
+    type: Object,
+    required: true,
+    // 기대 구조: { year: Number, month: Number, date: Number | null }
+  }
 });
 
-// 오늘 날짜인지 확인하는 로직 (예시)
-const isToday = (date) => {
+// 오늘 날짜 확인 (date가 null이면 false 반환)
+const isToday = () => {
+  const { year, month, date } = props.calendarDate;
+  if (!date) return false;
+
   const today = new Date();
   return (
-    today.getFullYear() === 2026 &&
-    today.getMonth() + 1 === 4 &&
-    date === today.getDate()
+    date === today.getDate() &&
+    month === today.getMonth() + 1 &&
+    year === today.getFullYear()
   );
 };
 
-// 요일별 색상 결정 함수
-const getDateColor = (date) => {
-  // 오늘 날짜 강조가 최우선이라면?
-  if (isToday(date)) return { color: 'var(--color-primary)' };
+// 날짜 색상 결정
+const getDateColor = () => {
+  const { year, month, date } = props.calendarDate;
+  if (!date) return {};
 
-  const dayOfWeek = new Date(props.year, props.month - 1, date).getDay();
+  if (isToday()) return { color: 'var(--color-primary)' };
 
-  if (dayOfWeek === 0) return { color: '#dc3545' }; // 일요일: Red
-  if (dayOfWeek === 6) return { color: '#0d6efd' }; // 토요일: Blue
-  return { color: '#212529' }; // 평일: Dark
+  // 요일 계산
+  const dayOfWeek = new Date(year, month - 1, date).getDay();
+  if (dayOfWeek === 0) return { color: '#dc3545' }; // 일요일
+  if (dayOfWeek === 6) return { color: '#0d6efd' }; // 토요일
+  return { color: '#212529' }; // 평일
 };
 
-const viewDailyledger = () => {
-  console.log('오늘의 가계부 등장! :', props.date, '일');
+const viewDailyLedger = () => {
+  const { year, month, date } = props.calendarDate;
+  if (date) {
+    console.log(`${year}-${month}-${date} 상세 보기`);
+  }
 };
 </script>
 
