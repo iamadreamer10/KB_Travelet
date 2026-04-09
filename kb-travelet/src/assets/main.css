@@ -1,10 +1,120 @@
+/* src/assets/main.css */
+
+/* 1. CSS 변수 정의 (브랜드 컬러 가이드 반영) */
 :root {
-  --color-primary: #0766ff;       /* Primary (Base): 메인 버튼, 로고 */
-  --color-primary-deep: #051766;  /* Deep Primary: 네비게이션 바 배경 */
-  --color-primary-soft: #e6f0ff;  /* Soft Blue: 카드 및 입력창 배경 */
-  
-  --color-accent: #ffae07;        /* Accent: 포인트, 알림, 경고 */
-  
-  --color-surface: #f1f4f9;       /* Surface: 전체 앱 배경색 */
-  --color-text-main: #020817;     /* Text Primary: 제목 및 본문 */
+  --color-primary: #0766ff; /* Primary (Base): 메인 버튼, 로고 */
+  --color-primary-deep: #051766; /* Deep Primary: 네비게이션 바 배경 */
+  --color-primary-soft: #e6f0ff; /* Soft Blue: 카드 및 입력창 배경 */
+  --color-accent: #ffae07; /* Accent: 포인트, 알림, 경고 */
+  --color-surface: #f1f4f9; /* Surface: 전체 앱 배경색 */
+  --color-text-main: #020817; /* Text Primary: 제목 및 본문 */
+}
+
+/* 2. 전역 스타일 설정 */
+body {
+  background-color: var(--ka-surface);
+
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* 3. 로고 전역 스타일 (추가됨) */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-img {
+  /* 기본 크기를 120px로 상향 조정 */
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  /* 부드러운 그림자 효과 */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05); /* 살짝 커지는 효과 */
+}
+
+/* 4. 부트스트랩 컴포넌트 커스텀 오버라이드 */
+
+.btn-primary {
+  background-color: var(--ka-primary) !important;
+  border-color: var(--ka-primary) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #0053d9 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(7, 102, 255, 0.3) !important;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid var(--ka-soft-blue);
+  border-radius: 1.5rem !important;
+}
+
+.form-control {
+  background-color: var(--ka-soft-blue) !important;
+  border: 1px solid transparent !important;
+  color: var(--ka-text-primary) !important;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  background-color: #ffffff !important;
+  border-color: var(--ka-primary) !important;
+  box-shadow: 0 0 0 0.25rem rgba(7, 102, 255, 0.15) !important;
+}
+
+/* 유틸리티 클래스 */
+.text-ka-primary {
+  color: var(--ka-primary) !important;
+}
+.text-ka-deep {
+  color: var(--ka-deep-primary) !important;
+}
+.text-ka-accent {
+  color: var(--ka-accent) !important;
+}
+.text-dark-navy {
+  color: var(--ka-text-primary) !important;
+}
+.bg-ka-soft {
+  background-color: var(--ka-soft-blue) !important;
+}
+.bg-ka-gradient {
+  background: var(--ka-gradient) !important;
+}
+
+/* 5. 애니메이션 효과 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-up {
+  animation: fadeInUp 0.6s ease-out;
 }
