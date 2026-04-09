@@ -3,42 +3,65 @@
     class="bg-ka-gradient d-flex align-items-center justify-content-center vh-100 px-3"
   >
     <main
-      class="card border-0 shadow-lg p-4 p-md-5 animate-up"
+      class="card border-0 shadow-lg p-4 p-md-5"
       style="max-width: 420px; width: 100%"
     >
-      <header class="text-center mb-5">
-        <div class="mb-3">
-          <img
-            src="@/assets/images/travelet_logo.svg"
-            alt="Travelet Logo"
-            class="logo-img"
-          />
-        </div>
+      <header class="text-center mb-4">
+        <img
+          src="@/assets/images/travelet_logo.svg"
+          alt="Logo"
+          class="logo-img mb-3"
+        />
         <h1 class="h2 fw-bold text-dark-navy mb-2">Travelet</h1>
-        <p class="text-muted small">꿈의 여행을 위한 첫 걸음</p>
+        <p class="text-muted small">당신만의 특별한 여행을 계획해보세요</p>
       </header>
 
+      <div
+        v-if="statusMessage"
+        class="alert mb-4 animate-fade-in text-center"
+        :class="statusType === 'success' ? 'alert-success' : 'alert-danger'"
+      >
+        {{ statusMessage }}
+      </div>
+
       <div class="mb-4">
-        <div class="mb-4">
-          <label class="form-label small fw-bold text-ka-deep ms-1">이름</label>
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-ka-deep ms-1"
+            >닉네임 (회원가입 시)</label
+          >
           <input
+            v-model="formData.name"
             type="text"
-            v-model="loginData.name"
             class="form-control form-control-lg py-3 rounded-3"
-            placeholder="이름을 입력하세요"
+            placeholder="닉네임을 입력하세요"
           />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-ka-deep ms-1"
+            >이메일 (아이디)</label
+          >
+          <input
+            v-model="formData.email"
+            type="email"
+            class="form-control form-control-lg py-3 rounded-3"
+            :class="{ 'is-invalid': emailError }"
+            placeholder="email@example.com"
+          />
+          <div v-if="emailError" class="text-danger small mt-1 ms-1">
+            올바른 이메일 형식이 아닙니다.
+          </div>
         </div>
 
         <div class="mb-2">
           <label class="form-label small fw-bold text-ka-deep ms-1"
-            >이메일</label
+            >비밀번호</label
           >
           <input
-            type="email"
-            v-model="loginData.email"
+            v-model="formData.password"
+            type="password"
             class="form-control form-control-lg py-3 rounded-3"
-            :class="{ 'is-invalid': emailError }"
-            placeholder="email@example.com"
+            placeholder="비밀번호를 입력하세요"
           />
           <div v-if="emailError" class="text-danger small mt-2 ms-1">
             올바른 이메일 형식을 입력해주세요.
@@ -46,80 +69,104 @@
         </div>
       </div>
 
-      <button
-        @click="handleStart"
-        class="btn btn-primary btn-lg w-100 py-3 rounded-4 shadow-sm mb-3"
-        :disabled="isProcessing || !isFormValid"
-      >
-        <span
-          v-if="isProcessing"
-          class="spinner-border spinner-border-sm me-2"
-        ></span>
-        시작하기
-      </button>
+      <div class="d-grid gap-3">
+        <button
+          @click="handleLogin"
+          class="btn btn-outline-primary btn-lg py-3 rounded-4 fw-bold"
+          :disabled="isProcessing || !canLogin"
+        >
+          로그인
+        </button>
 
-      <footer class="text-center mt-3">
-        <p class="text-secondary opacity-50 mb-0" style="font-size: 0.75rem">
-          © 2026 Travelet.
-        </p>
-      </footer>
+        <button
+          @click="handleRegister"
+          class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
+          :disabled="isProcessing || !canRegister"
+        >
+          회원가입
+        </button>
+      </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { reactive, toRefs, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth'; // 1. Store 임포트 확인
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
-const authStore = useAuthStore(); // 2. Store 인스턴스화
+const authStore = useAuthStore();
+const isProcessing = ref(false);
+const statusMessage = ref('');
+const statusType = ref('success');
 
-const state = reactive({
-  loginData: {
-    name: '',
-    email: '',
-  },
-  isProcessing: false,
+const formData = reactive({
+  name: '',
+  email: '',
+  password: '',
 });
 
-const { loginData, isProcessing } = toRefs(state);
+// 유효성 검사
+const validateEmail = (email) =>
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+    String(email).toLowerCase(),
+  );
+const emailError = computed(
+  () => formData.email && !validateEmail(formData.email),
+);
 
-const validateEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+// 버튼 활성화 조건 분리
+const canLogin = computed(
+  () => validateEmail(formData.email) && formData.password.length > 0,
+);
+const canRegister = computed(
+  () => formData.name.trim().length > 0 && canLogin.value,
+);
+
+const showMsg = (msg, type = 'success') => {
+  statusMessage.value = msg;
+  statusType.value = type;
+  setTimeout(() => {
+    statusMessage.value = '';
+  }, 3000);
 };
 
-const emailError = computed(() => {
-  return state.loginData.email && !validateEmail(state.loginData.email);
-});
-
-const isFormValid = computed(() => {
-  return (
-    state.loginData.name.trim() !== '' && validateEmail(state.loginData.email)
-  );
-});
-
-const handleStart = async () => {
-  if (!isFormValid.value) return;
-
-  state.isProcessing = true;
-
+const handleLogin = async () => {
+  isProcessing.value = true;
   try {
-    // 3. 실제로 authStore의 login 액션을 호출해야 토큰이 생성됩니다.
-    // reactive 객체인 state.loginData를 그대로 넘깁니다.
-    await authStore.login(state.loginData);
-
-    // 4. 저장이 완료된 후 페이지 이동
-    router.push({ name: 'step-region' });
-  } catch (error) {
-    console.error('로그인 프로세스 오류:', error);
-    alert('로그인 처리 중 문제가 발생했습니다.');
+    // 로그인 시 닉네임은 보내지 않음 (이메일/비밀번호만 사용)
+    const res = await authStore.login({
+      email: formData.email,
+      password: formData.password,
+    });
+    if (res.success) {
+      showMsg(`${res.user.name}님, 어서오세요!`, 'success');
+      setTimeout(() => router.push({ name: 'step-region' }), 800);
+    } else {
+      showMsg(res.message, 'danger');
+    }
+  } catch (err) {
+    showMsg('서버 연결 오류가 발생했습니다.', 'danger');
   } finally {
-    state.isProcessing = false;
+    isProcessing.value = false;
+  }
+};
+
+const handleRegister = async () => {
+  isProcessing.value = true;
+  try {
+    const res = await authStore.register(formData);
+    if (res.success) {
+      showMsg('가입이 완료되었습니다.', 'success');
+      setTimeout(() => router.push({ name: 'step-region' }), 800);
+    } else {
+      showMsg(res.message, 'danger');
+    }
+  } catch (err) {
+    showMsg('가입 처리 중 오류가 발생했습니다.', 'danger');
+  } finally {
+    isProcessing.value = false;
   }
 };
 </script>
