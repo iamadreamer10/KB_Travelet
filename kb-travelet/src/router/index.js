@@ -12,6 +12,10 @@ const routes = [
     component: () => import('@/pages/OnboardingView.vue'),
     children: [
       {
+        path: '',
+        redirect: { name: 'step-region' },
+      },
+      {
         path: 'region',
         name: 'step-region',
         component: () => import('@/components/onboarding/StepRegion.vue'),

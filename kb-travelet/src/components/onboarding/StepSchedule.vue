@@ -32,12 +32,18 @@
 
           <div class="calendar-card">
             <div class="calendar-header">
-              <button type="button" class="month-nav-btn" @click="moveMonth(-1)">
+              <button
+                type="button"
+                class="month-nav-btn"
+                @click="moveMonth(-1)"
+              >
                 이전
               </button>
               <div class="month-title-wrap">
                 <strong class="month-title">{{ currentMonthLabel }}</strong>
-                <span class="month-subtitle">원하는 출발일과 도착일을 한 번에 선택해 주세요</span>
+                <span class="month-subtitle"
+                  >원하는 출발일과 도착일을 한 번에 선택해 주세요</span
+                >
               </div>
               <button type="button" class="month-nav-btn" @click="moveMonth(1)">
                 다음
@@ -45,7 +51,9 @@
             </div>
 
             <div class="weekday-row">
-              <span v-for="day in weekDays" :key="day" class="weekday-label">{{ day }}</span>
+              <span v-for="day in weekDays" :key="day" class="weekday-label">{{
+                day
+              }}</span>
             </div>
 
             <div class="calendar-grid">
@@ -90,12 +98,16 @@
         </div>
 
         <div class="summary-action-row">
-          <button type="button" class="btn secondary-btn action-btn" @click="emit('prev')">
+          <button
+            type="button"
+            class="btn secondary-btn action-btn"
+            @click="emit('prev')"
+          >
             이전
           </button>
           <button
             type="button"
-            class="btn btn-primary action-btn"
+            class="btn confirm-btn action-btn"
             :disabled="!isRangeComplete"
             @click="emit('next')"
           >
@@ -126,18 +138,32 @@ const currentMonthLabel = computed(() =>
 );
 
 const formattedDeparture = computed(() =>
-  departureDate.value ? formatSummaryDate(departureDate.value) : '날짜를 선택해 주세요',
+  departureDate.value
+    ? formatSummaryDate(departureDate.value)
+    : '날짜를 선택해 주세요',
 );
 
 const formattedReturn = computed(() =>
-  returnDate.value ? formatSummaryDate(returnDate.value) : '날짜를 선택해 주세요',
+  returnDate.value
+    ? formatSummaryDate(returnDate.value)
+    : '날짜를 선택해 주세요',
 );
 
-const isRangeComplete = computed(() => Boolean(departureDate.value && returnDate.value));
+const isRangeComplete = computed(() =>
+  Boolean(departureDate.value && returnDate.value),
+);
 
 const calendarDays = computed(() => {
-  const monthStart = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth(), 1);
-  const monthEnd = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth() + 1, 0);
+  const monthStart = new Date(
+    currentMonth.value.getFullYear(),
+    currentMonth.value.getMonth(),
+    1,
+  );
+  const monthEnd = new Date(
+    currentMonth.value.getFullYear(),
+    currentMonth.value.getMonth() + 1,
+    0,
+  );
   const gridStart = new Date(monthStart);
   gridStart.setDate(monthStart.getDate() - monthStart.getDay());
 
@@ -247,6 +273,9 @@ function formatSummaryDate(date) {
 }
 
 .onboarding-card {
+  --color-primary: #0766ff;
+  --color-primary-deep: #051766;
+  --color-primary-soft: #e6f0ff;
   --color-text-muted: #64748b;
 
   width: min(100%, 680px);
@@ -509,6 +538,20 @@ function formatSummaryDate(date) {
   font-size: 0.96rem;
   font-weight: 800;
   line-height: 1.5;
+}
+
+.confirm-btn {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.confirm-btn:disabled {
+  background: #bcd7ff;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .summary-action-row {

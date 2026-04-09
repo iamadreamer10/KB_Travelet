@@ -2,8 +2,8 @@
   <div class="onboarding-transition-shell">
     <Transition :name="transitionName">
       <component
-        :is="steps[currentStep]"
-        :key="currentStep"
+        :is="currentStepComponent"
+        :key="currentStepKey"
         @next="nextStep"
         @prev="prevStep"
       />
@@ -12,23 +12,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import StepRegion from '@/components/onboarding/StepRegion.vue';
 import StepSchedule from '@/components/onboarding/StepSchedule.vue';
 import StepOption from '@/components/onboarding/StepOption.vue';
 import StepIncome from '@/components/onboarding/StepIncome.vue';
 
 const router = useRouter();
-const currentStep = ref(0);
+const route = useRoute();
 const transitionName = ref('step-forward');
 
-const steps = [StepRegion, StepSchedule, StepOption, StepIncome];
+const steps = [
+  { key: 'region', routeName: 'step-region', component: StepRegion },
+  { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
+  { key: 'option', routeName: 'step-option', component: StepOption },
+  { key: 'income', routeName: 'step-income', component: StepIncome },
+];
+
+const currentStep = computed(() => {
+  const index = steps.findIndex((step) => step.routeName === route.name);
+  return index >= 0 ? index : 0;
+});
+
+const currentStepComponent = computed(() => steps[currentStep.value].component);
+const currentStepKey = computed(() => steps[currentStep.value].key);
+
+watch(
+  () => route.name,
+  (newName, oldName) => {
+    if (!oldName) {
+      return;
+    }
+
+    const newIndex = steps.findIndex((step) => step.routeName === newName);
+    const oldIndex = steps.findIndex((step) => step.routeName === oldName);
+
+    if (newIndex !== -1 && oldIndex !== -1) {
+      transitionName.value = newIndex > oldIndex ? 'step-forward' : 'step-backward';
+    }
+  },
+);
 
 const nextStep = () => {
   if (currentStep.value < steps.length - 1) {
-    transitionName.value = 'step-forward';
-    currentStep.value++;
+    router.push({ name: steps[currentStep.value + 1].routeName });
   } else {
     alert('모든 설정 완료! 메인으로 이동합니다.');
     router.push('/main');
@@ -37,8 +65,7 @@ const nextStep = () => {
 
 const prevStep = () => {
   if (currentStep.value > 0) {
-    transitionName.value = 'step-backward';
-    currentStep.value--;
+    router.push({ name: steps[currentStep.value - 1].routeName });
   }
 };
 </script>

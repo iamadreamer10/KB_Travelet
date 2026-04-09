@@ -559,10 +559,8 @@ const confirmDestination = () => {
   min-height: 50px;
   border: 0;
   border-radius: 999px;
-  background: var(--color-primary);
-
+  background: rgba(5, 23, 102, 0.06);
   font-weight: 700;
-  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.22);
   transition: all 0.25s ease;
 }
 
