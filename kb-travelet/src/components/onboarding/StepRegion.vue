@@ -166,14 +166,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import travelData from '../../../db.json';
+import { computed, onMounted, ref } from 'vue';
+import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next']);
+const travelStore = useTravelStore();
 
-const subStep = ref('continent');
-const selectedContinent = ref('');
-const selectedCountry = ref(null);
+const subStep = ref(travelStore.selectedContinent ? 'city' : 'continent');
+const selectedContinent = ref(travelStore.selectedContinent || '');
+const selectedCountry = ref(travelStore.selectedCountry || null);
 const showAllCountries = ref(false);
 const initialVisibleCount = 3;
 
@@ -218,7 +219,7 @@ const selectedContinentSourceName = computed(() => {
 });
 
 const filteredCountries = computed(() => {
-  return travelData?.continents?.[selectedContinentSourceName.value] ?? [];
+  return travelStore.continents?.[selectedContinentSourceName.value] ?? [];
 });
 
 const visibleCountries = computed(() => {
@@ -237,7 +238,11 @@ const selectedCountrySummary = computed(() => {
   return `${selectedCountry.value.name} (${selectedContinent.value})`;
 });
 
-const selectContinent = (name) => {
+const selectContinent = async (name) => {
+  if (Object.keys(travelStore.continents).length === 0) {
+    await travelStore.fetchContinents();
+  }
+
   selectedContinent.value = name;
   selectedCountry.value = null;
   showAllCountries.value = false;
@@ -260,8 +265,16 @@ const confirmDestination = () => {
     return;
   }
 
+  travelStore.setDestination({
+    continent: selectedContinent.value,
+    country: selectedCountry.value,
+  });
   emit('next');
 };
+
+onMounted(() => {
+  travelStore.fetchContinents();
+});
 </script>
 
 <style scoped>

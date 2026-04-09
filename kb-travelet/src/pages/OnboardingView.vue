@@ -26,8 +26,8 @@ const transitionName = ref('step-forward');
 const steps = [
   { key: 'region', routeName: 'step-region', component: StepRegion },
   { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
-  { key: 'option', routeName: 'step-option', component: StepOption },
   { key: 'income', routeName: 'step-income', component: StepIncome },
+  { key: 'option', routeName: 'step-option', component: StepOption },
 ];
 
 const currentStep = computed(() => {

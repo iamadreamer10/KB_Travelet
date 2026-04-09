@@ -3,17 +3,17 @@
     <div class="onboarding-card shadow-lg mx-auto">
       <div class="progress-container p-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="step-text">STEP 4/4</span>
-          <span class="step-label">예산 정보 입력</span>
+          <span class="step-text">STEP 3/4</span>
+          <span class="step-label">재정 정보 입력</span>
         </div>
         <div class="progress-track">
           <div
             class="progress-bar-inner progress-animate"
-            style="--progress-start: 75%; --progress-end: 100%; width: 100%"
+            style="--progress-start: 50%; --progress-end: 75%; width: 75%"
           ></div>
           <span
             class="progress-plane progress-plane-animate"
-            style="--progress-start: 75%; --progress-end: 100%"
+            style="--progress-start: 50%; --progress-end: 75%"
           >
             <i class="fas fa-plane" aria-hidden="true"></i>
           </span>
@@ -22,28 +22,46 @@
 
       <div class="content-section p-4 p-md-5">
         <div class="text-center mb-4">
-          <h2 class="section-title mb-2">월 수입을 입력해 주세요</h2>
+          <h2 class="section-title mb-2">현재 자산과 월 수입을 입력해 주세요</h2>
           <p class="section-description mb-0">
-            예산 가이드를 계산하기 위한 기준값으로 사용됩니다.
+            다음 단계에서 여행 옵션을 추천하고 예상 금액을 계산하는 기준이 됩니다.
           </p>
         </div>
 
-        <label class="field-label mb-2" for="income-input">월 수입</label>
-        <div class="input-shell">
-          <span class="currency-label">원</span>
-          <input
-            id="income-input"
-            v-model="income"
-            class="form-control form-control-lg input-field"
-            type="number"
-            min="0"
-            placeholder="3000000"
-          />
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="field-label mb-2" for="asset-input">현재 자산 금액</label>
+            <div class="input-shell">
+              <span class="currency-label">원</span>
+              <input
+                id="asset-input"
+                v-model="assetAmount"
+                class="form-control form-control-lg input-field"
+                type="number"
+                min="0"
+                placeholder="5000000"
+              />
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="field-label mb-2" for="income-input">월 수입</label>
+            <div class="input-shell">
+              <span class="currency-label">원</span>
+              <input
+                id="income-input"
+                v-model="monthlyIncome"
+                class="form-control form-control-lg input-field"
+                type="number"
+                min="0"
+                placeholder="3000000"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="action-row mt-4">
           <button class="btn secondary-btn" @click="emit('prev')">이전</button>
-          <button class="btn primary-btn" @click="checkInComplete">완료</button>
+          <button class="btn primary-btn" @click="checkInComplete">다음</button>
         </div>
       </div>
     </div>
@@ -56,15 +74,19 @@ import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next', 'prev']);
 const travelStore = useTravelStore();
-const income = ref(0);
+const assetAmount = ref(travelStore.assetAmount || 0);
+const monthlyIncome = ref(travelStore.monthlyIncome || 0);
 
 const checkInComplete = () => {
-  if (income.value <= 0) {
-    alert('월 수입을 입력해 주세요.');
+  if (assetAmount.value < 0 || monthlyIncome.value < 0) {
+    alert('자산 금액과 월 수입은 0원 이상으로 입력해 주세요.');
     return;
   }
 
-  travelStore.setMonthlyIncome(income.value);
+  travelStore.setIncomeInfo({
+    assets: assetAmount.value,
+    income: monthlyIncome.value,
+  });
   emit('next');
 };
 </script>

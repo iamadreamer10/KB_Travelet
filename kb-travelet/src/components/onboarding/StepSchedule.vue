@@ -109,7 +109,7 @@
             type="button"
             class="btn confirm-btn action-btn"
             :disabled="!isRangeComplete"
-            @click="emit('next')"
+            @click="confirmSchedule"
           >
             확인
           </button>
@@ -121,13 +121,15 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next', 'prev']);
+const travelStore = useTravelStore();
 
 const today = startOfDay(new Date());
 const currentMonth = ref(new Date(today.getFullYear(), today.getMonth(), 1));
-const departureDate = ref(null);
-const returnDate = ref(null);
+const departureDate = ref(parseStoredDate(travelStore.departureDate));
+const returnDate = ref(parseStoredDate(travelStore.returnDate));
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
 const currentMonthLabel = computed(() =>
@@ -250,6 +252,28 @@ function formatIsoDate(date) {
 function formatSummaryDate(date) {
   const weekday = date.toLocaleDateString('ko-KR', { weekday: 'short' });
   return `${formatIsoDate(date)}(${weekday})`;
+}
+
+function parseStoredDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function confirmSchedule() {
+  if (!isRangeComplete.value) {
+    return;
+  }
+
+  travelStore.setSchedule({
+    startDate: formatIsoDate(departureDate.value),
+    endDate: formatIsoDate(returnDate.value),
+  });
+
+  emit('next');
 }
 </script>
 
