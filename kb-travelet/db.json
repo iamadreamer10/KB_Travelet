@@ -1,12 +1,5 @@
 {
-  "members": [
-    {
-      "name": "asdf",
-      "email": "asdf@asdf.com",
-      "createdAt": "2026. 04. 08. 17:16:48",
-      "id": "1ie_wT98RT4"
-    }
-  ],
+  "members": [],
   "continents": {
     "Asia": [
       {
@@ -48,12 +41,20 @@
       {
         "name": "필리핀",
         "code": "PH",
-        "levels": { "eco": [3, 3, 30], "std": [8, 9, 52], "lux": [20, 30, 125] }
+        "levels": {
+          "eco": [3, 3, 30],
+          "std": [8, 9, 52],
+          "lux": [20, 30, 125]
+        }
       },
       {
         "name": "베트남",
         "code": "VN",
-        "levels": { "eco": [3, 2, 33], "std": [7, 8, 55], "lux": [20, 30, 135] }
+        "levels": {
+          "eco": [3, 2, 33],
+          "std": [7, 8, 55],
+          "lux": [20, 30, 135]
+        }
       },
       {
         "name": "싱가포르",
@@ -233,5 +234,6 @@
         }
       }
     ]
-  }
+  },
+  "$schema": "./node_modules/json-server/schema.json"
 }
