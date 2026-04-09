@@ -63,6 +63,9 @@
             class="form-control form-control-lg py-3 rounded-3"
             placeholder="비밀번호를 입력하세요"
           />
+          <div v-if="emailError" class="text-danger small mt-2 ms-1">
+            올바른 이메일 형식을 입력해주세요.
+          </div>
         </div>
       </div>
 
@@ -167,3 +170,31 @@ const handleRegister = async () => {
   }
 };
 </script>
+
+<style scoped>
+.logo-img {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.rounded-4 {
+  border-radius: 1.25rem !important;
+}
+
+.text-dark-navy {
+  color: #020817;
+}
+
+/* 부트스트랩 에러 테두리 스타일 커스텀 */
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.text-danger {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+</style>

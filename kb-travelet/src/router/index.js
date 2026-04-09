@@ -44,9 +44,9 @@ const routes = [
     meta: { title: '대시보드' },
   },
   {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/pages/SettingsView.vue'),
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/pages/ProfileView.vue'),
     meta: { title: '설정' },
   },
   {

@@ -32,7 +32,7 @@
       </li>
       <li>
         <RouterLink
-          to="/settings"
+          to="/profile"
           class="nav-link text-white rounded-3 py-3 mb-2"
         >
           <i class="fas fa-cog me-2"></i> 설정
