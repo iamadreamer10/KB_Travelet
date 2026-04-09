@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container-fluid p-0 d-flex min-vh-100"
+    class="d-flex vh-100 overflow-hidden"
     style="background-color: var(--color-surface)"
   >
     <div style="width: 280px; flex-shrink: 0"><SideBar /></div>
@@ -11,7 +11,11 @@
       </div>
 
       <div class="p-4">
+<<<<<<< feature/dashboard
+        <div class="bg-white rounded-4 shadow-sm py-2 px-4">
+=======
         <div class="bg-white rounded-4 shadow-sm p-4">
+>>>>>>> develop
           <CalendarMain />
         </div>
       </div>
