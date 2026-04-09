@@ -6,6 +6,7 @@
     >
       <div class="d-flex justify-content-start">
         <div class="btn-group shadow-sm">
+<<<<<<< feature/dashboard
           <button
             @click="prevMonth"
             class="btn btn-sm btn-outline-primary px-2 border-2 me-1"
@@ -16,6 +17,7 @@
             @click="nextMonth"
             class="btn btn-sm btn-outline-primary px-2 border-2"
           >
+>>>>>>>>> Temporary merge branch 2
             <i class="fas fa-chevron-right fa-xs"></i>
           </button>
         </div>
@@ -24,6 +26,7 @@
       <div class="text-center px-4">
         <h6 class="text-secondary mb-0">{{ currentYear }}년</h6>
         <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
+>>>>>>>>> Temporary merge branch 2
       </div>
       <div class="d-flex gap-2 justify-content-end">
         <div
@@ -83,6 +86,9 @@
           :calendar-date="dayObj"
           :key="dayObj.date"
         />
+=========
+        <CalendarDayBar v-if="dayObj.date" :calendar-date="dayObj" />
+>>>>>>>>> Temporary merge branch 2
         <div v-else class="h-100 p-2 opacity-25"></div>
       </div>
     </div>
