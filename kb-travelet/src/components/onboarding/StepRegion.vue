@@ -218,11 +218,7 @@ const selectedContinentSourceName = computed(() => {
 });
 
 const filteredCountries = computed(() => {
-  const matchedContinent = travelData.continents.find(
-    (continent) => continent.continent === selectedContinentSourceName.value,
-  );
-
-  return matchedContinent?.countries ?? [];
+  return travelData?.continents?.[selectedContinentSourceName.value] ?? [];
 });
 
 const visibleCountries = computed(() => {
@@ -293,11 +289,6 @@ const confirmDestination = () => {
 }
 
 .onboarding-card {
-  --color-primary: #0766ff;
-  --color-primary-deep: #051766;
-  --color-primary-soft: #e6f0ff;
-  --color-text-main: #020817;
-
   width: min(100%, 780px);
   flex: 0 0 780px;
   background: #fff;
@@ -516,7 +507,7 @@ const confirmDestination = () => {
   min-height: 0;
   max-height: 100%;
   overflow-y: auto;
-  padding: 0 18px 0 4px;
+  padding: 4px 22px 10px 6px;
   overscroll-behavior: contain;
 }
 
@@ -548,21 +539,16 @@ const confirmDestination = () => {
   border-color: var(--color-primary) !important;
   background: var(--color-primary-soft) !important;
   box-shadow: 0 6px 18px rgba(7, 102, 255, 0.14) !important;
+  margin: 2px 0;
 }
 
 .more-country-card {
-  background: #eef4ff;
-  border: 1px solid #c7dcff;
+  background: var(--color-primary-deep);
+  border: 1px solid var(--color-primary-deep);
   border-radius: 1.25rem;
-  color: var(--color-primary-deep);
+  color: #fff;
   font-weight: 700;
   transition: all 0.25s ease;
-}
-
-.more-country-card:hover {
-  background: #0766ff;
-  border-color: #9fc3ff;
-  color: #ffffff;
 }
 
 .confirm-action-wrap {
@@ -573,14 +559,23 @@ const confirmDestination = () => {
   min-height: 50px;
   border: 0;
   border-radius: 999px;
-  background: #fff;
-  color: var(--color-primary-deep);
+  background: var(--color-primary);
+
   font-weight: 700;
+  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.22);
+  transition: all 0.25s ease;
+}
+
+.confirm-country-btn:hover {
+  background: #0766ff;
+  border-color: #9fc3ff;
+  color: #ffffff;
 }
 
 .confirm-country-btn:disabled {
-  background: rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 0.7);
+  background: #bcd7ff;
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: none;
   cursor: not-allowed;
 }
 

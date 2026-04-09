@@ -95,7 +95,7 @@
           </button>
           <button
             type="button"
-            class="btn confirm-btn action-btn"
+            class="btn btn-primary action-btn"
             :disabled="!isRangeComplete"
             @click="emit('next')"
           >
@@ -247,9 +247,6 @@ function formatSummaryDate(date) {
 }
 
 .onboarding-card {
-  --color-primary: #0766ff;
-  --color-primary-deep: #051766;
-  --color-primary-soft: #e6f0ff;
   --color-text-muted: #64748b;
 
   width: min(100%, 680px);
@@ -512,20 +509,6 @@ function formatSummaryDate(date) {
   font-size: 0.96rem;
   font-weight: 800;
   line-height: 1.5;
-}
-
-.confirm-btn {
-  min-height: 48px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 700;
-}
-
-.confirm-btn:disabled {
-  background: #bcd7ff;
-  color: rgba(255, 255, 255, 0.92);
 }
 
 .summary-action-row {
