@@ -6,6 +6,7 @@
     >
       <div class="d-flex justify-content-start">
         <div class="btn-group shadow-sm">
+<<<<<<< feature/dashboard
           <button
             @click="prevMonth"
             class="btn btn-sm btn-outline-primary px-2 border-2 me-1"
@@ -16,14 +17,24 @@
             @click="nextMonth"
             class="btn btn-sm btn-outline-primary px-2 border-2"
           >
+=======
+          <button class="btn btn-sm btn-outline-primary px-2 border-2 me-1">
+            <i class="fas fa-chevron-left fa-xs"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-primary px-2 border-2">
+>>>>>>> develop
             <i class="fas fa-chevron-right fa-xs"></i>
           </button>
         </div>
       </div>
 
       <div class="text-center px-4">
+<<<<<<< feature/dashboard
         <h6 class="text-secondary mb-0">{{ currentYear }}년</h6>
         <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
+=======
+        <h5 class="fw-bold mb-0">2026년 4월</h5>
+>>>>>>> develop
       </div>
       <div class="d-flex gap-2 justify-content-end">
         <div
