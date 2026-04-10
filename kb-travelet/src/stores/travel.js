@@ -15,6 +15,9 @@ export const useTravelStore = defineStore('travel', () => {
   const selectedBudgetOption = ref('');
   const assetAmount = ref(0);
   const monthlyIncome = ref(0);
+  const dailyExpense = ref(0);
+  const hotelExpense = ref(0);
+  const flightExpense = ref(0);
   const checkedIn = ref(false);
 
   const hasSchedule = computed(() => Boolean(departureDate.value && returnDate.value));
@@ -36,9 +39,22 @@ export const useTravelStore = defineStore('travel', () => {
       currentAsset: 0,
       monthlyIncome: 0,
       budgetOption: '',
+      dailyExpense: 0,
+      hotelExpense: 0,
+      flightExpense: 0,
       checkedIn: false,
       isCompleted: false,
     };
+  }
+
+  function getBudgetLevelKey(option) {
+    const optionMap = {
+      budget: 'eco',
+      standard: 'std',
+      luxury: 'lux',
+    };
+
+    return optionMap[option] || '';
   }
 
   function findCountryByCode(code) {
@@ -85,6 +101,9 @@ export const useTravelStore = defineStore('travel', () => {
     assetAmount.value = Number(nextProfile.currentAsset) || 0;
     monthlyIncome.value = Number(nextProfile.monthlyIncome) || 0;
     selectedBudgetOption.value = nextProfile.budgetOption || '';
+    dailyExpense.value = Number(nextProfile.dailyExpense) || 0;
+    hotelExpense.value = Number(nextProfile.hotelExpense) || 0;
+    flightExpense.value = Number(nextProfile.flightExpense) || 0;
     checkedIn.value = Boolean(nextProfile.checkedIn);
   }
 
@@ -205,6 +224,42 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = option;
   }
 
+  function getRecommendedExpensePreset(option = selectedBudgetOption.value) {
+    const levelKey = getBudgetLevelKey(option);
+    const levels = selectedCountry.value?.levels ?? {};
+    const [daily = 0, hotel = 0, flight = 0] = levels[levelKey] ?? [];
+
+    return {
+      dailyExpense: daily * 10000,
+      hotelExpense: hotel * 10000,
+      flightExpense: flight * 10000,
+    };
+  }
+
+  function setExpenseOverrides({ daily = 0, hotel = 0, flight = 0 }) {
+    dailyExpense.value = Number(daily) || 0;
+    hotelExpense.value = Number(hotel) || 0;
+    flightExpense.value = Number(flight) || 0;
+  }
+
+  async function saveExpenseOverrides({ daily = 0, hotel = 0, flight = 0 }) {
+    const normalizedDaily = Number(daily) || 0;
+    const normalizedHotel = Number(hotel) || 0;
+    const normalizedFlight = Number(flight) || 0;
+
+    setExpenseOverrides({
+      daily: normalizedDaily,
+      hotel: normalizedHotel,
+      flight: normalizedFlight,
+    });
+
+    return saveProfile({
+      dailyExpense: normalizedDaily,
+      hotelExpense: normalizedHotel,
+      flightExpense: normalizedFlight,
+    });
+  }
+
   function setIncomeInfo({ assets = 0, income = 0 }) {
     // 입력창의 현재 값을 즉시 계산 상태에 반영한다.
     assetAmount.value = Number(assets) || 0;
@@ -254,6 +309,9 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = '';
     assetAmount.value = 0;
     monthlyIncome.value = 0;
+    dailyExpense.value = 0;
+    hotelExpense.value = 0;
+    flightExpense.value = 0;
     checkedIn.value = false;
   }
 
@@ -268,6 +326,9 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption,
     assetAmount,
     monthlyIncome,
+    dailyExpense,
+    hotelExpense,
+    flightExpense,
     checkedIn,
     hasSchedule,
     availableBudget,
@@ -280,6 +341,9 @@ export const useTravelStore = defineStore('travel', () => {
     setSchedule,
     saveSchedule,
     setBudgetOption,
+    getRecommendedExpensePreset,
+    setExpenseOverrides,
+    saveExpenseOverrides,
     setIncomeInfo,
     saveIncomeInfo,
     setMonthlyIncome,

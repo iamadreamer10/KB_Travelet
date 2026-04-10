@@ -278,8 +278,14 @@ async function confirmOptionSelection() {
   try {
     // 최종 선택이 확정되면 프로필을 완료 상태로 저장한다.
     travelStore.setBudgetOption(pendingOption.value.key);
+    const expensePreset = travelStore.getRecommendedExpensePreset(
+      pendingOption.value.key,
+    );
     await travelStore.saveProfile({
       budgetOption: pendingOption.value.key,
+      dailyExpense: expensePreset.dailyExpense,
+      hotelExpense: expensePreset.hotelExpense,
+      flightExpense: expensePreset.flightExpense,
       checkedIn: true,
       isCompleted: true,
     });
