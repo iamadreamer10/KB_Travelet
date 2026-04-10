@@ -7,17 +7,17 @@
       <div class="onboarding-card shadow-lg">
         <div class="progress-container p-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="step-text">STEP 1/4</span>
+            <span class="step-text">STEP 1/5</span>
             <span class="step-label">목적지 선택</span>
           </div>
           <div class="progress-track position-relative">
             <div
               class="progress-bar-inner progress-animate"
-              style="--progress-start: 0%; --progress-end: 25%; width: 25%"
+              style="--progress-start: 0%; --progress-end: 20%; width: 20%"
             ></div>
             <span
               class="progress-plane progress-plane-animate"
-              style="--progress-start: 0%; --progress-end: 25%"
+              style="--progress-start: 0%; --progress-end: 20%"
             >
               <i class="fas fa-plane" aria-hidden="true"></i>
             </span>

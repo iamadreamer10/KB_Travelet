@@ -40,6 +40,7 @@
                   id="asset-input"
                   :value="formatInputNumber(assetAmount)"
                   @input="handleAmountInput('asset', $event.target.value)"
+                  @keydown="blockInvalidNumberKey"
                   class="form-control form-control-lg input-field"
                   type="text"
                   inputmode="numeric"
@@ -74,6 +75,7 @@
                   id="income-input"
                   :value="formatInputNumber(monthlyIncome)"
                   @input="handleAmountInput('income', $event.target.value)"
+                  @keydown="blockInvalidNumberKey"
                   class="form-control form-control-lg input-field"
                   type="text"
                   inputmode="numeric"
@@ -203,6 +205,12 @@ function handleAmountInput(target, value) {
   }
 
   monthlyIncome.value = parsedValue;
+}
+
+function blockInvalidNumberKey(event) {
+  if (['-', '+', 'e', 'E', '.'].includes(event.key)) {
+    event.preventDefault();
+  }
 }
 
 function adjustAmount(target, delta) {

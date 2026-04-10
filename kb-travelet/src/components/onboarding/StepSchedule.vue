@@ -4,17 +4,17 @@
       <div class="onboarding-card shadow-lg">
         <div class="progress-container p-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="step-text">STEP 2/4</span>
+            <span class="step-text">STEP 2/5</span>
             <span class="step-label">여행 일정 선택</span>
           </div>
           <div class="progress-track">
             <div
               class="progress-bar-inner progress-animate"
-              style="--progress-start: 25%; --progress-end: 50%; width: 50%"
+              style="--progress-start: 20%; --progress-end: 40%; width: 40%"
             ></div>
             <span
               class="progress-plane progress-plane-animate"
-              style="--progress-start: 25%; --progress-end: 50%"
+              style="--progress-start: 20%; --progress-end: 40%"
             >
               <i class="fas fa-plane" aria-hidden="true"></i>
             </span>
@@ -26,7 +26,7 @@
             <span class="copy-kicker">Schedule</span>
             <h2 class="section-title mb-2">언제 떠나볼까요?</h2>
             <p class="section-description mb-0">
-              달력에서 출발일과 도착일을 순서대로 선택해주세요.
+              달력에서 출발일과 도착일을 순서대로 선택해주세요
             </p>
           </div>
 
@@ -36,17 +36,20 @@
                 type="button"
                 class="month-nav-btn"
                 @click="moveMonth(-1)"
+                aria-label="이전 달"
               >
-                이전
+                <i class="fas fa-angle-left" aria-hidden="true"></i>
               </button>
               <div class="month-title-wrap">
                 <strong class="month-title">{{ currentMonthLabel }}</strong>
-                <span class="month-subtitle"
-                  >원하는 출발일과 도착일을 한 번에 선택해 주세요</span
-                >
               </div>
-              <button type="button" class="month-nav-btn" @click="moveMonth(1)">
-                다음
+              <button
+                type="button"
+                class="month-nav-btn"
+                @click="moveMonth(1)"
+                aria-label="다음 달"
+              >
+                <i class="fas fa-angle-right" aria-hidden="true"></i>
               </button>
             </div>
 
@@ -164,10 +167,10 @@ const tripLengthLabel = computed(() => {
   }
 
   // 출발일과 도착일 차이를 기준으로 n박 n일 문구를 만든다.
-  const diffNights = Math.round(
+  const diffDays = Math.round(
     (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
   );
-  const diffDays = diffNights + 1;
+  const diffNights = Math.max(diffDays - 1, 0);
 
   return `${diffNights}박 ${diffDays}일`;
 });
@@ -306,7 +309,7 @@ async function confirmSchedule() {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 24px 18px;
+  padding: 18px 18px 14px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -320,6 +323,7 @@ async function confirmSchedule() {
   align-items: flex-start;
   justify-content: center;
   gap: 10px;
+  transform: translateY(-8px);
 }
 
 .onboarding-card {
@@ -454,9 +458,12 @@ async function confirmSchedule() {
 
 .calendar-card {
   padding: 14px;
-  border: 1px solid var(--color-primary-soft);
+  border: 1.5px solid rgba(7, 102, 255, 0.22);
   border-radius: 1.75rem;
   background: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 8px 24px rgba(7, 102, 255, 0.06);
 }
 
 .calendar-header {
@@ -468,14 +475,30 @@ async function confirmSchedule() {
 }
 
 .month-nav-btn {
-  min-width: 56px;
+  min-width: 40px;
+  width: 40px;
   min-height: 34px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 999px;
   background: #fff;
   color: var(--color-primary-deep);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.month-nav-btn:hover {
+  transform: translateY(-1px);
+  border-color: #bfd6ff;
+  background: #f8fbff;
+  box-shadow: 0 8px 18px rgba(7, 102, 255, 0.1);
 }
 
 .month-title-wrap {
@@ -690,6 +713,7 @@ async function confirmSchedule() {
 @media (max-width: 991px) {
   .step-schedule-stage {
     flex-direction: column;
+    transform: translateY(-4px);
   }
 
   .onboarding-card,
