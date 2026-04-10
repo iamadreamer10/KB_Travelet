@@ -33,13 +33,44 @@ const currentStep = ref(0);
 const transitionName = ref('step-forward');
 const steps = [StepRegion, StepSchedule, StepOption, StepIncome];
 
-// 현재 단계에 맞는 컴포넌트 계산
-const currentStepComponent = computed(() => steps[currentStep.value]);
+const steps = [
+  // URL 순서와 실제 온보딩 순서를 1:1로 맞춘다.
+  { key: 'region', routeName: 'step-region', component: StepRegion },
+  { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
+  { key: 'income', routeName: 'step-income', component: StepIncome },
+  { key: 'option', routeName: 'step-option', component: StepOption },
+];
+
+const currentStep = computed(() => {
+  const index = steps.findIndex((step) => step.routeName === route.name);
+  return index >= 0 ? index : 0;
+});
+
+const currentStepComponent = computed(() => steps[currentStep.value].component);
+const currentStepKey = computed(() => steps[currentStep.value].key);
+
+watch(
+  () => route.name,
+  (newName, oldName) => {
+    if (!oldName) {
+      return;
+    }
+
+    const newIndex = steps.findIndex((step) => step.routeName === newName);
+    const oldIndex = steps.findIndex((step) => step.routeName === oldName);
+
+    if (newIndex !== -1 && oldIndex !== -1) {
+      transitionName.value =
+        newIndex > oldIndex ? 'step-forward' : 'step-backward';
+    }
+  },
+);
 
 /**
  * 다음 단계로 이동
  */
 const nextStep = () => {
+  // 마지막 스텝이 아니면 다음 라우트로, 끝이면 대시보드로 이동한다.
   if (currentStep.value < steps.length - 1) {
     transitionName.value = 'step-forward';
     currentStep.value++;
@@ -66,8 +97,13 @@ const prevStep = () => {
  */
 onMounted(async () => {
   try {
-    // travel.js의 loadProfile 실행 (대륙 정보 + 기존 프로필 로드)
-    await travelStore.loadProfile();
+    const profile = await travelStore.loadProfile();
+
+    // 이미 여행 프로필이 있으면 온보딩을 건너뛴다.
+    if (profile?.checkedIn) {
+      router.replace('/main');
+      return;
+    }
   } catch (error) {
     console.error('초기 데이터 로드 실패:', error);
   } finally {

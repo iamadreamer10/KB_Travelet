@@ -211,6 +211,7 @@ const continents = [
 ];
 
 const selectedContinentSourceName = computed(() => {
+  // 화면에 보이는 대륙명과 API 응답 키를 연결한다.
   return (
     continents.find((continent) => continent.name === selectedContinent.value)
       ?.sourceName ?? ''
@@ -238,6 +239,7 @@ const selectedCountrySummary = computed(() => {
 });
 
 const selectContinent = async (name) => {
+  // 대륙을 고르면 국가 리스트 패널이 열리도록 전환한다.
   if (Object.keys(travelStore.continents).length === 0) {
     await travelStore.fetchContinents();
   }
@@ -265,6 +267,7 @@ const confirmDestination = async () => {
   }
 
   try {
+    // 선택한 목적지는 서버에 저장한 뒤 다음 단계로 넘어간다.
     await travelStore.saveDestination({
       continent: selectedContinent.value,
       country: selectedCountry.value,

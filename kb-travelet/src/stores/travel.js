@@ -15,6 +15,7 @@ export const useTravelStore = defineStore('travel', () => {
   const selectedBudgetOption = ref('');
   const assetAmount = ref(0);
   const monthlyIncome = ref(0);
+  const checkedIn = ref(false);
 
   const hasSchedule = computed(() => Boolean(departureDate.value && returnDate.value));
   const availableBudget = computed(() => assetAmount.value + monthlyIncome.value);
@@ -25,13 +26,17 @@ export const useTravelStore = defineStore('travel', () => {
   }
 
   function createDefaultProfile(memberId) {
+    // json-server에 저장할 기본 여행 프로필 형태를 정의한다.
     return {
       memberId,
       destination: '',
+      destinationCode: '',
       startDate: '',
       endDate: '',
       currentAsset: 0,
       monthlyIncome: 0,
+      budgetOption: '',
+      checkedIn: false,
       isCompleted: false,
     };
   }
@@ -64,12 +69,14 @@ export const useTravelStore = defineStore('travel', () => {
   }
 
   function applyProfile(profile) {
+    // 서버에서 가져온 프로필을 화면 상태로 되돌린다.
     const memberId = getCurrentMemberId();
     const nextProfile = {
       ...createDefaultProfile(memberId),
       ...(profile ?? {}),
     };
-    const { continent, country } = findCountryByCode(nextProfile.destination);
+    const resolvedCode = nextProfile.destinationCode || nextProfile.destination;
+    const { continent, country } = findCountryByCode(resolvedCode);
 
     selectedContinent.value = continent;
     selectedCountry.value = country;
@@ -77,6 +84,8 @@ export const useTravelStore = defineStore('travel', () => {
     returnDate.value = nextProfile.endDate || '';
     assetAmount.value = Number(nextProfile.currentAsset) || 0;
     monthlyIncome.value = Number(nextProfile.monthlyIncome) || 0;
+    selectedBudgetOption.value = nextProfile.budgetOption || '';
+    checkedIn.value = Boolean(nextProfile.checkedIn);
   }
 
   async function getCurrentProfile() {
@@ -97,6 +106,7 @@ export const useTravelStore = defineStore('travel', () => {
     const memberId = getCurrentMemberId();
 
     if (!memberId) {
+      // 로그인 정보가 없으면 온보딩 상태도 초기화한다.
       resetTravelPlan();
       return null;
     }
@@ -119,6 +129,7 @@ export const useTravelStore = defineStore('travel', () => {
     const baseProfile = currentProfile ?? createDefaultProfile(memberId);
 
     const nextProfile = {
+      // 기본값 -> 기존 값 -> 이번에 바뀐 값 순으로 덮어쓴다.
       ...createDefaultProfile(memberId),
       ...baseProfile,
       ...patch,
@@ -143,6 +154,7 @@ export const useTravelStore = defineStore('travel', () => {
 
     try {
       const data = await api.get('/continents');
+      // json-server 응답을 그대로 캐시에 저장한다.
       continents.value = data ?? {};
       return continents.value;
     } catch (error) {
@@ -163,8 +175,11 @@ export const useTravelStore = defineStore('travel', () => {
   async function saveDestination({ continent, country }) {
     setDestination({ continent, country });
 
+    // 목적지는 선택 즉시 서버에도 저장한다.
     return saveProfile({
-      destination: country?.code || '',
+      destination: country?.name || '',
+      destinationCode: country?.code || '',
+      checkedIn: false,
       isCompleted: false,
     });
   }
@@ -177,9 +192,11 @@ export const useTravelStore = defineStore('travel', () => {
   async function saveSchedule({ startDate, endDate }) {
     setSchedule({ startDate, endDate });
 
+    // 일정 선택 후 바로 프로필에 반영한다.
     return saveProfile({
       startDate,
       endDate,
+      checkedIn: false,
       isCompleted: false,
     });
   }
@@ -189,6 +206,7 @@ export const useTravelStore = defineStore('travel', () => {
   }
 
   function setIncomeInfo({ assets = 0, income = 0 }) {
+    // 입력창의 현재 값을 즉시 계산 상태에 반영한다.
     assetAmount.value = Number(assets) || 0;
     monthlyIncome.value = Number(income) || 0;
   }
@@ -202,11 +220,25 @@ export const useTravelStore = defineStore('travel', () => {
       income: normalizedIncome,
     });
 
+    // 시드 머니 입력 단계는 다음 예산 계산의 기준이 된다.
     return saveProfile({
       currentAsset: normalizedAssets,
       monthlyIncome: normalizedIncome,
+      checkedIn: false,
       isCompleted: false,
     });
+  }
+
+  async function resetSavedProfile() {
+    const memberId = getCurrentMemberId();
+
+    if (!memberId) {
+      throw new Error('새 여행 정보를 초기화할 사용자를 찾을 수 없습니다.');
+    }
+
+    // 새로 만들기를 선택하면 서버 프로필을 초기 상태로 다시 저장한다.
+    const nextProfile = createDefaultProfile(memberId);
+    return saveProfile(nextProfile);
   }
 
   function setMonthlyIncome(income) {
@@ -214,6 +246,7 @@ export const useTravelStore = defineStore('travel', () => {
   }
 
   function resetTravelPlan() {
+    // 화면 상태만 초기화하고 서버와의 연결은 유지한다.
     selectedContinent.value = '';
     selectedCountry.value = null;
     departureDate.value = '';
@@ -221,6 +254,7 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = '';
     assetAmount.value = 0;
     monthlyIncome.value = 0;
+    checkedIn.value = false;
   }
 
   return {
@@ -234,6 +268,7 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption,
     assetAmount,
     monthlyIncome,
+    checkedIn,
     hasSchedule,
     availableBudget,
     fetchContinents,
@@ -248,6 +283,7 @@ export const useTravelStore = defineStore('travel', () => {
     setIncomeInfo,
     saveIncomeInfo,
     setMonthlyIncome,
+    resetSavedProfile,
     resetTravelPlan,
   };
 });

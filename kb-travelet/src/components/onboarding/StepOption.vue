@@ -17,7 +17,7 @@
       <div class="content-section p-4 p-md-5">
         <div class="option-copy mb-4">
           <span class="copy-kicker">Trip Option</span>
-          <h2 class="section-title mb-2">여행 예산을 정해주세요</h2>
+          <h2 class="section-title mb-2">여행 유형을 정해주세요</h2>
           <p class="section-description mb-0">
             선택한 여행지, 일정, 그리고 현재 재정 상황에 맞춰 예산 유형을 선택해
             주세요.
@@ -53,7 +53,7 @@
             <span class="option-badge">{{ option.label }}</span>
             <strong class="option-total">{{ option.totalText }}</strong>
             <span class="option-meta"
-              >예상 {{ stayNights }}박 / {{ tripDays }}일 기준</span
+              >예상 {{ stayNights }}박 {{ tripDays }}일 기준</span
             >
             <span class="option-breakdown">
               일비 {{ option.dailyText }} · 숙박 {{ option.hotelText }} · 항공
@@ -100,7 +100,9 @@
           <div class="budget-modal-summary">
             <div class="budget-modal-item">
               <span class="budget-modal-label">여행지</span>
-              <strong class="budget-modal-value">{{ selectedDestinationText }}</strong>
+              <strong class="budget-modal-value">{{
+                selectedDestinationText
+              }}</strong>
             </div>
             <div class="budget-modal-item">
               <span class="budget-modal-label">여행 기간</span>
@@ -108,7 +110,9 @@
             </div>
             <div class="budget-modal-item">
               <span class="budget-modal-label">여행 유형</span>
-              <strong class="budget-modal-value">{{ pendingOption.label }}</strong>
+              <strong class="budget-modal-value">{{
+                pendingOption.label
+              }}</strong>
             </div>
           </div>
 
@@ -164,6 +168,7 @@ const tripDays = computed(() => {
     return 0;
   }
 
+  // 여행 일수는 도착일 - 출발일 기준으로 계산한다.
   const diff = Math.round((arrival.value - departure.value) / dayMs);
   return Math.max(diff, 1);
 });
@@ -173,8 +178,9 @@ const stayNights = computed(() => {
     return 0;
   }
 
+  // 숙박 박수는 "전체 일수 - 1"로 계산한다.
   const diff = Math.round((arrival.value - departure.value) / dayMs);
-  return Math.max(diff, 0);
+  return Math.max(diff - 1, 0);
 });
 
 const selectedDestinationText = computed(() => {
@@ -230,6 +236,7 @@ const budgetOptions = computed(() => {
 
   return optionMap.map((option) => {
     const [daily = 0, hotel = 0, flight = 0] = levels[option.levelKey] ?? [];
+    // 일비/숙박/항공을 합산해 총 예산을 계산한다.
     const total =
       (daily * tripDays.value + hotel * stayNights.value + flight) * 10000;
     const isOverBudget = total > availableBudget.value;
@@ -255,6 +262,7 @@ async function selectOption(option) {
     return;
   }
 
+  // 버튼을 누르면 바로 저장하지 않고 확인 팝업을 먼저 띄운다.
   pendingOption.value = option;
 }
 
@@ -268,8 +276,11 @@ async function confirmOptionSelection() {
   }
 
   try {
+    // 최종 선택이 확정되면 프로필을 완료 상태로 저장한다.
     travelStore.setBudgetOption(pendingOption.value.key);
     await travelStore.saveProfile({
+      budgetOption: pendingOption.value.key,
+      checkedIn: true,
       isCompleted: true,
     });
     closeOptionModal();
@@ -311,6 +322,7 @@ function formatWon(amount) {
 
 onMounted(async () => {
   try {
+    // 저장된 여행 정보가 있으면 화면 초기 상태에 반영한다.
     await travelStore.loadProfile();
   } catch (error) {
     console.error('옵션 페이지 프로필 불러오기 실패:', error);
