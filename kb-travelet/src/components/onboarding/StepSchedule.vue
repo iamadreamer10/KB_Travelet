@@ -163,6 +163,7 @@ const tripLengthLabel = computed(() => {
     return '';
   }
 
+  // 출발일과 도착일의 차이를 여행 기간 문구로 보여준다.
   const diffDays = Math.round(
     (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
   );
@@ -230,6 +231,7 @@ function moveMonth(offset) {
 }
 
 function selectDate(date) {
+  // 첫 클릭은 출발일, 두 번째 클릭은 도착일로 처리한다.
   if (!departureDate.value || (departureDate.value && returnDate.value)) {
     departureDate.value = date;
     returnDate.value = null;
@@ -237,6 +239,7 @@ function selectDate(date) {
   }
 
   if (date < departureDate.value) {
+    // 도착일이 출발일보다 빠르면 선택을 초기화한다.
     departureDate.value = null;
     returnDate.value = null;
     return;
@@ -284,6 +287,7 @@ async function confirmSchedule() {
   }
 
   try {
+    // 선택한 일정은 서버에 저장한 뒤 다음 단계로 보낸다.
     await travelStore.saveSchedule({
       startDate: formatIsoDate(departureDate.value),
       endDate: formatIsoDate(returnDate.value),

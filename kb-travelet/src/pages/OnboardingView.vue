@@ -28,6 +28,7 @@ const transitionName = ref('step-forward');
 const isReady = ref(false);
 
 const steps = [
+  // URL 순서와 실제 온보딩 순서를 1:1로 맞춘다.
   { key: 'region', routeName: 'step-region', component: StepRegion },
   { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
   { key: 'income', routeName: 'step-income', component: StepIncome },
@@ -59,6 +60,7 @@ watch(
 );
 
 const nextStep = () => {
+  // 마지막 스텝이 아니면 다음 라우트로, 끝이면 대시보드로 이동한다.
   if (currentStep.value < steps.length - 1) {
     router.push({ name: steps[currentStep.value + 1].routeName });
   } else {
@@ -75,7 +77,13 @@ const prevStep = () => {
 
 onMounted(async () => {
   try {
-    await travelStore.loadProfile();
+    const profile = await travelStore.loadProfile();
+
+    // 이미 여행 프로필이 있으면 온보딩을 건너뛴다.
+    if (profile?.checkedIn) {
+      router.replace('/main');
+      return;
+    }
   } catch (error) {
     console.error('프로필 불러오기 실패:', error);
   } finally {
