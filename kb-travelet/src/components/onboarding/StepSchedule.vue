@@ -21,7 +21,7 @@
           </div>
         </div>
 
-        <div class="content-section p-4 p-md-4">
+        <div class="content-section p-4 p-md-5">
           <div class="schedule-copy mb-4">
             <span class="copy-kicker">Schedule</span>
             <h2 class="section-title mb-2">여행 일정을 정해주세요</h2>
@@ -32,12 +32,18 @@
 
           <div class="calendar-card">
             <div class="calendar-header">
-              <button type="button" class="month-nav-btn" @click="moveMonth(-1)">
+              <button
+                type="button"
+                class="month-nav-btn"
+                @click="moveMonth(-1)"
+              >
                 이전
               </button>
               <div class="month-title-wrap">
                 <strong class="month-title">{{ currentMonthLabel }}</strong>
-                <span class="month-subtitle">원하는 출발일과 도착일을 한 번에 선택해 주세요</span>
+                <span class="month-subtitle"
+                  >원하는 출발일과 도착일을 한 번에 선택해 주세요</span
+                >
               </div>
               <button type="button" class="month-nav-btn" @click="moveMonth(1)">
                 다음
@@ -45,7 +51,9 @@
             </div>
 
             <div class="weekday-row">
-              <span v-for="day in weekDays" :key="day" class="weekday-label">{{ day }}</span>
+              <span v-for="day in weekDays" :key="day" class="weekday-label">{{
+                day
+              }}</span>
             </div>
 
             <div class="calendar-grid">
@@ -74,8 +82,7 @@
 
       <aside class="schedule-summary-card shadow-lg">
         <div class="summary-header">
-          <span class="summary-kicker">선택 일정</span>
-          <h3 class="summary-title mb-0">여행 날짜 확인</h3>
+          <h2 class="summary-title mb-0">여행 일정 확인</h2>
         </div>
 
         <div class="summary-list">
@@ -89,15 +96,24 @@
           </div>
         </div>
 
+        <div v-if="tripLengthLabel" class="trip-length-banner">
+          <p class="trip-length-caption mb-1">Trip Length</p>
+          <p class="trip-length-note mb-0">{{ tripLengthLabel }}</p>
+        </div>
+
         <div class="summary-action-row">
-          <button type="button" class="btn secondary-btn action-btn" @click="emit('prev')">
-            이전
+          <button
+            type="button"
+            class="btn secondary-btn action-btn prev-icon-btn"
+            @click="emit('prev')"
+          >
+            <i class="fas fa-angle-left" aria-hidden="true"></i>
           </button>
           <button
             type="button"
-            class="btn btn-primary action-btn"
+            class="btn confirm-btn action-btn"
             :disabled="!isRangeComplete"
-            @click="emit('next')"
+            @click="confirmSchedule"
           >
             확인
           </button>
@@ -109,13 +125,15 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next', 'prev']);
+const travelStore = useTravelStore();
 
 const today = startOfDay(new Date());
 const currentMonth = ref(new Date(today.getFullYear(), today.getMonth(), 1));
-const departureDate = ref(null);
-const returnDate = ref(null);
+const departureDate = ref(parseStoredDate(travelStore.departureDate));
+const returnDate = ref(parseStoredDate(travelStore.returnDate));
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
 const currentMonthLabel = computed(() =>
@@ -126,18 +144,43 @@ const currentMonthLabel = computed(() =>
 );
 
 const formattedDeparture = computed(() =>
-  departureDate.value ? formatSummaryDate(departureDate.value) : '날짜를 선택해 주세요',
+  departureDate.value
+    ? formatSummaryDate(departureDate.value)
+    : '날짜를 선택해 주세요',
 );
 
 const formattedReturn = computed(() =>
-  returnDate.value ? formatSummaryDate(returnDate.value) : '날짜를 선택해 주세요',
+  returnDate.value
+    ? formatSummaryDate(returnDate.value)
+    : '날짜를 선택해 주세요',
 );
 
-const isRangeComplete = computed(() => Boolean(departureDate.value && returnDate.value));
+const isRangeComplete = computed(() =>
+  Boolean(departureDate.value && returnDate.value),
+);
+const tripLengthLabel = computed(() => {
+  if (!isRangeComplete.value) {
+    return '';
+  }
+
+  const diffDays = Math.round(
+    (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
+  );
+
+  return `${diffDays}일간의 여행이에요.`;
+});
 
 const calendarDays = computed(() => {
-  const monthStart = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth(), 1);
-  const monthEnd = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth() + 1, 0);
+  const monthStart = new Date(
+    currentMonth.value.getFullYear(),
+    currentMonth.value.getMonth(),
+    1,
+  );
+  const monthEnd = new Date(
+    currentMonth.value.getFullYear(),
+    currentMonth.value.getMonth() + 1,
+    0,
+  );
   const gridStart = new Date(monthStart);
   gridStart.setDate(monthStart.getDate() - monthStart.getDay());
 
@@ -225,15 +268,43 @@ function formatSummaryDate(date) {
   const weekday = date.toLocaleDateString('ko-KR', { weekday: 'short' });
   return `${formatIsoDate(date)}(${weekday})`;
 }
+
+function parseStoredDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+async function confirmSchedule() {
+  if (!isRangeComplete.value) {
+    return;
+  }
+
+  try {
+    await travelStore.saveSchedule({
+      startDate: formatIsoDate(departureDate.value),
+      endDate: formatIsoDate(returnDate.value),
+    });
+
+    emit('next');
+  } catch (error) {
+    console.error('여행 일정 저장 실패:', error);
+    alert('여행 일정을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
 </script>
 
 <style scoped>
 .onboarding-page-bg {
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #0766ff;
-  padding: 20px 18px 32px;
+  padding: 24px 18px;
+  box-sizing: border-box;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
 }
 
@@ -247,6 +318,9 @@ function formatSummaryDate(date) {
 }
 
 .onboarding-card {
+  --color-primary: #0766ff;
+  --color-primary-deep: #051766;
+  --color-primary-soft: #e6f0ff;
   --color-text-muted: #64748b;
 
   width: min(100%, 680px);
@@ -258,13 +332,13 @@ function formatSummaryDate(date) {
 }
 
 .schedule-summary-card {
-  width: 300px;
-  flex: 0 0 300px;
+  width: 328px;
+  flex: 0 0 328px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 18px;
-  padding: 20px;
+  padding: 24px;
   border-radius: 2rem;
   background: #fcfdff;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16) !important;
@@ -295,6 +369,7 @@ function formatSummaryDate(date) {
   background: rgba(2, 8, 23, 0.08);
   border-radius: 999px;
   overflow: visible;
+  margin-top: 6px;
 }
 
 .progress-bar-inner {
@@ -315,12 +390,25 @@ function formatSummaryDate(date) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #051766;
-  font-size: 1.15rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  color: #0766ff;
+  font-size: 1.4rem;
   line-height: 1;
-  transform: translate(-50%, -60%);
+  background: linear-gradient(180deg, #ffffff 0%, #eaf2ff 100%);
+  border: 2px solid rgba(7, 102, 255, 0.18);
+  border-radius: 999px;
+  box-shadow:
+    0 10px 20px rgba(7, 102, 255, 0.2),
+    0 2px 6px rgba(5, 23, 102, 0.14);
+  transform: translate(-50%, -50%);
   transform-origin: center;
   pointer-events: none;
+  z-index: 2;
+}
+
+.progress-plane i {
+  filter: drop-shadow(0 1px 2px rgba(5, 23, 102, 0.16));
 }
 
 .progress-plane-animate {
@@ -511,22 +599,87 @@ function formatSummaryDate(date) {
   line-height: 1.5;
 }
 
+.confirm-btn {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.confirm-btn:disabled {
+  background: #bcd7ff;
+  color: rgba(255, 255, 255, 0.92);
+}
+
 .summary-action-row {
   display: flex;
   gap: 10px;
 }
 
+.trip-length-banner {
+  padding: 16px 18px;
+  border-radius: 1.25rem;
+  background: rgba(5, 23, 102, 0.06);
+  text-align: right;
+}
+
+.trip-length-caption {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.trip-length-note {
+  color: var(--color-primary-deep);
+  font-size: 1.28rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
 .action-btn {
-  flex: 1;
   min-height: 48px;
   border-radius: 999px;
   font-weight: 700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.prev-icon-btn {
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+  font-size: 1.15rem;
 }
 
 .secondary-btn {
   border: 1px solid var(--color-primary-soft);
-  background: #fff;
+  background: #f8fafc;
   color: var(--color-primary-deep);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  background: #eef2f7;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.confirm-btn {
+  flex: 1;
+  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.16);
+}
+
+.confirm-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #055ae3;
+  box-shadow: 0 16px 30px rgba(7, 102, 255, 0.24);
 }
 
 @media (max-width: 991px) {

@@ -24,12 +24,12 @@
           </div>
         </div>
 
-        <div class="main-content-wrapper p-4 p-mb-5">
+        <div class="main-content-wrapper p-4 p-md-5">
           <div class="map-copy mb-2">
             <span class="copy-kicker">Destination</span>
-            <h2 class="section-title mb-2">목적지를 정해주세요</h2>
+            <h2 class="section-title mb-2">어디로 떠나볼까요?</h2>
             <p class="section-description mb-0">
-              대륙을 선택하면 추천 국가와 선택 정보를 알려드립니다.
+              대륙을 선택하면 추천 국가를 알려드립니다.
             </p>
           </div>
 
@@ -148,11 +148,10 @@
               </div>
             </div>
 
-            <div class="confirm-action-wrap mt-4">
+            <div v-if="selectedCountry" class="confirm-action-wrap mt-4">
               <button
                 type="button"
                 class="btn confirm-country-btn w-100"
-                :disabled="!selectedCountry"
                 @click="confirmDestination"
               >
                 확인
@@ -166,14 +165,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import travelData from '../../../db.json';
+import { computed, onMounted, ref } from 'vue';
+import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next']);
+const travelStore = useTravelStore();
 
-const subStep = ref('continent');
-const selectedContinent = ref('');
-const selectedCountry = ref(null);
+const subStep = ref(travelStore.selectedContinent ? 'city' : 'continent');
+const selectedContinent = ref(travelStore.selectedContinent || '');
+const selectedCountry = ref(travelStore.selectedCountry || null);
 const showAllCountries = ref(false);
 const initialVisibleCount = 3;
 
@@ -218,7 +218,7 @@ const selectedContinentSourceName = computed(() => {
 });
 
 const filteredCountries = computed(() => {
-  return travelData?.continents?.[selectedContinentSourceName.value] ?? [];
+  return travelStore.continents?.[selectedContinentSourceName.value] ?? [];
 });
 
 const visibleCountries = computed(() => {
@@ -237,7 +237,11 @@ const selectedCountrySummary = computed(() => {
   return `${selectedCountry.value.name} (${selectedContinent.value})`;
 });
 
-const selectContinent = (name) => {
+const selectContinent = async (name) => {
+  if (Object.keys(travelStore.continents).length === 0) {
+    await travelStore.fetchContinents();
+  }
+
   selectedContinent.value = name;
   selectedCountry.value = null;
   showAllCountries.value = false;
@@ -255,32 +259,49 @@ const selectCountry = (country) => {
   selectedCountry.value = country;
 };
 
-const confirmDestination = () => {
+const confirmDestination = async () => {
   if (!selectedCountry.value) {
     return;
   }
 
-  emit('next');
+  try {
+    await travelStore.saveDestination({
+      continent: selectedContinent.value,
+      country: selectedCountry.value,
+    });
+    emit('next');
+  } catch (error) {
+    console.error('여행지 정보 저장 실패:', error);
+    alert('여행지 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
 };
+
+onMounted(() => {
+  travelStore.fetchContinents();
+});
 </script>
 
 <style scoped>
 .onboarding-page-bg {
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #0766ff;
-  padding: 18px 20px 36px;
+  padding: 24px 20px;
+  box-sizing: border-box;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
 }
 
 .step-region-stage {
+  --destination-stage-height: min(720px, calc(100dvh - 48px));
+
   width: 100%;
+  min-height: var(--destination-stage-height);
   max-width: 1240px;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  gap: 5px;
+  gap: 10px;
   transition: gap 0.38s cubic-bezier(0.22, 0.8, 0.2, 1);
 }
 
@@ -291,6 +312,8 @@ const confirmDestination = () => {
 .onboarding-card {
   width: min(100%, 780px);
   flex: 0 0 780px;
+  height: var(--destination-stage-height);
+  min-height: var(--destination-stage-height);
   background: #fff;
   border-radius: 2rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
@@ -300,7 +323,7 @@ const confirmDestination = () => {
 }
 
 .panel-open .onboarding-card {
-  transform: translateX(-18px);
+  transform: translateX(0);
 }
 
 .progress-container {
@@ -328,6 +351,7 @@ const confirmDestination = () => {
   background: rgba(2, 8, 23, 0.08);
   border-radius: 999px;
   overflow: visible;
+  margin-top: 6px;
 }
 
 .progress-bar-inner {
@@ -348,12 +372,25 @@ const confirmDestination = () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #051766;
-  font-size: 1.15rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  color: #0766ff;
+  font-size: 1.4rem;
   line-height: 1;
-  transform: translate(-50%, -60%);
+  background: linear-gradient(180deg, #ffffff 0%, #eaf2ff 100%);
+  border: 2px solid rgba(7, 102, 255, 0.18);
+  border-radius: 999px;
+  box-shadow:
+    0 10px 20px rgba(7, 102, 255, 0.2),
+    0 2px 6px rgba(5, 23, 102, 0.14);
+  transform: translate(-50%, -50%);
   transform-origin: center;
   pointer-events: none;
+  z-index: 2;
+}
+
+.progress-plane i {
+  filter: drop-shadow(0 1px 2px rgba(5, 23, 102, 0.16));
 }
 
 .progress-plane-animate {
@@ -456,6 +493,7 @@ const confirmDestination = () => {
 .country-panel-stack {
   flex: 0 0 420px;
   width: 420px;
+  height: var(--destination-stage-height);
   display: flex;
   flex-direction: column;
   align-self: stretch;
@@ -464,8 +502,9 @@ const confirmDestination = () => {
 
 .country-panel-card {
   width: 100%;
-  height: min(100%, 720px);
-  max-height: calc(100vh - 56px);
+  height: var(--destination-stage-height);
+  min-height: var(--destination-stage-height);
+  max-height: var(--destination-stage-height);
   display: flex;
   flex-direction: column;
   background: #fcfdfe;
@@ -560,16 +599,22 @@ const confirmDestination = () => {
   border: 0;
   border-radius: 999px;
   background: var(--color-primary);
-
+  color: #fff;
   font-weight: 700;
-  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.22);
-  transition: all 0.25s ease;
+  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.16);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .confirm-country-btn:hover {
-  background: #0766ff;
-  border-color: #9fc3ff;
+  transform: translateY(-2px);
+  background: #055ae3;
   color: #ffffff;
+  box-shadow: 0 16px 30px rgba(7, 102, 255, 0.24);
 }
 
 .confirm-country-btn:disabled {
@@ -677,22 +722,28 @@ const confirmDestination = () => {
     justify-content: center;
     flex-direction: column;
     gap: 16px;
+    min-height: auto;
   }
 
   .onboarding-card {
     width: 100%;
     flex-basis: auto;
+    height: auto;
+    min-height: auto;
     transform: none;
   }
 
   .country-panel-card {
     width: 100%;
     flex-basis: auto;
+    height: auto;
+    min-height: auto;
     max-height: none;
   }
 
   .country-panel-stack {
     width: 100%;
+    height: auto;
     flex-basis: auto;
   }
 

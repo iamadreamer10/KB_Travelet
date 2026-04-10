@@ -1,5 +1,13 @@
 {
-  "members": [],
+  "members": [
+    {
+      "name": "qwe",
+      "email": "qwe@naver.com",
+      "password": "qwe",
+      "createdAt": "2026. 4. 9. 오후 11:53:08",
+      "id": "9djjSdlwdoo"
+    }
+  ],
   "continents": {
     "Asia": [
       {
@@ -90,18 +98,42 @@
         "name": "필리핀",
         "code": "PH",
         "levels": {
-          "eco": [3, 3, 30],
-          "std": [8, 9, 52],
-          "lux": [20, 30, 125]
+          "eco": [
+            3,
+            3,
+            30
+          ],
+          "std": [
+            8,
+            9,
+            52
+          ],
+          "lux": [
+            20,
+            30,
+            125
+          ]
         }
       },
       {
         "name": "베트남",
         "code": "VN",
         "levels": {
-          "eco": [3, 2, 33],
-          "std": [7, 8, 55],
-          "lux": [20, 30, 135]
+          "eco": [
+            3,
+            2,
+            33
+          ],
+          "std": [
+            7,
+            8,
+            55
+          ],
+          "lux": [
+            20,
+            30,
+            135
+          ]
         }
       },
       {
@@ -509,6 +541,63 @@
           ]
         }
       }
+    ],
+    "Oceania": [
+      {
+        "name": "호주",
+        "code": "AU",
+        "levels": {
+          "eco": [
+            9,
+            10,
+            82
+          ],
+          "std": [
+            22,
+            28,
+            150
+          ],
+          "lux": [
+            55,
+            70,
+            470
+          ]
+        }
+      },
+      {
+        "name": "뉴질랜드",
+        "code": "NZ",
+        "levels": {
+          "eco": [
+            10,
+            12,
+            105
+          ],
+          "std": [
+            24,
+            30,
+            185
+          ],
+          "lux": [
+            60,
+            80,
+            520
+          ]
+        }
+      }
     ]
-  }
+  },
+  "profiles": [
+    {
+      "memberId": "9djjSdlwdoo",
+      "destination": "TW",
+      "startDate": "2026-04-17",
+      "endDate": "2026-04-24",
+      "currentAsset": 1300000,
+      "monthlyIncome": 1300000,
+      "isCompleted": false,
+      "id": "m7ZiRjwkZCo"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

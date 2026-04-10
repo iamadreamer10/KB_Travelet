@@ -12,6 +12,10 @@ const routes = [
     component: () => import('@/pages/OnboardingView.vue'),
     children: [
       {
+        path: '',
+        redirect: { name: 'step-region' },
+      },
+      {
         path: 'region',
         name: 'step-region',
         component: () => import('@/components/onboarding/StepRegion.vue'),
@@ -24,15 +28,15 @@ const routes = [
         meta: { step: 2 },
       },
       {
-        path: 'option',
-        name: 'step-option',
-        component: () => import('@/components/onboarding/StepOption.vue'),
-        meta: { step: 3 },
-      },
-      {
         path: 'income',
         name: 'step-income',
         component: () => import('@/components/onboarding/StepIncome.vue'),
+        meta: { step: 3 },
+      },
+      {
+        path: 'option',
+        name: 'step-option',
+        component: () => import('@/components/onboarding/StepOption.vue'),
         meta: { step: 4 },
       },
     ],
