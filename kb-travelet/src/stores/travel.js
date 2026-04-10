@@ -20,6 +20,15 @@ export const useTravelStore = defineStore('travel', () => {
   const flightExpense = ref(0);
   const checkedIn = ref(false);
 
+  // 재정 정보 상태
+  const currentAsset = ref(0);
+  const monthlyRent = ref(0);
+  const monthlyInsurance = ref(0);
+  const monthlyPhone = ref(0);
+  const monthlyTransport = ref(0);
+  const monthlySubscription = ref(0);
+  const monthlyOtherFixed = ref(0);
+
   const hasSchedule = computed(() => Boolean(departureDate.value && returnDate.value));
   const availableBudget = computed(() => assetAmount.value + monthlyIncome.value);
 
@@ -38,11 +47,12 @@ export const useTravelStore = defineStore('travel', () => {
       endDate: '',
       currentAsset: 0,
       monthlyIncome: 0,
-      budgetOption: '',
-      dailyExpense: 0,
-      hotelExpense: 0,
-      flightExpense: 0,
-      checkedIn: false,
+      monthlyRent: 0,
+      monthlyInsurance: 0,
+      monthlyPhone: 0,
+      monthlyTransport: 0,
+      monthlySubscription: 0,
+      monthlyOtherFixed: 0,
       isCompleted: false,
     };
   }
@@ -100,11 +110,15 @@ export const useTravelStore = defineStore('travel', () => {
     returnDate.value = nextProfile.endDate || '';
     assetAmount.value = Number(nextProfile.currentAsset) || 0;
     monthlyIncome.value = Number(nextProfile.monthlyIncome) || 0;
-    selectedBudgetOption.value = nextProfile.budgetOption || '';
-    dailyExpense.value = Number(nextProfile.dailyExpense) || 0;
-    hotelExpense.value = Number(nextProfile.hotelExpense) || 0;
-    flightExpense.value = Number(nextProfile.flightExpense) || 0;
-    checkedIn.value = Boolean(nextProfile.checkedIn);
+
+    // 재정 정보 적용
+    currentAsset.value = Number(nextProfile.currentAsset) || 0;
+    monthlyRent.value = Number(nextProfile.monthlyRent) || 0;
+    monthlyInsurance.value = Number(nextProfile.monthlyInsurance) || 0;
+    monthlyPhone.value = Number(nextProfile.monthlyPhone) || 0;
+    monthlyTransport.value = Number(nextProfile.monthlyTransport) || 0;
+    monthlySubscription.value = Number(nextProfile.monthlySubscription) || 0;
+    monthlyOtherFixed.value = Number(nextProfile.monthlyOtherFixed) || 0;
   }
 
   async function getCurrentProfile() {
@@ -284,6 +298,53 @@ export const useTravelStore = defineStore('travel', () => {
     });
   }
 
+  function setFixedExpenses({
+    rent = 0,
+    insurance = 0,
+    phone = 0,
+    transport = 0,
+    subscription = 0,
+    otherFixed = 0,
+  } = {}) {
+    monthlyRent.value = Number(rent) || 0;
+    monthlyInsurance.value = Number(insurance) || 0;
+    monthlyPhone.value = Number(phone) || 0;
+    monthlyTransport.value = Number(transport) || 0;
+    monthlySubscription.value = Number(subscription) || 0;
+    monthlyOtherFixed.value = Number(otherFixed) || 0;
+  }
+
+  async function saveFixedExpenses({
+    rent = 0,
+    insurance = 0,
+    phone = 0,
+    transport = 0,
+    subscription = 0,
+    otherFixed = 0,
+  } = {}) {
+    const normalizedExpenses = {
+      rent: Number(rent) || 0,
+      insurance: Number(insurance) || 0,
+      phone: Number(phone) || 0,
+      transport: Number(transport) || 0,
+      subscription: Number(subscription) || 0,
+      otherFixed: Number(otherFixed) || 0,
+    };
+
+    setFixedExpenses(normalizedExpenses);
+
+    return saveProfile({
+      monthlyRent: normalizedExpenses.rent,
+      monthlyInsurance: normalizedExpenses.insurance,
+      monthlyPhone: normalizedExpenses.phone,
+      monthlyTransport: normalizedExpenses.transport,
+      monthlySubscription: normalizedExpenses.subscription,
+      monthlyOtherFixed: normalizedExpenses.otherFixed,
+      checkedIn: false,
+      isCompleted: false,
+    });
+  }
+
   async function resetSavedProfile() {
     const memberId = getCurrentMemberId();
 
@@ -300,6 +361,59 @@ export const useTravelStore = defineStore('travel', () => {
     monthlyIncome.value = Number(income) || 0;
   }
 
+  function setFinanceInfo({
+    currentAssetVal = 0,
+    monthlyIncomeVal = 0,
+    rentVal = 0,
+    insuranceVal = 0,
+    phoneVal = 0,
+    transportVal = 0,
+    subscriptionVal = 0,
+    otherFixedVal = 0,
+  } = {}) {
+    currentAsset.value = Number(currentAssetVal) || 0;
+    monthlyIncome.value = Number(monthlyIncomeVal) || 0;
+    monthlyRent.value = Number(rentVal) || 0;
+    monthlyInsurance.value = Number(insuranceVal) || 0;
+    monthlyPhone.value = Number(phoneVal) || 0;
+    monthlyTransport.value = Number(transportVal) || 0;
+    monthlySubscription.value = Number(subscriptionVal) || 0;
+    monthlyOtherFixed.value = Number(otherFixedVal) || 0;
+  }
+
+  async function saveFinanceInfo({
+    currentAssetVal = 0,
+    monthlyIncomeVal = 0,
+    rentVal = 0,
+    insuranceVal = 0,
+    phoneVal = 0,
+    transportVal = 0,
+    subscriptionVal = 0,
+    otherFixedVal = 0,
+  } = {}) {
+    setFinanceInfo({
+      currentAssetVal,
+      monthlyIncomeVal,
+      rentVal,
+      insuranceVal,
+      phoneVal,
+      transportVal,
+      subscriptionVal,
+      otherFixedVal,
+    });
+
+    return saveProfile({
+      currentAsset: Number(currentAssetVal) || 0,
+      monthlyIncome: Number(monthlyIncomeVal) || 0,
+      monthlyRent: Number(rentVal) || 0,
+      monthlyInsurance: Number(insuranceVal) || 0,
+      monthlyPhone: Number(phoneVal) || 0,
+      monthlyTransport: Number(transportVal) || 0,
+      monthlySubscription: Number(subscriptionVal) || 0,
+      monthlyOtherFixed: Number(otherFixedVal) || 0,
+    });
+  }
+
   function resetTravelPlan() {
     // 화면 상태만 초기화하고 서버와의 연결은 유지한다.
     selectedContinent.value = '';
@@ -309,10 +423,13 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = '';
     assetAmount.value = 0;
     monthlyIncome.value = 0;
-    dailyExpense.value = 0;
-    hotelExpense.value = 0;
-    flightExpense.value = 0;
-    checkedIn.value = false;
+    currentAsset.value = 0;
+    monthlyRent.value = 0;
+    monthlyInsurance.value = 0;
+    monthlyPhone.value = 0;
+    monthlyTransport.value = 0;
+    monthlySubscription.value = 0;
+    monthlyOtherFixed.value = 0;
   }
 
   return {
@@ -326,10 +443,13 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption,
     assetAmount,
     monthlyIncome,
-    dailyExpense,
-    hotelExpense,
-    flightExpense,
-    checkedIn,
+    currentAsset,
+    monthlyRent,
+    monthlyInsurance,
+    monthlyPhone,
+    monthlyTransport,
+    monthlySubscription,
+    monthlyOtherFixed,
     hasSchedule,
     availableBudget,
     fetchContinents,
@@ -346,8 +466,11 @@ export const useTravelStore = defineStore('travel', () => {
     saveExpenseOverrides,
     setIncomeInfo,
     saveIncomeInfo,
+    setFixedExpenses,
+    saveFixedExpenses,
     setMonthlyIncome,
-    resetSavedProfile,
+    setFinanceInfo,
+    saveFinanceInfo,
     resetTravelPlan,
   };
 });

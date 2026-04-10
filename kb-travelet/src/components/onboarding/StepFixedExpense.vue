@@ -1,19 +1,19 @@
-﻿<template>
+<template>
   <div class="onboarding-page-bg">
     <div class="onboarding-card shadow-lg mx-auto">
       <div class="progress-container p-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="step-text">STEP 3/5</span>
-          <span class="step-label"> 시드 머니 입력</span>
+          <span class="step-text">STEP 4/5</span>
+          <span class="step-label">월 고정지출 입력</span>
         </div>
         <div class="progress-track">
           <div
             class="progress-bar-inner progress-animate"
-            style="--progress-start: 40%; --progress-end: 60%; width: 60%"
+            style="--progress-start: 60%; --progress-end: 80%; width: 80%"
           ></div>
           <span
             class="progress-plane progress-plane-animate"
-            style="--progress-start: 40%; --progress-end: 60%"
+            style="--progress-start: 60%; --progress-end: 80%"
           >
             <i class="fas fa-plane" aria-hidden="true"></i>
           </span>
@@ -21,92 +21,70 @@
       </div>
 
       <div class="content-section p-4 p-md-5">
-        <div class="income-copy mb-4">
-          <span class="copy-kicker">money for trip</span>
-          <h2 class="section-title mb-2">
-            현재 여행 자금은 어느 정도인가요?
-          </h2>
+        <div class="expense-copy mb-4">
+          <span class="copy-kicker">fixed monthly expense</span>
+          <h2 class="section-title mb-2">고정으로 나가는 비용이 있나요?</h2>
           <p class="section-description mb-0">
-            여행 자금과 월 수입을 입력해 주세요.
+            여행 계획에 반영해서 계산해드릴게요.
           </p>
         </div>
 
-        <div class="row g-3 income-field-grid">
-          <div class="col-12 col-md-6">
-            <label class="field-card" for="asset-input">
-              <span class="field-label">시드 머니</span>
-              <div class="input-shell">
-                <input
-                  id="asset-input"
-                  :value="formatInputNumber(assetAmount)"
-                  @input="handleAmountInput('asset', $event.target.value)"
-                  class="form-control form-control-lg input-field"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="예) 5,000,000"
-                />
-                <div class="stepper-controls" aria-hidden="true">
-                  <button
-                    type="button"
-                    class="stepper-btn"
-                    @click.prevent="adjustAmount('asset', 10000)"
-                  >
-                    ▲
-                  </button>
-                  <button
-                    type="button"
-                    class="stepper-btn"
-                    @click.prevent="adjustAmount('asset', -10000)"
-                  >
-                    ▼
-                  </button>
-                </div>
-                <span class="currency-label">원</span>
+        <div class="expense-grid">
+          <label
+            v-for="field in expenseFields"
+            :key="field.key"
+            class="field-card"
+            :for="`${field.key}-input`"
+          >
+            <span class="field-label">{{ field.label }}</span>
+            <div class="input-shell">
+              <input
+                :id="`${field.key}-input`"
+                :value="formatInputNumber(expenses[field.key])"
+                @input="handleAmountInput(field.key, $event.target.value)"
+                class="form-control form-control-lg input-field"
+                type="text"
+                inputmode="numeric"
+                placeholder="0"
+              />
+              <div class="stepper-controls" aria-hidden="true">
+                <button
+                  type="button"
+                  class="stepper-btn"
+                  @click.prevent="adjustAmount(field.key, 10000)"
+                >
+                  ▲
+                </button>
+                <button
+                  type="button"
+                  class="stepper-btn"
+                  @click.prevent="adjustAmount(field.key, -10000)"
+                >
+                  ▼
+                </button>
               </div>
-              <span class="field-preview">{{ assetAmountPreview }}</span>
-            </label>
-          </div>
-          <div class="col-12 col-md-6">
-            <label class="field-card" for="income-input">
-              <span class="field-label">월 수입</span>
-              <div class="input-shell">
-                <input
-                  id="income-input"
-                  :value="formatInputNumber(monthlyIncome)"
-                  @input="handleAmountInput('income', $event.target.value)"
-                  class="form-control form-control-lg input-field"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="예) 1,000,000"
-                />
-                <div class="stepper-controls" aria-hidden="true">
-                  <button
-                    type="button"
-                    class="stepper-btn"
-                    @click.prevent="adjustAmount('income', 10000)"
-                  >
-                    ▲
-                  </button>
-                  <button
-                    type="button"
-                    class="stepper-btn"
-                    @click.prevent="adjustAmount('income', -10000)"
-                  >
-                    ▼
-                  </button>
-                </div>
-                <span class="currency-label">원</span>
-              </div>
-              <span class="field-preview">{{ monthlyIncomePreview }}</span>
-            </label>
-          </div>
+              <span class="currency-label">원</span>
+            </div>
+            <span class="field-preview">{{
+              formatToKoreanAmount(expenses[field.key])
+            }}</span>
+          </label>
+        </div>
+
+        <div class="summary-card mt-4">
+          <span class="summary-caption">Monthly Fixed Total</span>
+          <strong class="summary-value">{{ formatWon(totalFixedExpense) }}</strong>
+          <p class="summary-description mb-0">
+            이 금액을 기준으로 다음 단계에서 하루 사용 가능 금액과 절약 필요
+            금액을 계산합니다.
+          </p>
         </div>
 
         <div class="action-row mt-4">
           <button class="btn secondary-btn prev-icon-btn" @click="emit('prev')">
             <i class="fas fa-angle-left" aria-hidden="true"></i>
           </button>
-          <button class="btn primary-btn" @click="checkInComplete">다음</button>
+          <button class="btn primary-btn" @click="saveAndContinue">다음</button>
         </div>
       </div>
     </div>
@@ -114,41 +92,62 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['next', 'prev']);
 const travelStore = useTravelStore();
-const assetAmount = ref(travelStore.assetAmount || 0);
-const monthlyIncome = ref(travelStore.monthlyIncome || 0);
-const assetAmountPreview = computed(() =>
-  formatToKoreanAmount(assetAmount.value),
-);
-const monthlyIncomePreview = computed(() =>
-  formatToKoreanAmount(monthlyIncome.value),
+
+const expenses = reactive({
+  rent: Number(travelStore.monthlyRent) || 0,
+  insurance: Number(travelStore.monthlyInsurance) || 0,
+  phone: Number(travelStore.monthlyPhone) || 0,
+  transport: Number(travelStore.monthlyTransport) || 0,
+  subscription: Number(travelStore.monthlySubscription) || 0,
+  otherFixed: Number(travelStore.monthlyOtherFixed) || 0,
+});
+
+const expenseFields = [
+  { key: 'rent', label: '월세' },
+  { key: 'insurance', label: '보험료' },
+  { key: 'phone', label: '통신비' },
+  { key: 'transport', label: '교통비' },
+  { key: 'subscription', label: '구독료' },
+  { key: 'otherFixed', label: '기타 고정지출' },
+];
+
+const totalFixedExpense = computed(() =>
+  Object.values(expenses).reduce((sum, value) => sum + (Number(value) || 0), 0),
 );
 
-const checkInComplete = async () => {
-  if (assetAmount.value < 0 || monthlyIncome.value < 0) {
-    alert('자산 금액과 월 수입은 0원 이상으로 입력해 주세요.');
-    return;
-  }
-
+async function saveAndContinue() {
   try {
-    // 자산과 월 수입은 다음 단계의 예산 계산 기준이 된다.
-    await travelStore.saveIncomeInfo({
-      assets: assetAmount.value,
-      income: monthlyIncome.value,
-    });
+    await travelStore.saveFixedExpenses({ ...expenses });
     emit('next');
   } catch (error) {
-    console.error('재정 정보 저장 실패:', error);
-    alert('재정 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    console.error('고정지출 저장 실패:', error);
+    alert('고정지출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }
-};
+}
+
+function formatInputNumber(value) {
+  const amount = Number(value) || 0;
+  return amount > 0 ? amount.toLocaleString('ko-KR') : '';
+}
+
+function parseInputNumber(value) {
+  return Number(String(value).replace(/[^\d]/g, '')) || 0;
+}
+
+function handleAmountInput(target, value) {
+  expenses[target] = parseInputNumber(value);
+}
+
+function adjustAmount(target, delta) {
+  expenses[target] = Math.max(0, (Number(expenses[target]) || 0) + delta);
+}
 
 function formatToKoreanAmount(value) {
-  // 숫자를 "n억 m만 x원" 형식으로 읽기 쉽게 바꾼다.
   const amount = Number(value) || 0;
 
   if (amount <= 0) {
@@ -183,36 +182,12 @@ function formatToKoreanAmount(value) {
   return parts.join(' ');
 }
 
-function formatInputNumber(value) {
-  const amount = Number(value) || 0;
-  return amount > 0 ? amount.toLocaleString('ko-KR') : '';
-}
-
-function parseInputNumber(value) {
-  // 입력값에서 숫자만 남겨 실제 계산 가능한 값으로 만든다.
-  return Number(String(value).replace(/[^\d]/g, '')) || 0;
-}
-
-function handleAmountInput(target, value) {
-  // 자산과 월 수입 입력칸을 각각 독립적으로 갱신한다.
-  const parsedValue = parseInputNumber(value);
-
-  if (target === 'asset') {
-    assetAmount.value = parsedValue;
-    return;
-  }
-
-  monthlyIncome.value = parsedValue;
-}
-
-function adjustAmount(target, delta) {
-  // 스테퍼 버튼으로 금액을 조금씩 조정한다.
-  if (target === 'asset') {
-    assetAmount.value = Math.max(0, (Number(assetAmount.value) || 0) + delta);
-    return;
-  }
-
-  monthlyIncome.value = Math.max(0, (Number(monthlyIncome.value) || 0) + delta);
+function formatWon(amount) {
+  return new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0,
+  }).format(Number(amount) || 0);
 }
 </script>
 
@@ -220,7 +195,7 @@ function adjustAmount(target, delta) {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 0 20px;
+  padding: 16px 20px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -230,8 +205,11 @@ function adjustAmount(target, delta) {
 .onboarding-card {
   --color-text-muted: #64748b;
 
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 760px;
+  max-width: 860px;
+  max-height: min(92dvh, 980px);
   background: #fff;
   border-radius: 2rem;
   overflow: visible;
@@ -240,9 +218,15 @@ function adjustAmount(target, delta) {
 }
 
 .progress-container {
+  flex-shrink: 0;
   background-color: var(--color-primary-soft);
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
+}
+
+.content-section {
+  overflow-y: auto;
+  max-height: calc(min(92dvh, 980px) - 110px);
 }
 
 .step-text {
@@ -310,7 +294,7 @@ function adjustAmount(target, delta) {
   animation: planeFly 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.income-copy {
+.expense-copy {
   max-width: 560px;
 }
 
@@ -340,6 +324,12 @@ function adjustAmount(target, delta) {
   line-height: 1.62;
 }
 
+.expense-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .field-label {
   display: block;
   color: var(--color-primary-deep);
@@ -350,8 +340,8 @@ function adjustAmount(target, delta) {
 .field-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 18px;
+  gap: 10px;
+  padding: 14px;
   border: 1px solid rgba(7, 102, 255, 0.1);
   border-radius: 1.35rem;
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
@@ -362,7 +352,7 @@ function adjustAmount(target, delta) {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px 12px 18px;
+  padding: 10px 12px 10px 16px;
   border: 1px solid rgba(7, 102, 255, 0.16);
   border-radius: 1rem;
   background: #fff;
@@ -379,7 +369,7 @@ function adjustAmount(target, delta) {
   border: 0;
   box-shadow: none;
   padding: 0;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-primary-deep);
   text-align: right;
@@ -426,19 +416,11 @@ function adjustAmount(target, delta) {
   color: var(--color-primary);
 }
 
-.field-helper {
-  margin-top: 0.75rem;
-  padding-left: 0.2rem;
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
-  line-height: 1.5;
-}
-
-.income-summary-card {
+.summary-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 18px 20px;
+  gap: 6px;
+  padding: 16px 18px;
   border-radius: 1.35rem;
   background: linear-gradient(135deg, #f7fbff 0%, #eef5ff 100%);
   border: 1px solid rgba(7, 102, 255, 0.12);
@@ -454,7 +436,7 @@ function adjustAmount(target, delta) {
 
 .summary-value {
   color: var(--color-primary-deep);
-  font-size: 1.02rem;
+  font-size: 1.12rem;
   font-weight: 800;
   line-height: 1.5;
 }
@@ -492,6 +474,15 @@ function adjustAmount(target, delta) {
 
 .primary-btn {
   flex: 1;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.16);
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  background: #055ae3;
+  box-shadow: 0 16px 30px rgba(7, 102, 255, 0.24);
 }
 
 .secondary-btn {
@@ -506,21 +497,31 @@ function adjustAmount(target, delta) {
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
-.primary-btn {
-  background: var(--color-primary);
-  color: #fff;
-  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.16);
-}
-
-.primary-btn:hover {
-  transform: translateY(-2px);
-  background: #055ae3;
-  box-shadow: 0 16px 30px rgba(7, 102, 255, 0.24);
-}
-
 @media (max-width: 991px) {
   .onboarding-card {
     max-width: 100%;
+  }
+
+  .expense-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .onboarding-page-bg {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .content-section {
+    padding: 1.1rem !important;
+  }
+
+  .field-card {
+    padding: 12px;
   }
 }
 

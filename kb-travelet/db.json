@@ -8,32 +8,32 @@
       "id": "9djjSdlwdoo"
     },
     {
-      "name": "asdf",
-      "email": "asdf@naver.com",
-      "password": "asdf",
-      "createdAt": "2026. 4. 10. 오전 8:56:53",
-      "id": "gVqYt5y"
+      "name": "나비",
+      "email": "asd@naver.com",
+      "password": "asd",
+      "createdAt": "2026. 4. 10. 오전 10:02:20",
+      "id": "zmOOxBf"
     },
     {
-      "name": "123",
-      "email": "123@naver.com",
-      "password": "123",
-      "createdAt": "2026. 4. 10. 오전 9:43:29",
-      "id": "Arfb-aB"
+      "name": "트레블러 ",
+      "email": "tra@naver.com",
+      "password": "tra",
+      "createdAt": "2026. 4. 10. 오후 1:27:08",
+      "id": "1IEbFjH"
     },
     {
-      "name": "qwe",
-      "email": "qweqwe@naver.com",
-      "password": "qwe",
-      "createdAt": "2026. 4. 10. 오전 10:14:43",
-      "id": "1FFyc9c"
+      "name": "트",
+      "email": "t@naver.com",
+      "password": "t",
+      "createdAt": "2026. 4. 10. 오후 1:44:35",
+      "id": "gNf1ZdD"
     },
     {
-      "name": "choi",
-      "email": "choi@naver.com",
-      "password": "choi",
-      "createdAt": "2026. 4. 10. 오전 10:18:27",
-      "id": "FcJoUEH"
+      "name": "r",
+      "email": "r@naver.com",
+      "password": "r",
+      "createdAt": "2026. 4. 10. 오후 2:02:17",
+      "id": "xUugayS"
     }
   ],
   "continents": {
@@ -309,78 +309,102 @@
       "userId": "gVqYt5y"
     },
     {
-      "date": "2026-04-01",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "ddddd",
-      "id": 1775794632502
-    },
-    {
-      "date": "2026-04-01",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 999,
-      "memo": "555",
-      "id": 1775794968031
-    },
-    {
-      "id": 1775796381625,
-      "date": "2026-04-04",
-      "type": "expense",
-      "category": "쇼핑",
-      "amount": 80000,
-      "memo": "가죽자켓!!"
-    }
-  ],
-  "profiles": [
-    {
       "memberId": "9djjSdlwdoo",
       "destination": "TW",
       "startDate": "2026-04-17",
       "endDate": "2026-04-24",
       "currentAsset": 1300000,
       "monthlyIncome": 1300000,
-      "isCompleted": true,
-      "id": "m7ZiRjwkZCo",
-      "checkedIn": true
+      "isCompleted": false,
+      "id": "m7ZiRjwkZCo"
     },
     {
-      "memberId": "gVqYt5y",
-      "destination": "TW",
-      "startDate": "2026-04-11",
-      "endDate": "2026-04-18",
-      "currentAsset": 1300000,
-      "monthlyIncome": 1300000,
+      "memberId": "zmOOxBf",
+      "destination": "프랑스",
+      "startDate": "2026-04-17",
+      "endDate": "2026-04-24",
+      "currentAsset": 30000,
+      "monthlyIncome": 10000,
+      "isCompleted": true,
+      "id": "yQAp3sb",
+      "monthlyRent": 0,
+      "monthlyInsurance": 0,
+      "monthlyPhone": 0,
+      "monthlyTransport": 0,
+      "monthlySubscription": 0,
+      "monthlyOtherFixed": 0,
+      "destinationCode": "FR",
       "checkedIn": true,
+      "budgetOption": "standard",
+      "dailyExpense": 220000,
+      "hotelExpense": 300000,
+      "flightExpense": 1650000
+    },
+    {
+      "memberId": "1IEbFjH",
+      "destination": "프랑스",
+      "destinationCode": "FR",
+      "startDate": "2026-04-10",
+      "endDate": "2026-04-17",
+      "currentAsset": 30000,
+      "monthlyIncome": 30000,
+      "monthlyRent": 40000,
+      "monthlyInsurance": 0,
+      "monthlyPhone": 0,
+      "monthlyTransport": 0,
+      "monthlySubscription": 0,
+      "monthlyOtherFixed": 0,
       "isCompleted": true,
-      "id": "SZX2YXC",
-      "budgetOption": "standard"
+      "checkedIn": true,
+      "id": "r6RqN2H",
+      "budgetOption": "standard",
+      "dailyExpense": 220000,
+      "hotelExpense": 300000,
+      "flightExpense": 1650000
     },
     {
-      "memberId": "Arfb-aB",
-      "destination": "CN",
-      "startDate": "2026-04-18",
-      "endDate": "2026-04-25",
-      "currentAsset": 5000000,
-      "monthlyIncome": 5000000,
-      "budgetOption": "",
-      "checkedIn": false,
-      "isCompleted": false,
-      "id": "tmn7iPv"
+      "memberId": "gNf1ZdD",
+      "destination": "이집트",
+      "destinationCode": "EG",
+      "startDate": "2027-02-11",
+      "endDate": "2027-02-25",
+      "currentAsset": 546456,
+      "monthlyIncome": 2458555,
+      "monthlyRent": 452145,
+      "monthlyInsurance": 58200,
+      "monthlyPhone": 58200,
+      "monthlyTransport": 58526,
+      "monthlySubscription": 5852,
+      "monthlyOtherFixed": 585268,
+      "isCompleted": true,
+      "checkedIn": true,
+      "id": "m5CAfS7",
+      "budgetOption": "standard",
+      "dailyExpense": 100000,
+      "hotelExpense": 120000,
+      "flightExpense": 1950000
     },
     {
-      "memberId": "FcJoUEH",
-      "destination": "TW",
-      "startDate": "2026-09-04",
-      "endDate": "2026-09-11",
-      "currentAsset": 190000000,
-      "monthlyIncome": 3000000,
-      "budgetOption": "",
-      "checkedIn": false,
-      "isCompleted": false,
-      "id": "x3wXCym",
-      "destinationCode": ""
+      "memberId": "xUugayS",
+      "destination": "미국",
+      "destinationCode": "US",
+      "startDate": "2026-09-05",
+      "endDate": "2026-09-12",
+      "currentAsset": 3240000,
+      "monthlyIncome": 2500000,
+      "monthlyRent": 500000,
+      "monthlyInsurance": 250000,
+      "monthlyPhone": 50000,
+      "monthlyTransport": 70000,
+      "monthlySubscription": 50000,
+      "monthlyOtherFixed": 214562,
+      "isCompleted": true,
+      "checkedIn": true,
+      "id": "XsGkjVh",
+      "budgetOption": "standard",
+      "dailyExpense": 280000,
+      "hotelExpense": 350000,
+      "flightExpense": 2000000
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

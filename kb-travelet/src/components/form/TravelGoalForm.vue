@@ -1,5 +1,12 @@
 <template>
   <div class="row g-3">
+    <!-- 여행 정보 섹션 -->
+    <div class="col-12">
+      <div class="section-header mb-3">
+        <i class="fas fa-plane-departure me-2 text-primary"></i>여행 정보
+      </div>
+    </div>
+
     <div class="col-6">
       <label class="text-muted small mb-1">대륙</label>
       <select v-model="modelValue.continent" class="form-select fw-bold">
@@ -115,6 +122,109 @@
           inputmode="numeric"
           class="form-control form-control-sm w-50 text-end border-0 bg-white"
         />
+      </div>
+    </div>
+
+    <!-- 재정 정보 섹션 -->
+    <div class="col-12 mt-4">
+      <div class="section-header mb-3">
+        <i class="fas fa-wallet me-2 text-success"></i>재정 정보
+      </div>
+    </div>
+
+    <div class="col-12 p-3 bg-light rounded-4">
+      <!-- 기본 자산 정보 -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small fw-bold">현재 자산</span>
+          <input
+            v-model.number="modelValue.currentAsset"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-50 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="small fw-bold">월 수입</span>
+          <input
+            v-model.number="modelValue.monthlyIncome"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-50 text-end border-0 bg-white"
+          />
+        </div>
+      </div>
+
+      <hr class="my-3 opacity-25" />
+
+      <!-- 고정지출 항목들 -->
+      <div class="mb-3">
+        <div class="label-group mb-2">
+          <small class="fw-bold text-muted">월별 고정지출</small>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">월세</span>
+          <input
+            v-model.number="modelValue.monthlyRent"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">보험료</span>
+          <input
+            v-model.number="modelValue.monthlyInsurance"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">통신비</span>
+          <input
+            v-model.number="modelValue.monthlyPhone"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">교통비</span>
+          <input
+            v-model.number="modelValue.monthlyTransport"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small">구독료</span>
+          <input
+            v-model.number="modelValue.monthlySubscription"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="small">기타 고정지출</span>
+          <input
+            v-model.number="modelValue.monthlyOtherFixed"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -244,5 +354,18 @@ onMounted(() => {
 }
 .badge {
   font-size: 0.7rem;
+}
+.section-header {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+.label-group {
+  display: block;
+}
+.w-40 {
+  width: 40% !important;
 }
 </style>

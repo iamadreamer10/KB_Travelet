@@ -33,6 +33,12 @@
         {{ totalExpense.toLocaleString() }}원
       </span>
     </div>
+
+    <!-- 예산 계산 결과 표시 -->
+    <GoalBudgetCalculationDisplay
+      v-if="!isEditing"
+      :budget="budgetCalculation"
+    />
   </div>
 </template>
 
@@ -40,6 +46,8 @@
 import { ref, computed } from 'vue';
 import TravelGoalDisplay from './TravelGoalDisplay.vue';
 import TravelGoalForm from '../form/TravelGoalForm.vue';
+import GoalBudgetCalculationDisplay from './GoalBudgetCalculationDisplay.vue';
+import { useGoalBudgetCalculation } from '@/composables/useGoalBudgetCalculation';
 
 const props = defineProps({
   goal: { type: Object, required: true },
@@ -56,6 +64,36 @@ const totalExpense = computed(() => {
     (target.flightExpense || 0) +
     (target.hotelExpense || 0)
   );
+});
+
+// 여행일수 계산 헬퍼
+function computeTravelDays(goal) {
+  if (!goal.startDate || !goal.endDate) return 1;
+  const start = new Date(goal.startDate);
+  const end = new Date(goal.endDate);
+  const diffMs = end.getTime() - start.getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+  return days > 0 ? days : 1;
+}
+
+// 예산 계산 composable - computed로 감싸서 실시간 업데이트
+const budgetCalculation = computed(() => {
+  const travelDays = computeTravelDays(props.goal);
+  return useGoalBudgetCalculation({
+    currentAsset: props.goal.currentAsset || 0,
+    monthlyIncome: props.goal.monthlyIncome || 0,
+    monthlyRent: props.goal.monthlyRent || 0,
+    monthlyInsurance: props.goal.monthlyInsurance || 0,
+    monthlyPhone: props.goal.monthlyPhone || 0,
+    monthlyTransport: props.goal.monthlyTransport || 0,
+    monthlySubscription: props.goal.monthlySubscription || 0,
+    monthlyOtherFixed: props.goal.monthlyOtherFixed || 0,
+    departureDate: props.goal.startDate || '',
+    returnDate: props.goal.endDate || '',
+    dayExpense: (props.goal.etcExpense || 0) / Math.max(1, travelDays),
+    nightly: ((props.goal.hotelExpense || 0) / Math.max(1, travelDays - 1)) || 0,
+    flightExpense: props.goal.flightExpense || 0,
+  });
 });
 
 const startEdit = () => {
@@ -105,3 +143,5 @@ const cancelEdit = () => {
   isEditing.value = false;
 };
 </script>
+
+<style scoped></style>
