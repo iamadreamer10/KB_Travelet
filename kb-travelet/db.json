@@ -1,11 +1,39 @@
 {
   "members": [
     {
-      "name": "zxcv",
-      "email": "zxcv@zxcv.com",
-      "password": "zxcv",
-      "createdAt": "2026. 4. 10. 오전 11:13:36",
-      "id": "EtTxl73"
+      "name": "qwe",
+      "email": "qwe@naver.com",
+      "password": "qwe",
+      "createdAt": "2026. 4. 9. 오후 11:53:08",
+      "id": "9djjSdlwdoo"
+    },
+    {
+      "name": "asdf",
+      "email": "asdf@naver.com",
+      "password": "asdf",
+      "createdAt": "2026. 4. 10. 오전 8:56:53",
+      "id": "gVqYt5y"
+    },
+    {
+      "name": "123",
+      "email": "123@naver.com",
+      "password": "123",
+      "createdAt": "2026. 4. 10. 오전 9:43:29",
+      "id": "Arfb-aB"
+    },
+    {
+      "name": "qwe",
+      "email": "qweqwe@naver.com",
+      "password": "qwe",
+      "createdAt": "2026. 4. 10. 오전 10:14:43",
+      "id": "1FFyc9c"
+    },
+    {
+      "name": "choi",
+      "email": "choi@naver.com",
+      "password": "choi",
+      "createdAt": "2026. 4. 10. 오전 10:18:27",
+      "id": "FcJoUEH"
     }
   ],
   "continents": {
@@ -263,21 +291,12 @@
       "userId": "9djjSdlwdoo"
     },
     {
+      "id": 1775788502370,
       "date": "2026-04-10",
       "type": "expense",
       "category": "식비/카페",
       "amount": 20000,
-      "memo": "수플레",
-      "id": 1775788502370,
-      "userId": "9djjSdlwdoo"
-    },
-    {
-      "date": "2026-04-08",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 222,
-      "memo": "dd",
-      "id": 1775789398015,
+      "memo": "수플레><",
       "userId": "9djjSdlwdoo"
     },
     {
@@ -306,40 +325,62 @@
       "id": 1775794968031
     },
     {
-      "date": "2026-04-01",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "9999",
-      "id": 1775796354006,
-      "userId": "gVqYt5y"
-    },
-    {
+      "id": 1775796381625,
       "date": "2026-04-04",
       "type": "expense",
       "category": "쇼핑",
       "amount": 80000,
-      "memo": "가죽자켓",
-      "id": 1775796381625,
-      "userId": "gVqYt5y"
+      "memo": "가죽자켓!!"
     }
   ],
   "profiles": [
     {
-      "memberId": "EtTxl73",
-      "destination": "중국",
-      "destinationCode": "CN",
-      "startDate": "2026-04-23",
-      "endDate": "2026-04-30",
-      "currentAsset": 1000000,
-      "monthlyIncome": 1000000,
-      "budgetOption": "standard",
-      "dailyExpense": 100000,
-      "hotelExpense": 120000,
-      "flightExpense": 400000,
+      "memberId": "9djjSdlwdoo",
+      "destination": "TW",
+      "startDate": "2026-04-17",
+      "endDate": "2026-04-24",
+      "currentAsset": 1300000,
+      "monthlyIncome": 1300000,
+      "isCompleted": true,
+      "id": "m7ZiRjwkZCo",
+      "checkedIn": true
+    },
+    {
+      "memberId": "gVqYt5y",
+      "destination": "TW",
+      "startDate": "2026-04-11",
+      "endDate": "2026-04-18",
+      "currentAsset": 1300000,
+      "monthlyIncome": 1300000,
       "checkedIn": true,
       "isCompleted": true,
-      "id": "MmvjIip"
+      "id": "SZX2YXC",
+      "budgetOption": "standard"
+    },
+    {
+      "memberId": "Arfb-aB",
+      "destination": "CN",
+      "startDate": "2026-04-18",
+      "endDate": "2026-04-25",
+      "currentAsset": 5000000,
+      "monthlyIncome": 5000000,
+      "budgetOption": "",
+      "checkedIn": false,
+      "isCompleted": false,
+      "id": "tmn7iPv"
+    },
+    {
+      "memberId": "FcJoUEH",
+      "destination": "TW",
+      "startDate": "2026-09-04",
+      "endDate": "2026-09-11",
+      "currentAsset": 190000000,
+      "monthlyIncome": 3000000,
+      "budgetOption": "",
+      "checkedIn": false,
+      "isCompleted": false,
+      "id": "x3wXCym",
+      "destinationCode": ""
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
