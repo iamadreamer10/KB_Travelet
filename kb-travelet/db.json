@@ -616,75 +616,7 @@
     ]
   },
   "transactions": [
-    {
-      "date": "2026-04-09",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 2000,
-      "memo": "커피",
-      "id": 1775787808493,
-      "userId": "9djjSdlwdoo"
-    },
-    {
-      "date": "2026-04-09",
-      "type": "income",
-      "category": "",
-      "amount": 50000,
-      "memo": "로또 당첨",
-      "id": 1775787817061,
-      "userId": "9djjSdlwdoo"
-    },
-    {
-      "id": 1775788502370,
-      "date": "2026-04-10",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 20000,
-      "memo": "수플레><",
-      "userId": "9djjSdlwdoo"
-    },
-    {
-      "date": "2026-04-06",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 888,
-      "memo": "dddd",
-      "id": 1775794585147,
-      "userId": "gVqYt5y"
-    },
-    {
-      "date": "2026-04-01",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "ddddd",
-      "id": 1775794632502
-    },
-    {
-      "date": "2026-04-01",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 999,
-      "memo": "555",
-      "id": 1775794968031
-    },
-    {
-      "id": 1775796381625,
-      "date": "2026-04-04",
-      "type": "expense",
-      "category": "쇼핑",
-      "amount": 80000,
-      "memo": "가죽자켓!!"
-    },
-    {
-      "date": "2026-04-06",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "용돈",
-      "id": 1775800530767,
-      "userId": "gVqYt5y"
-    }
+    
   ],
   "profiles": [
     {

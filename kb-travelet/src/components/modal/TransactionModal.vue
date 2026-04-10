@@ -159,7 +159,7 @@ const add = async () => {
     });
   }
 
-  // 🔥 핵심: DB 기준으로 다시 불러오기
+  // DB 기준으로 다시 불러오기
   await store.fetchTransactions();
 
   // 입력 초기화
