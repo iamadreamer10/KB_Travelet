@@ -37,15 +37,23 @@
       >
         <div class="summary-box border-primary text-primary">
           <div class="label">수익</div>
-          <div class="price">+ 2,678,123원</div>
+          <div class="price">
+            + {{ monthlySummary.income.toLocaleString() }}원
+          </div>
         </div>
         <div class="summary-box border-danger text-danger">
           <div class="label">지출</div>
-          <div class="price">- 1,678,000원</div>
+          <div class="price">
+            - {{ monthlySummary.expense.toLocaleString() }}원
+          </div>
         </div>
         <div class="summary-box total-bg">
           <div class="label text-white-50">총 잔액</div>
-          <div class="price text-white">+ 1,000,123원</div>
+          <div class="price text-white">
+            {{
+              (monthlySummary.income - monthlySummary.expense).toLocaleString()
+            }}원
+          </div>
         </div>
       </div>
     </div>
@@ -90,8 +98,33 @@ import { ref, computed } from 'vue';
 import CalendarDayBar from './CalendarDayBar.vue';
 import TransactionModal from '../modal/TransactionModal.vue';
 import { useAccountStore } from '@/stores/account';
+import { useProfileStore } from '@/stores/profile';
+const { myTravelGoal } = useProfileStore();
 
 const store = useAccountStore();
+const monthlySummary = computed(() => {
+  const summary = {
+    income: 0,
+    expense: 0,
+  };
+
+  // 비교할 문자열 만들기 (예: "2026-04")
+  // 월이 10보다 작을 때 앞에 0을 붙여줘야 데이터 포맷("04")과 일치합니다.
+  const yearMonthPrefix = `${currentYear.value}-${String(currentMonth.value).padStart(2, '0')}`;
+
+  store.transactions.forEach((t) => {
+    // 해당 년/월로 시작하는 데이터만 합산
+    if (t.date.startsWith(yearMonthPrefix)) {
+      if (t.type === 'income') {
+        summary.income += t.amount;
+      } else {
+        summary.expense += t.amount;
+      }
+    }
+  });
+
+  return summary;
+});
 
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const today = new Date();

@@ -1,5 +1,13 @@
 {
-  "members": [],
+  "members": [
+    {
+      "name": "권실장",
+      "email": "abc@abc.com",
+      "password": "abc",
+      "createdAt": "2026년 4월 10일",
+      "id": "7jCO9J_qYY8"
+    }
+  ],
   "continents": {
     "Asia": [
       {
@@ -235,7 +243,60 @@
       }
     ]
   },
-  "transactions": [],
-  "profiles": [],
+  "transactions": [
+    {
+      "date": "2026-04-09",
+      "type": "income",
+      "category": "식비/카페",
+      "amount": 100000,
+      "memo": "",
+      "id": "v0bFz7Y_93Q",
+      "userId": "7jCO9J_qYY8"
+    },
+    {
+      "date": "2026-04-07",
+      "type": "expense",
+      "category": "쇼핑",
+      "amount": 100000,
+      "memo": "키보드",
+      "id": "T-VHqgx5o3U",
+      "userId": "7jCO9J_qYY8"
+    },
+    {
+      "date": "2026-04-10",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 2000,
+      "memo": "커피",
+      "id": "DNhFVygjDMg",
+      "userId": "7jCO9J_qYY8"
+    }
+  ],
+  "profiles": [
+    {
+      "memberId": "7jCO9J_qYY8",
+      "destination": "아이슬란드",
+      "destinationCode": "IS",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-06",
+      "currentAsset": 6000000,
+      "monthlyIncome": 3000000,
+      "monthlyRent": 450000,
+      "monthlyInsurance": 30000,
+      "monthlyPhone": 15000,
+      "monthlyTransport": 65000,
+      "monthlySubscription": 50000,
+      "monthlyOtherFixed": 0,
+      "isCompleted": false,
+      "checkedIn": true,
+      "id": "3_k-fFBf5xw",
+      "budgetOption": "standard",
+      "dailyExpense": 200000,
+      "hotelExpense": 200000,
+      "flightExpense": 550000,
+      "continent": "유럽",
+      "country": "아이슬란드"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
