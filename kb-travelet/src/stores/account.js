@@ -46,6 +46,7 @@ export const useAccountStore = defineStore('account', () => {
   };
 
   const deleteTransaction = async (id) => {
+    console.log('삭제 id:', id);
     try {
       await axios.delete(`http://localhost:3000/transactions/${id}`);
       transactions.value = transactions.value.filter((t) => t.id !== id);
@@ -55,10 +56,11 @@ export const useAccountStore = defineStore('account', () => {
   };
 
   const updateTransaction = async (updated) => {
+    const userId = localStorage.getItem('userId');
     try {
       const res = await axios.put(
         `http://localhost:3000/transactions/${updated.id}`,
-        updated,
+        { ...updated, userId: userId },
       );
 
       const idx = transactions.value.findIndex((t) => t.id === updated.id);
