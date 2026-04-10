@@ -23,4 +23,20 @@
 import SideBar from '@/components/common/SideBar.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import CalendarMain from '@/components/calendar/CalendarMain.vue';
+import { onMounted } from 'vue';
+import { useAccountStore } from '@/stores/account';
+import { useAuthStore } from '@/stores/auth';
+
+const store = useAccountStore();
+const auth = useAuthStore();
+
+onMounted(() => {
+  const userId = localStorage.getItem('userId');
+
+  if (userId) {
+    store.fetchTransactions();
+  }
+});
+
+console.log('user:', auth.user);
 </script>

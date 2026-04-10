@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAccountStore } from '@/stores/account';
 
 const props = defineProps({
@@ -133,12 +133,12 @@ const amount = ref('');
 const memo = ref('');
 
 // 거래 추가
-const add = () => {
+const add = async () => {
   if (!amount.value) return;
 
   if (editingId.value) {
     // 수정
-    store.updateTransaction({
+    await store.updateTransaction({
       id: editingId.value,
       date: props.date,
       type: type.value,
@@ -150,7 +150,7 @@ const add = () => {
     editingId.value = null;
   } else {
     // 추가
-    store.addTransaction({
+    await store.addTransaction({
       date: props.date,
       type: type.value,
       category: category.value,
@@ -159,10 +159,15 @@ const add = () => {
     });
   }
 
+  // 🔥 핵심: DB 기준으로 다시 불러오기
+  await store.fetchTransactions();
+
+  // 입력 초기화
   amount.value = '';
   memo.value = '';
   category.value = '';
   type.value = 'expense';
+
   showForm.value = false;
 };
 
