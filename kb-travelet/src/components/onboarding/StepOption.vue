@@ -174,7 +174,7 @@ const stayNights = computed(() => {
   }
 
   const diff = Math.round((arrival.value - departure.value) / dayMs);
-  return Math.max(diff, 0);
+  return Math.max(diff - 1, 0);
 });
 
 const selectedDestinationText = computed(() => {
@@ -270,6 +270,8 @@ async function confirmOptionSelection() {
   try {
     travelStore.setBudgetOption(pendingOption.value.key);
     await travelStore.saveProfile({
+      budgetOption: pendingOption.value.key,
+      checkedIn: true,
       isCompleted: true,
     });
     closeOptionModal();

@@ -27,7 +27,7 @@
             현재 자산과 월 수입을 입력해 주세요
           </h2>
           <p class="section-description mb-0">
-            다음 단계에서 여행 옵션을 추천하고 예상 금액을 계산하는 기준이
+            다음 단계에서 여행 옵션을 추천하고 계산하는 기준이
             됩니다.
           </p>
         </div>
@@ -219,7 +219,7 @@ function adjustAmount(target, delta) {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 24px 20px;
+  padding: 0 20px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -235,6 +235,7 @@ function adjustAmount(target, delta) {
   border-radius: 2rem;
   overflow: visible;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+  margin: auto 0;
 }
 
 .progress-container {

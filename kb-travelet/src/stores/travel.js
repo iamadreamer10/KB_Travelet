@@ -15,6 +15,7 @@ export const useTravelStore = defineStore('travel', () => {
   const selectedBudgetOption = ref('');
   const assetAmount = ref(0);
   const monthlyIncome = ref(0);
+  const checkedIn = ref(false);
 
   const hasSchedule = computed(() => Boolean(departureDate.value && returnDate.value));
   const availableBudget = computed(() => assetAmount.value + monthlyIncome.value);
@@ -32,6 +33,8 @@ export const useTravelStore = defineStore('travel', () => {
       endDate: '',
       currentAsset: 0,
       monthlyIncome: 0,
+      budgetOption: '',
+      checkedIn: false,
       isCompleted: false,
     };
   }
@@ -77,6 +80,8 @@ export const useTravelStore = defineStore('travel', () => {
     returnDate.value = nextProfile.endDate || '';
     assetAmount.value = Number(nextProfile.currentAsset) || 0;
     monthlyIncome.value = Number(nextProfile.monthlyIncome) || 0;
+    selectedBudgetOption.value = nextProfile.budgetOption || '';
+    checkedIn.value = Boolean(nextProfile.checkedIn);
   }
 
   async function getCurrentProfile() {
@@ -165,6 +170,7 @@ export const useTravelStore = defineStore('travel', () => {
 
     return saveProfile({
       destination: country?.code || '',
+      checkedIn: false,
       isCompleted: false,
     });
   }
@@ -180,6 +186,7 @@ export const useTravelStore = defineStore('travel', () => {
     return saveProfile({
       startDate,
       endDate,
+      checkedIn: false,
       isCompleted: false,
     });
   }
@@ -205,8 +212,20 @@ export const useTravelStore = defineStore('travel', () => {
     return saveProfile({
       currentAsset: normalizedAssets,
       monthlyIncome: normalizedIncome,
+      checkedIn: false,
       isCompleted: false,
     });
+  }
+
+  async function resetSavedProfile() {
+    const memberId = getCurrentMemberId();
+
+    if (!memberId) {
+      throw new Error('새 여행 정보를 초기화할 사용자를 찾을 수 없습니다.');
+    }
+
+    const nextProfile = createDefaultProfile(memberId);
+    return saveProfile(nextProfile);
   }
 
   function setMonthlyIncome(income) {
@@ -221,6 +240,7 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = '';
     assetAmount.value = 0;
     monthlyIncome.value = 0;
+    checkedIn.value = false;
   }
 
   return {
@@ -234,6 +254,7 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption,
     assetAmount,
     monthlyIncome,
+    checkedIn,
     hasSchedule,
     availableBudget,
     fetchContinents,
@@ -248,6 +269,7 @@ export const useTravelStore = defineStore('travel', () => {
     setIncomeInfo,
     saveIncomeInfo,
     setMonthlyIncome,
+    resetSavedProfile,
     resetTravelPlan,
   };
 });

@@ -75,7 +75,12 @@ const prevStep = () => {
 
 onMounted(async () => {
   try {
-    await travelStore.loadProfile();
+    const profile = await travelStore.loadProfile();
+
+    if (profile?.checkedIn) {
+      router.replace('/main');
+      return;
+    }
   } catch (error) {
     console.error('프로필 불러오기 실패:', error);
   } finally {
