@@ -69,7 +69,9 @@
         </div>
 
         <div class="form-actions">
-          <button class="submit" @click="add">추가</button>
+          <button class="submit" @click="add">
+            {{ editingId ? '수정하기' : '추가' }}
+          </button>
           <button class="cancel" @click="showForm = false">취소</button>
         </div>
       </div>
@@ -98,8 +100,13 @@
               {{ t.type === 'income' ? '+' : '-'
               }}{{ t.amount.toLocaleString() }}원
             </span>
-            <button @click="editTransaction(t)">✏️</button>
-            <button @click="store.deleteTransaction(t.id)">🗑</button>
+            <button class="icon-btn" @click="editTransaction(t)">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+
+            <button class="icon-btn delete" @click="handleDelete(t.id)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -160,7 +167,7 @@ const add = async () => {
     });
   }
 
-  // 🔥 핵심: DB 기준으로 다시 불러오기
+  // DB 기준으로 다시 불러오기
   await store.fetchTransactions();
 
   // 입력 초기화
@@ -207,6 +214,15 @@ const editTransaction = (t) => {
   editingId.value = t.id;
   showForm.value = true;
 };
+
+// 내역 삭제 확인 함수
+const handleDelete = (id) => {
+  const ok = confirm('정말로 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');
+
+  if (ok) {
+    store.deleteTransaction(id);
+  }
+};
 </script>
 
 <style scoped>
@@ -225,10 +241,22 @@ const editTransaction = (t) => {
 
 .modal-content {
   width: 520px;
+  max-height: 80vh;   
+  overflow-y: auto;
   background: white;
   border-radius: 16px;
   padding: 24px;
   position: relative;
+  scroll-behavior: smooth;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
 }
 
 /* 닫기 */
@@ -338,7 +366,7 @@ const editTransaction = (t) => {
   margin-top: 10px;
   padding: 12px;
   border-radius: 10px;
-  background: #f9fafb;
+  background: #eee;
 }
 
 .category {
@@ -490,6 +518,25 @@ const editTransaction = (t) => {
 
 .expense-badge {
   background: #fde8e8;
+  color: #dc2626;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  font-size: 14px;
+  color: #555;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  color: #2563eb;
+  transform: scale(1.1);
+}
+
+.icon-btn.delete:hover {
   color: #dc2626;
 }
 </style>

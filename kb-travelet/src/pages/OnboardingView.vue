@@ -22,9 +22,9 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import StepRegion from '@/components/onboarding/StepRegion.vue';
 import StepSchedule from '@/components/onboarding/StepSchedule.vue';
-import StepOption from '@/components/onboarding/StepOption.vue';
 import StepIncome from '@/components/onboarding/StepIncome.vue';
 import StepFixedExpense from '@/components/onboarding/StepFixedExpense.vue';
+import StepOption from '@/components/onboarding/StepOption.vue';
 import { useTravelStore } from '@/stores/travel';
 
 const router = useRouter();
@@ -41,7 +41,11 @@ const steps = [
   { key: 'region', routeName: 'step-region', component: StepRegion },
   { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
   { key: 'income', routeName: 'step-income', component: StepIncome },
-  { key: 'fixed-expense', routeName: 'step-fixed-expense', component: StepFixedExpense },
+  {
+    key: 'fixed-expense',
+    routeName: 'step-fixed-expense',
+    component: StepFixedExpense,
+  },
   { key: 'option', routeName: 'step-option', component: StepOption },
 ];
 
@@ -136,7 +140,14 @@ onMounted(async () => {
 .step-forward-leave-active,
 .step-backward-enter-active,
 .step-backward-leave-active {
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 100dvh;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 0.8, 0.2, 1),
+    opacity 0.2s ease;
+  will-change: transform, opacity;
 }
 
 .step-forward-enter-from {
@@ -150,10 +161,16 @@ onMounted(async () => {
 
 .step-backward-enter-from {
   transform: translateX(-100%);
-  opacity: 0;
+  opacity: 1;
 }
-.step-backward-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
+
+.step-forward-enter-active,
+.step-backward-enter-active {
+  z-index: 2;
+}
+
+.step-forward-leave-active,
+.step-backward-leave-active {
+  z-index: 1;
 }
 </style>

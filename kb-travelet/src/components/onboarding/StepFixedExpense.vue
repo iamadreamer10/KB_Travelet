@@ -1,10 +1,10 @@
-<template>
+﻿<template>
   <div class="onboarding-page-bg">
     <div class="onboarding-card shadow-lg mx-auto">
       <div class="progress-container p-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="step-text">STEP 4/5</span>
-          <span class="step-label">월 고정지출 입력</span>
+          <span class="step-label">고정 지출 입력</span>
         </div>
         <div class="progress-track">
           <div
@@ -42,6 +42,7 @@
                 :id="`${field.key}-input`"
                 :value="formatInputNumber(expenses[field.key])"
                 @input="handleAmountInput(field.key, $event.target.value)"
+                @keydown="blockInvalidNumberKey"
                 class="form-control form-control-lg input-field"
                 type="text"
                 inputmode="numeric"
@@ -73,10 +74,12 @@
 
         <div class="summary-card mt-4">
           <span class="summary-caption">Monthly Fixed Total</span>
-          <strong class="summary-value">{{ formatWon(totalFixedExpense) }}</strong>
+          <strong class="summary-value">{{
+            formatWon(totalFixedExpense)
+          }}</strong>
           <p class="summary-description mb-0">
-            이 금액을 기준으로 다음 단계에서 하루 사용 가능 금액과 절약 필요
-            금액을 계산합니다.
+            이 금액을 기준으로 다음 단계에서 선택 가능한 여행 유형을 더 정확하게
+            계산합니다.
           </p>
         </div>
 
@@ -108,12 +111,12 @@ const expenses = reactive({
 });
 
 const expenseFields = [
-  { key: 'rent', label: '월세' },
+  { key: 'rent', label: '주거비' },
   { key: 'insurance', label: '보험료' },
   { key: 'phone', label: '통신비' },
   { key: 'transport', label: '교통비' },
   { key: 'subscription', label: '구독료' },
-  { key: 'otherFixed', label: '기타 고정지출' },
+  { key: 'otherFixed', label: '기타 고정 지출' },
 ];
 
 const totalFixedExpense = computed(() =>
@@ -125,8 +128,8 @@ async function saveAndContinue() {
     await travelStore.saveFixedExpenses({ ...expenses });
     emit('next');
   } catch (error) {
-    console.error('고정지출 저장 실패:', error);
-    alert('고정지출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    console.error('고정 지출 저장 실패:', error);
+    alert('고정 지출을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }
 }
 
@@ -141,6 +144,12 @@ function parseInputNumber(value) {
 
 function handleAmountInput(target, value) {
   expenses[target] = parseInputNumber(value);
+}
+
+function blockInvalidNumberKey(event) {
+  if (['-', '+', 'e', 'E', '.'].includes(event.key)) {
+    event.preventDefault();
+  }
 }
 
 function adjustAmount(target, delta) {
@@ -225,8 +234,18 @@ function formatWon(amount) {
 }
 
 .content-section {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   max-height: calc(min(92dvh, 980px) - 110px);
+  padding-right: 26px !important;
+  overscroll-behavior: contain;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.content-section::-webkit-scrollbar {
+  display: none;
 }
 
 .step-text {

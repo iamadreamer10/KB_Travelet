@@ -32,27 +32,41 @@
         </button>
       </div>
 
-      <div
-        class="d-flex gap-2 justify-content-center justify-content-lg-end order-2 order-lg-3 flex-wrap"
-      >
-        <div class="summary-box border-primary text-primary">
-          <div class="label">수익</div>
-          <div class="price">
-            + {{ monthlySummary.income.toLocaleString() }}원
+      <div class="text-center px-4">
+        <h6 class="text-secondary mb-0">{{ currentYear }}년</h6>
+        <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
+      </div>
+      <div class="d-flex gap-2 justify-content-end">
+        <div
+          class="p-2 px-3 bg-white rounded-3 text-end border-top border-primary border-4 shadow-sm"
+          style="min-width: 120px"
+        >
+          <div class="text-muted extra-small fw-bold">수익</div>
+          <div class="fw-bold text-primary" style="font-size: 0.9rem">
+            + 2,678,123원
           </div>
         </div>
-        <div class="summary-box border-danger text-danger">
-          <div class="label">지출</div>
-          <div class="price">
-            - {{ monthlySummary.expense.toLocaleString() }}원
+
+        <div
+          class="p-2 px-3 bg-white rounded-3 text-end border-top border-danger border-4 shadow-sm"
+          style="min-width: 120px"
+        >
+          <div class="text-muted extra-small fw-bold">지출</div>
+          <div class="fw-bold text-danger" style="font-size: 0.9rem">
+            - 1,678,000원
           </div>
         </div>
-        <div class="summary-box total-bg">
-          <div class="label text-white-50">총 잔액</div>
-          <div class="price text-white">
-            {{
-              (monthlySummary.income - monthlySummary.expense).toLocaleString()
-            }}원
+
+        <div
+          class="p-2 px-3 rounded-3 text-end shadow-sm d-flex flex-column justify-content-center"
+          style="background-color: var(--color-primary); min-width: 140px"
+        >
+          <div class="text-white extra-small fw-bold">총 잔액</div>
+          <div
+            class="fw-bold"
+            style="color: var(--color-surface); font-size: 1rem"
+          >
+            + 1,000,123원
           </div>
         </div>
       </div>
