@@ -1,12 +1,6 @@
 {
   "members": [
-    {
-      "name": "qwe",
-      "email": "qwe@naver.com",
-      "password": "qwe",
-      "createdAt": "2026년 4월 10일",
-      "id": 1
-    }
+    
   ],
   "continents": {
     "Asia": [
@@ -264,57 +258,10 @@
     ]
   },
   "transactions": [
-    {
-      "date": "2026-04-09",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 80000,
-      "memo": "용돈",
-      "id": 1775807851610,
-      "userId": "9djjSdlwdoo"
-    },
-    {
-      "id": 1775808524086,
-      "date": "2026-04-09",
-      "type": "expense",
-      "category": "쇼핑",
-      "amount": 50000,
-      "memo": "원피스!!",
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-09",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "로또당첨",
-      "id": 1775809059524,
-      "userId": "1"
-    }
+   
   ],
   "profiles": [
-    {
-      "memberId": "1",
-      "destination": "독일",
-      "destinationCode": "DE",
-      "startDate": "2026-04-23",
-      "endDate": "2026-04-28",
-      "currentAsset": 500000,
-      "monthlyIncome": 3500000,
-      "monthlyRent": 600000,
-      "monthlyInsurance": 50000,
-      "monthlyPhone": 50000,
-      "monthlyTransport": 90000,
-      "monthlySubscription": 60000,
-      "monthlyOtherFixed": 80000,
-      "isCompleted": false,
-      "checkedIn": true,
-      "id": "cG5vSZy",
-      "budgetOption": "standard",
-      "dailyExpense": 200000,
-      "hotelExpense": 250000,
-      "flightExpense": 1800000
-    }
+    
   ],
   "$schema": "./node_modules/json-server/schema.json"
 }
