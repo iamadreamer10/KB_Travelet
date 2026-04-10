@@ -81,6 +81,7 @@
         <CalendarDayBar
           v-if="dayObj.date"
           :calendar-date="dayObj"
+          :daily-summary="dailySummary"
           :key="dayObj.date"
           @selectDate="handleClickDate"
         />
@@ -99,6 +100,9 @@
 import { ref, computed } from 'vue';
 import CalendarDayBar from './CalendarDayBar.vue';
 import TransactionModal from '../modal/TransactionModal.vue';
+import { useAccountStore } from '@/stores/account';
+
+const store = useAccountStore();
 
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const today = new Date();
@@ -154,6 +158,31 @@ const selectedDate = ref(null);
 const handleClickDate = (date) => {
   selectedDate.value = date;
 };
+
+/*
+-------------------------------------------------------------
+달력 날짜에 그날 하루의 총수입 총지출 표시로직
+*/
+const dailySummary = computed(() => {
+  const result = {};
+
+  store.transactions.forEach((t) => {
+    if (!result[t.date]) {
+      result[t.date] = {
+        income: 0,
+        expense: 0,
+      };
+    }
+
+    if (t.type === 'income') {
+      result[t.date].income += t.amount;
+    } else {
+      result[t.date].expense += t.amount;
+    }
+  });
+
+  return result;
+});
 </script>
 
 <style scoped>

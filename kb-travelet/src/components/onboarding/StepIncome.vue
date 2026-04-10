@@ -24,10 +24,10 @@
         <div class="income-copy mb-4">
           <span class="copy-kicker">money for trip</span>
           <h2 class="section-title mb-2">
-            시드 머니와 한달 수입을 입력해 주세요
+            현재 여행 자금은 어느 정도인가요?
           </h2>
           <p class="section-description mb-0">
-            다음 단계에서 여행 옵션을 추천하고 계산하는 기준이 됩니다.
+            여행 자금과 월 수입을 입력해 주세요.
           </p>
         </div>
 

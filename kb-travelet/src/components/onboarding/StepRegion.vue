@@ -219,7 +219,12 @@ const selectedContinentSourceName = computed(() => {
 });
 
 const filteredCountries = computed(() => {
-  return travelStore.continents?.[selectedContinentSourceName.value] ?? [];
+  const countries =
+    travelStore.continents?.[selectedContinentSourceName.value] ?? [];
+
+  return [...countries].sort((a, b) =>
+    String(a?.name ?? '').localeCompare(String(b?.name ?? ''), 'ko-KR'),
+  );
 });
 
 const visibleCountries = computed(() => {

@@ -8,13 +8,24 @@
     <span class="text-center fw-bold small" :style="getDateColor()">
       {{ calendarDate.date }}
     </span>
-    <div class="mt-auto"></div>
+    <!-- 날짜별 총수입, 총지출위한 코드 -->
+    <div class="mt-auto text-center small">
+      <div v-if="summary?.income > 0" style="color: green">
+        +{{ summary.income.toLocaleString() }}
+      </div>
+
+      <div v-if="summary?.expense > 0" style="color: red">
+        -{{ summary.expense.toLocaleString() }}
+      </div>
+    </div>
   </div>
 
   <div v-else class="h-100" style="min-height: 75px; opacity: 0"></div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
+
 // Props 정의: calendarDate 객체 하나로 깔끔하게!
 const props = defineProps({
   calendarDate: {
@@ -22,6 +33,7 @@ const props = defineProps({
     required: true,
     // 기대 구조: { year: Number, month: Number, date: Number | null }
   },
+  dailySummary: Object,
 });
 
 // 오늘 날짜 확인 (date가 null이면 false 반환)
@@ -66,6 +78,25 @@ const viewDailyLedger = () => {
     emit('selectDate', formatted);
   }
 };
+
+/* 날짜 key 만들기 */
+const fullDate = computed(() => {
+  const { year, month, date } = props.calendarDate;
+  if (!date) return null;
+
+  return `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+});
+
+const summary = computed(() => {
+  if (!fullDate.value) return null;
+
+  return (
+    props.dailySummary?.[fullDate.value] || {
+      income: 0,
+      expense: 0,
+    }
+  );
+});
 </script>
 
 <style scoped>

@@ -26,6 +26,15 @@ export const useTravelStore = defineStore('travel', () => {
   const flightExpense = ref(0);
   const checkedIn = ref(false);
 
+  // 재정 정보 상태
+  const currentAsset = ref(0);
+  const monthlyRent = ref(0);
+  const monthlyInsurance = ref(0);
+  const monthlyPhone = ref(0);
+  const monthlyTransport = ref(0);
+  const monthlySubscription = ref(0);
+  const monthlyOtherFixed = ref(0);
+
   const hasSchedule = computed(() => Boolean(departureDate.value && returnDate.value));
   const availableBudget = computed(() => assetAmount.value + monthlyIncome.value);
 
@@ -309,7 +318,7 @@ export const useTravelStore = defineStore('travel', () => {
     transport = 0,
     subscription = 0,
     otherFixed = 0,
-  }) {
+  } = {}) {
     monthlyRent.value = Number(rent) || 0;
     monthlyInsurance.value = Number(insurance) || 0;
     monthlyPhone.value = Number(phone) || 0;
@@ -325,7 +334,7 @@ export const useTravelStore = defineStore('travel', () => {
     transport = 0,
     subscription = 0,
     otherFixed = 0,
-  }) {
+  } = {}) {
     const normalizedExpenses = {
       rent: Number(rent) || 0,
       insurance: Number(insurance) || 0,
@@ -365,6 +374,59 @@ export const useTravelStore = defineStore('travel', () => {
     monthlyIncome.value = Number(income) || 0;
   }
 
+  function setFinanceInfo({
+    currentAssetVal = 0,
+    monthlyIncomeVal = 0,
+    rentVal = 0,
+    insuranceVal = 0,
+    phoneVal = 0,
+    transportVal = 0,
+    subscriptionVal = 0,
+    otherFixedVal = 0,
+  } = {}) {
+    currentAsset.value = Number(currentAssetVal) || 0;
+    monthlyIncome.value = Number(monthlyIncomeVal) || 0;
+    monthlyRent.value = Number(rentVal) || 0;
+    monthlyInsurance.value = Number(insuranceVal) || 0;
+    monthlyPhone.value = Number(phoneVal) || 0;
+    monthlyTransport.value = Number(transportVal) || 0;
+    monthlySubscription.value = Number(subscriptionVal) || 0;
+    monthlyOtherFixed.value = Number(otherFixedVal) || 0;
+  }
+
+  async function saveFinanceInfo({
+    currentAssetVal = 0,
+    monthlyIncomeVal = 0,
+    rentVal = 0,
+    insuranceVal = 0,
+    phoneVal = 0,
+    transportVal = 0,
+    subscriptionVal = 0,
+    otherFixedVal = 0,
+  } = {}) {
+    setFinanceInfo({
+      currentAssetVal,
+      monthlyIncomeVal,
+      rentVal,
+      insuranceVal,
+      phoneVal,
+      transportVal,
+      subscriptionVal,
+      otherFixedVal,
+    });
+
+    return saveProfile({
+      currentAsset: Number(currentAssetVal) || 0,
+      monthlyIncome: Number(monthlyIncomeVal) || 0,
+      monthlyRent: Number(rentVal) || 0,
+      monthlyInsurance: Number(insuranceVal) || 0,
+      monthlyPhone: Number(phoneVal) || 0,
+      monthlyTransport: Number(transportVal) || 0,
+      monthlySubscription: Number(subscriptionVal) || 0,
+      monthlyOtherFixed: Number(otherFixedVal) || 0,
+    });
+  }
+
   function resetTravelPlan() {
     // 화면 상태만 초기화하고 서버와의 연결은 유지한다.
     selectedContinent.value = '';
@@ -374,16 +436,13 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption.value = '';
     assetAmount.value = 0;
     monthlyIncome.value = 0;
+    currentAsset.value = 0;
     monthlyRent.value = 0;
     monthlyInsurance.value = 0;
     monthlyPhone.value = 0;
     monthlyTransport.value = 0;
     monthlySubscription.value = 0;
     monthlyOtherFixed.value = 0;
-    dailyExpense.value = 0;
-    hotelExpense.value = 0;
-    flightExpense.value = 0;
-    checkedIn.value = false;
   }
 
   return {
@@ -397,16 +456,13 @@ export const useTravelStore = defineStore('travel', () => {
     selectedBudgetOption,
     assetAmount,
     monthlyIncome,
+    currentAsset,
     monthlyRent,
     monthlyInsurance,
     monthlyPhone,
     monthlyTransport,
     monthlySubscription,
     monthlyOtherFixed,
-    dailyExpense,
-    hotelExpense,
-    flightExpense,
-    checkedIn,
     hasSchedule,
     availableBudget,
     fetchContinents,
@@ -426,7 +482,8 @@ export const useTravelStore = defineStore('travel', () => {
     setFixedExpenses,
     saveFixedExpenses,
     setMonthlyIncome,
-    resetSavedProfile,
+    setFinanceInfo,
+    saveFinanceInfo,
     resetTravelPlan,
   };
 });

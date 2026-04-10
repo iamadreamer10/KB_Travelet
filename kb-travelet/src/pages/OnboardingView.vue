@@ -1,14 +1,19 @@
 ﻿<template>
   <div class="onboarding-transition-shell">
-    <Transition :name="transitionName">
-      <component
-        v-if="isReady"
-        :is="currentStepComponent"
-        :key="currentStepKey"
-        @next="nextStep"
-        @prev="prevStep"
-      />
-    </Transition>
+    <router-view v-slot="{ Component }">
+      <Transition :name="transitionName" mode="out-in">
+        <component
+          v-if="isReady"
+          :is="Component"
+          :key="route.path"
+          @next="nextStep"
+          @prev="prevStep"
+        />
+        <div v-else class="loading-screen">
+          <p>데이터를 불러오는 중입니다...</p>
+        </div>
+      </Transition>
+    </router-view>
   </div>
 </template>
 
@@ -20,75 +25,93 @@ import StepSchedule from '@/components/onboarding/StepSchedule.vue';
 import StepIncome from '@/components/onboarding/StepIncome.vue';
 import StepFixedExpense from '@/components/onboarding/StepFixedExpense.vue';
 import StepOption from '@/components/onboarding/StepOption.vue';
+import StepIncome from '@/components/onboarding/StepIncome.vue';
+import StepFixedExpense from '@/components/onboarding/StepFixedExpense.vue';
 import { useTravelStore } from '@/stores/travel';
 
 const router = useRouter();
 const route = useRoute();
 const travelStore = useTravelStore();
-const transitionName = ref('step-forward');
-const isReady = ref(false);
 
+// --- 상태 관리 ---
+const isReady = ref(false);
+const transitionName = ref('step-forward');
+
+// 순서 정의
 const steps = [
   // URL 순서와 실제 온보딩 순서를 1:1로 맞춘다.
   { key: 'region', routeName: 'step-region', component: StepRegion },
   { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
   { key: 'income', routeName: 'step-income', component: StepIncome },
   { key: 'fixed-expense', routeName: 'step-fixed-expense', component: StepFixedExpense },
+  { key: 'fixed-expense', routeName: 'step-fixed-expense', component: StepFixedExpense },
   { key: 'option', routeName: 'step-option', component: StepOption },
 ];
 
-const currentStep = computed(() => {
+// 현재 몇 번째 단계인지 계산 (0, 1, 2, 3)
+const currentStepIndex = computed(() => {
   const index = steps.findIndex((step) => step.routeName === route.name);
   return index >= 0 ? index : 0;
 });
 
-const currentStepComponent = computed(() => steps[currentStep.value].component);
-const currentStepKey = computed(() => steps[currentStep.value].key);
-
+/**
+ * 🚩 트랜지션 방향 결정 (Watch)
+ */
 watch(
   () => route.name,
   (newName, oldName) => {
-    if (!oldName) {
-      return;
-    }
+    if (!oldName) return;
 
-    const newIndex = steps.findIndex((step) => step.routeName === newName);
-    const oldIndex = steps.findIndex((step) => step.routeName === oldName);
+    const newIdx = steps.findIndex((s) => s.routeName === newName);
+    const oldIdx = steps.findIndex((s) => s.routeName === oldName);
 
-    if (newIndex !== -1 && oldIndex !== -1) {
-      transitionName.value =
-        newIndex > oldIndex ? 'step-forward' : 'step-backward';
+    if (newIdx !== -1 && oldIdx !== -1) {
+      transitionName.value = newIdx > oldIdx ? 'step-forward' : 'step-backward';
     }
   },
 );
 
+/**
+ * 다음 단계로 이동 (Router push 활용)
+ */
 const nextStep = () => {
-  // 마지막 스텝이 아니면 다음 라우트로, 끝이면 대시보드로 이동한다.
-  if (currentStep.value < steps.length - 1) {
-    router.push({ name: steps[currentStep.value + 1].routeName });
+  const nextIdx = currentStepIndex.value + 1;
+
+  if (nextIdx < steps.length) {
+    // 다음 스텝으로 라우팅 이동
+    router.push({ name: steps[nextIdx].routeName });
   } else {
+    // 🚩 마지막 스텝 완료 시 처리
+    localStorage.setItem('onboarded', 'true');
     alert('모든 설정 완료! 메인으로 이동합니다.');
-    router.push('/main');
+    router.push({ name: 'main-dashboard' }); // 메인 대시보드 이름 확인
   }
 };
 
+/**
+ * 이전 단계로 이동
+ */
 const prevStep = () => {
-  if (currentStep.value > 0) {
-    router.push({ name: steps[currentStep.value - 1].routeName });
+  const prevIdx = currentStepIndex.value - 1;
+  if (prevIdx >= 0) {
+    router.push({ name: steps[prevIdx].routeName });
   }
 };
 
+/**
+ * 초기 데이터 로드 및 온보딩 체크
+ */
 onMounted(async () => {
   try {
     const profile = await travelStore.loadProfile();
 
-    // 이미 여행 프로필이 있으면 온보딩을 건너뛴다.
     if (profile?.checkedIn) {
+      localStorage.setItem('onboarded', 'true');
       router.replace('/main');
       return;
     }
   } catch (error) {
-    console.error('프로필 불러오기 실패:', error);
+    console.error('초기 데이터 로드 실패:', error);
   } finally {
     isReady.value = true;
   }
@@ -101,9 +124,17 @@ onMounted(async () => {
   width: 100%;
   min-height: 100dvh;
   overflow: hidden;
-  background: #0766ff;
+  background-color: #fff;
 }
 
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 트랜지션 스타일 */
 .step-forward-enter-active,
 .step-forward-leave-active,
 .step-backward-enter-active,
@@ -118,13 +149,15 @@ onMounted(async () => {
   will-change: transform, opacity;
 }
 
-.step-forward-enter-from,
-.step-backward-leave-to {
+.step-forward-enter-from {
   transform: translateX(100%);
-  opacity: 1;
+  opacity: 0;
+}
+.step-forward-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
 }
 
-.step-forward-leave-to,
 .step-backward-enter-from {
   transform: translateX(-100%);
   opacity: 1;

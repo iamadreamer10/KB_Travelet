@@ -24,7 +24,7 @@
         <div class="content-section p-4 p-md-5">
           <div class="schedule-copy mb-4">
             <span class="copy-kicker">Schedule</span>
-            <h2 class="section-title mb-2">언제 여행을 떠나시나요?</h2>
+            <h2 class="section-title mb-2">언제 떠나볼까요?</h2>
             <p class="section-description mb-0">
               달력에서 출발일과 도착일을 순서대로 선택해주세요
             </p>
@@ -160,12 +160,13 @@ const tripLengthLabel = computed(() => {
     return '';
   }
 
-  // 출발일과 도착일의 차이를 여행 기간 문구로 보여준다.
-  const diffDays = Math.round(
+  // 출발일과 도착일 차이를 기준으로 n박 n일 문구를 만든다.
+  const diffNights = Math.round(
     (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
   );
+  const diffDays = diffNights + 1;
 
-  return `${diffDays}일간의 여행이에요`;
+  return `${diffNights}박 ${diffDays}일`;
 });
 
 const calendarDays = computed(() => {
@@ -623,7 +624,7 @@ async function confirmSchedule() {
   padding: 16px 18px;
   border-radius: 1.25rem;
   background: rgba(5, 23, 102, 0.06);
-  text-align: right;
+  text-align: left;
 }
 
 .trip-length-caption {

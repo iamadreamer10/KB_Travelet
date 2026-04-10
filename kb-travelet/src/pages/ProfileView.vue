@@ -68,6 +68,15 @@ const myTravelGoal = ref({
   etcExpense: 1200000,
   flightExpense: 450000,
   hotelExpense: 1850000,
+  // 재정 정보
+  currentAsset: 5000000,
+  monthlyIncome: 4000000,
+  monthlyRent: 800000,
+  monthlyInsurance: 200000,
+  monthlyPhone: 50000,
+  monthlyTransport: 300000,
+  monthlySubscription: 100000,
+  monthlyOtherFixed: 200000,
 });
 
 const router = useRouter();
