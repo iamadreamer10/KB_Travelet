@@ -1,70 +1,51 @@
 <template>
   <div class="calendar-container">
     <div
-      class="align-items-center mb-4"
-      style="display: grid; grid-template-columns: 1fr auto 1fr; width: 100%"
+      class="align-items-center mb-4 gap-3"
+      style="display: grid; width: 100%"
+      :style="{
+        gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr',
+      }"
     >
-      <div></div>
+      <div class="d-none d-lg-block"></div>
 
-      <div class="d-flex align-items-center justify-content-center px-4">
+      <div
+        class="d-flex align-items-center justify-content-center order-1 order-lg-2"
+      >
         <button
           @click="prevMonth"
-          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0 d-flex align-items-center justify-content-center me-3"
+          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0"
           style="width: 28px; height: 28px"
         >
           <i class="fas fa-chevron-left fa-xs"></i>
         </button>
-
-        <div class="text-center">
-          <h6 class="text-secondary mb-0" style="font-size: 0.8rem">
-            {{ currentYear }}년
-          </h6>
-          <h4 class="fw-bold mb-0" style="min-width: 60px">
-            {{ currentMonth }}월
-          </h4>
+        <div class="text-center px-4">
+          <h6 class="text-secondary mb-0 small">{{ currentYear }}년</h6>
+          <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
         </div>
-
         <button
           @click="nextMonth"
-          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0 d-flex align-items-center justify-content-center ms-3"
+          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0"
           style="width: 28px; height: 28px"
         >
           <i class="fas fa-chevron-right fa-xs"></i>
         </button>
       </div>
 
-      <div class="d-flex gap-2 justify-content-end">
-        <div
-          class="p-2 px-3 bg-white rounded-3 text-end border-top border-primary border-4 shadow-sm"
-          style="min-width: 110px"
-        >
-          <div class="text-muted extra-small fw-bold">수익</div>
-          <div class="fw-bold text-primary" style="font-size: 0.85rem">
-            + 2,678,123원
-          </div>
+      <div
+        class="d-flex gap-2 justify-content-center justify-content-lg-end order-2 order-lg-3 flex-wrap"
+      >
+        <div class="summary-box border-primary text-primary">
+          <div class="label">수익</div>
+          <div class="price">+ 2,678,123원</div>
         </div>
-
-        <div
-          class="p-2 px-3 bg-white rounded-3 text-end border-top border-danger border-4 shadow-sm"
-          style="min-width: 110px"
-        >
-          <div class="text-muted extra-small fw-bold">지출</div>
-          <div class="fw-bold text-danger" style="font-size: 0.85rem">
-            - 1,678,000원
-          </div>
+        <div class="summary-box border-danger text-danger">
+          <div class="label">지출</div>
+          <div class="price">- 1,678,000원</div>
         </div>
-
-        <div
-          class="p-2 px-3 rounded-3 text-end shadow-sm d-flex flex-column justify-content-center"
-          style="background-color: var(--color-primary); min-width: 130px"
-        >
-          <div class="text-white extra-small fw-bold">총 잔액</div>
-          <div
-            class="fw-bold"
-            style="color: var(--color-surface); font-size: 0.95rem"
-          >
-            + 1,000,123원
-          </div>
+        <div class="summary-box total-bg">
+          <div class="label text-white-50">총 잔액</div>
+          <div class="price text-white">+ 1,000,123원</div>
         </div>
       </div>
     </div>
@@ -195,6 +176,130 @@ const dailySummary = computed(() => {
 
 <style scoped>
 /* 7열 그리드를 위한 커스텀 스타일 */
+.col-1-7 {
+  flex: 0 0 14.285%;
+  max-width: 14.285%;
+}
+</style>
+
+<style scoped>
+/* 1. 상단 컨테이너 레이아웃 */
+.header-container {
+  display: flex;
+  flex-direction: column; /* 기본은 세로 쌓기 (모바일) */
+  align-items: center;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .header-container {
+    flex-direction: row; /* PC에서는 가로로 */
+    justify-content: space-between;
+  }
+  .date-controller {
+    order: 2; /* 날짜를 가운데로 */
+    flex: 1;
+  }
+  .summary-container {
+    order: 3;
+  }
+  /* 밸런스를 위해 왼쪽 빈 공간 확보 */
+  .header-container::before {
+    content: '';
+    flex: 1;
+    order: 1;
+  }
+}
+
+/* 2. 요약 카드 반응형 사이즈 */
+.summary-container {
+  width: 100%;
+  overflow-x: auto; /* 모바일에서 자리가 좁으면 옆으로 스크롤 가능하게 */
+  padding-bottom: 5px;
+  justify-content: center;
+}
+
+.summary-card {
+  flex: 1; /* 자식들이 공평하게 나눠가짐 */
+  min-width: 90px;
+  max-width: 130px;
+  padding: 8px;
+  background: white;
+  border-radius: 12px;
+  text-align: right;
+  border-top: 4px solid;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.total-card {
+  background-color: var(--color-primary);
+  border-top: none;
+}
+
+.amount {
+  font-weight: bold;
+  font-size: 0.8rem; /* 모바일 기본 크기 */
+}
+
+@media (min-width: 768px) {
+  .amount {
+    font-size: 0.95rem;
+  }
+  .summary-card {
+    min-width: 110px;
+  }
+}
+
+/* 3. 캘린더 날짜 텍스트 크기 */
+.col-1-7 {
+  flex: 0 0 14.285%;
+  max-width: 14.285%;
+}
+
+.nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tiny-label {
+  font-size: 0.65rem;
+}
+
+.summary-box {
+  padding: 8px 12px;
+  background: white;
+  border-radius: 12px;
+  text-align: right;
+  min-width: 100px; /* 너무 작아지지 않게 */
+  border-top: 4px solid;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex: 1; /* 좁을 때 공평하게 나눠갖기 */
+  max-width: 130px;
+}
+
+.total-bg {
+  background-color: var(--color-primary);
+  border-top: none;
+}
+
+.label {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #6c757d;
+}
+.price {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+/* 7열 그리드는 이미 잘 짜셔서 그대로 두셔도 됩니다! */
 .col-1-7 {
   flex: 0 0 14.285%;
   max-width: 14.285%;

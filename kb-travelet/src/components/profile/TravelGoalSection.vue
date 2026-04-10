@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import TravelGoalDisplay from './TravelGoalDisplay.vue';
 import TravelGoalForm from '../form/TravelGoalForm.vue';
 import GoalBudgetCalculationDisplay from './GoalBudgetCalculationDisplay.vue';
@@ -57,12 +57,25 @@ const emit = defineEmits(['update-goal']);
 const isEditing = ref(false);
 const tempData = ref({});
 
+const calculatePeriod = (start, end) => {
+  if (!start || !end) return 0;
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  const diffInMs = endDate - startDate;
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  return Math.floor(diffInDays);
+};
+
 const totalExpense = computed(() => {
+  const period = calculatePeriod(props.goal.startDate, props.goal.endDate);
   const target = isEditing.value ? tempData.value : props.goal;
   return (
-    (target.etcExpense || 0) +
+    (target.dailyExpense || 0) * (period + 1) +
     (target.flightExpense || 0) +
-    (target.hotelExpense || 0)
+    (target.hotelExpense || 0) * period
   );
 });
 
@@ -142,6 +155,10 @@ const saveEdit = () => {
 const cancelEdit = () => {
   isEditing.value = false;
 };
+
+onMounted(() => {
+  console.log('초기 여행 목표 데이터:', props.goal);
+});
 </script>
 
 <style scoped></style>
