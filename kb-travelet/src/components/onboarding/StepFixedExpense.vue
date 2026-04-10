@@ -42,6 +42,7 @@
                 :id="`${field.key}-input`"
                 :value="formatInputNumber(expenses[field.key])"
                 @input="handleAmountInput(field.key, $event.target.value)"
+                @keydown="blockInvalidNumberKey"
                 class="form-control form-control-lg input-field"
                 type="text"
                 inputmode="numeric"
@@ -110,7 +111,7 @@ const expenses = reactive({
 });
 
 const expenseFields = [
-  { key: 'rent', label: '월세' },
+  { key: 'rent', label: '주거비' },
   { key: 'insurance', label: '보험료' },
   { key: 'phone', label: '통신비' },
   { key: 'transport', label: '교통비' },
@@ -143,6 +144,12 @@ function parseInputNumber(value) {
 
 function handleAmountInput(target, value) {
   expenses[target] = parseInputNumber(value);
+}
+
+function blockInvalidNumberKey(event) {
+  if (['-', '+', 'e', 'E', '.'].includes(event.key)) {
+    event.preventDefault();
+  }
 }
 
 function adjustAmount(target, delta) {
@@ -227,8 +234,18 @@ function formatWon(amount) {
 }
 
 .content-section {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   max-height: calc(min(92dvh, 980px) - 110px);
+  padding-right: 26px !important;
+  overscroll-behavior: contain;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.content-section::-webkit-scrollbar {
+  display: none;
 }
 
 .step-text {

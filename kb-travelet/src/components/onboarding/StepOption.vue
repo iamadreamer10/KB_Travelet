@@ -4,8 +4,7 @@
       <div class="progress-container p-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="step-text">STEP 5/5</span>
-          <span class="step-text">STEP 5/5</span>
-          <span class="step-label">여행 예산 선택</span>
+          <span class="step-label">여행 옵션 선택</span>
         </div>
         <div class="progress-track">
           <div
@@ -55,10 +54,26 @@
             <span class="option-meta"
               >예상 {{ stayNights }}박 {{ tripDays }}일 기준</span
             >
-            <span class="option-breakdown">
-              일비 {{ option.dailyText }} · 숙박 {{ option.hotelText }} · 항공
-              {{ option.flightText }}
-            </span>
+            <div class="option-breakdown-grid">
+              <div class="option-breakdown-item">
+                <span class="option-breakdown-label">경비</span>
+                <strong class="option-breakdown-value">{{
+                  option.dailyText
+                }}</strong>
+              </div>
+              <div class="option-breakdown-item">
+                <span class="option-breakdown-label">숙박</span>
+                <strong class="option-breakdown-value">{{
+                  option.hotelText
+                }}</strong>
+              </div>
+              <div class="option-breakdown-item">
+                <span class="option-breakdown-label">항공</span>
+                <strong class="option-breakdown-value">{{
+                  option.flightText
+                }}</strong>
+              </div>
+            </div>
             <div class="option-budget-result">
               <span class="option-budget-result-label">
                 {{ option.dailyResultLabel }}
@@ -102,31 +117,36 @@
             </h3>
           </div>
 
-          <div class="budget-modal-summary">
-            <div class="budget-modal-item">
-              <span class="budget-modal-label">여행지</span>
-              <strong class="budget-modal-value">{{
+          <div class="budget-flow-summary">
+            <span class="budget-flow-label">여행</span>
+            <p class="budget-flow-text mb-0">
+              <strong class="budget-flow-emphasis">{{
                 selectedDestinationText
               }}</strong>
-            </div>
-            <div class="budget-modal-item">
-              <span class="budget-modal-label">여행 기간</span>
-              <strong class="budget-modal-value">{{ tripDays }}일간</strong>
-            </div>
-            <div class="budget-modal-item">
-              <span class="budget-modal-label">여행 유형</span>
-              <strong class="budget-modal-value">{{
-                pendingOption.label
+              /
+              <strong class="budget-flow-emphasis">{{
+                tripLengthText
               }}</strong>
-            </div>
+            </p>
+          </div>
+
+          <div class="budget-flow-summary">
+            <span class="budget-flow-label">여행 유형</span>
+            <p class="budget-flow-text mb-0">{{ pendingOption.label }}</p>
+          </div>
+
+          <div class="budget-flow-summary is-strong">
+            <span class="budget-flow-label">예상 여행 경비</span>
+            <p class="budget-flow-text mb-0">
+              총 {{ pendingOption.totalText }}
+            </p>
           </div>
 
           <div class="budget-daily-banner">
             <span class="budget-daily-caption">여행 전까지</span>
-            <strong class="budget-daily-value">{{ dailyBudgetGuide }}</strong>
-            <p class="budget-daily-description mb-0">
-              준비 기간을 기준으로 계산한 하루 예산 안내예요.
-            </p>
+            <strong class="budget-daily-value">
+              하루 약 {{ dailyBudget }}을 쓸 수 있어요.
+            </strong>
           </div>
 
           <div class="budget-modal-actions">
@@ -177,7 +197,10 @@ const totalMonthlyFixed = computed(
     (Number(travelStore.monthlyOtherFixed) || 0),
 );
 const monthlyAvailable = computed(() =>
-  Math.max((Number(travelStore.monthlyIncome) || 0) - totalMonthlyFixed.value, 0),
+  Math.max(
+    (Number(travelStore.monthlyIncome) || 0) - totalMonthlyFixed.value,
+    0,
+  ),
 );
 const monthlySavingsForTravel = computed(() => monthlyAvailable.value);
 const dailySavingsForTravel = computed(() =>
@@ -212,6 +235,14 @@ const selectedDestinationText = computed(() => {
   return `${travelStore.selectedCountry.name} (${travelStore.selectedContinent})`;
 });
 
+const tripLengthText = computed(() => {
+  if (!tripDays.value) {
+    return '일정을 선택해 주세요';
+  }
+
+  return `${stayNights.value}박 ${tripDays.value}일`;
+});
+
 const formattedDeparture = computed(() =>
   departure.value
     ? formatDisplayDate(departure.value)
@@ -232,19 +263,12 @@ const daysUntilDeparture = computed(() => {
 
   return Math.max(Math.ceil((departure.value - today) / dayMs), 0);
 });
-const dailyBudgetGuide = computed(() => {
+const dailyBudget = computed(() => {
   if (!pendingOption.value) {
     return '';
   }
 
-  if (daysUntilDeparture.value <= 0) {
-    return `총 ${pendingOption.value.totalText} 예산을 바로 확인해 주세요.`;
-  }
-
-  const dailyAmount = Math.ceil(
-    pendingOption.value.total / daysUntilDeparture.value,
-  );
-  return `여행 전까지 하루 약 ${formatWon(dailyAmount)} 준비하면 돼요.`;
+  return formatDisplayWon(pendingOption.value.rawDailyBudget);
 });
 
 const budgetOptions = computed(() => {
@@ -268,22 +292,25 @@ const budgetOptions = computed(() => {
       daysUntilDeparture.value > 0
         ? Math.floor(Math.abs(budgetGap) / daysUntilDeparture.value)
         : 0;
+    const normalizedDailyBudget = truncateToHundreds(dailyBudget);
     const dailyResult = resolveDailyResult({
       canSelectBudget: canSelectBudget.value,
       daysUntilDeparture: daysUntilDeparture.value,
       hasInvalidMonthlyBudget:
         totalMonthlyFixed.value > (Number(travelStore.monthlyIncome) || 0),
       budgetGap,
-      dailyBudget,
+      dailyBudget: normalizedDailyBudget,
     });
 
     return {
       ...option,
       total,
       totalText: canSelectBudget.value ? formatWon(total) : '예상 금액 계산 전',
-      dailyText: formatWon(daily * 10000),
-      hotelText: formatWon(hotel * 10000),
-      flightText: formatWon(flight * 10000),
+      dailyText: formatManWon(daily * 10000),
+      hotelText: formatManWon(hotel * 10000),
+      flightText: formatManWon(flight * 10000),
+      rawDailyBudget: normalizedDailyBudget,
+      dailyAvailableBudget: budgetGap >= 0 ? normalizedDailyBudget : 0,
       dailyResultLabel: dailyResult.label,
       dailyResultText: dailyResult.text,
     };
@@ -316,7 +343,8 @@ async function confirmOptionSelection() {
     );
     await travelStore.saveProfile({
       budgetOption: pendingOption.value.key,
-      dailyExpense: expensePreset.dailyExpense,
+      dailyTravelExpense: expensePreset.dailyTravelExpense,
+      dailyAvailableBudget: pendingOption.value.dailyAvailableBudget,
       hotelExpense: expensePreset.hotelExpense,
       flightExpense: expensePreset.flightExpense,
       checkedIn: true,
@@ -359,6 +387,17 @@ function formatWon(amount) {
   }).format(amount);
 }
 
+function formatDisplayWon(amount) {
+  const normalized = Math.floor((Number(amount) || 0) / 100) * 100;
+  return `${normalized.toLocaleString('ko-KR')}원`;
+}
+
+function formatManWon(amount) {
+  const normalized = Math.floor((Number(amount) || 0) / 10000) * 10000;
+  const manWon = normalized / 10000;
+  return `${manWon.toLocaleString('ko-KR')}만원`;
+}
+
 function resolveDailyResult({
   canSelectBudget,
   daysUntilDeparture,
@@ -389,15 +428,19 @@ function resolveDailyResult({
 
   if (budgetGap >= 0) {
     return {
-      label: '하루 사용 가능 금액',
-      text: formatWon(dailyBudget),
+      label: '하루 약 사용 가능 금액',
+      text: formatDisplayWon(dailyBudget),
     };
   }
 
   return {
     label: '하루 절약 필요 금액',
-    text: formatWon(dailyBudget),
+    text: formatDisplayWon(dailyBudget),
   };
+}
+
+function truncateToHundreds(amount) {
+  return Math.floor((Number(amount) || 0) / 100) * 100;
 }
 
 onMounted(async () => {
@@ -414,7 +457,7 @@ onMounted(async () => {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 16px 20px;
+  padding: 10px 20px 12px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -425,7 +468,7 @@ onMounted(async () => {
   --color-text-muted: #64748b;
 
   width: 100%;
-  max-width: 820px;
+  max-width: 780px;
   background: #fff;
   border-radius: 2rem;
   overflow: visible;
@@ -433,7 +476,7 @@ onMounted(async () => {
 }
 
 .content-section {
-  padding-bottom: 18px;
+  padding-bottom: 10px;
 }
 
 .progress-container {
@@ -508,7 +551,7 @@ onMounted(async () => {
 }
 
 .option-copy {
-  max-width: 560px;
+  max-width: 520px;
 }
 
 .copy-kicker {
@@ -526,25 +569,25 @@ onMounted(async () => {
 
 .section-title {
   color: var(--color-primary-deep);
-  font-size: clamp(1.85rem, 2vw, 2.25rem);
+  font-size: clamp(1.7rem, 1.8vw, 2rem);
   font-weight: 800;
   line-height: 1.12;
 }
 
 .section-description {
   color: var(--color-text-muted);
-  font-size: 0.98rem;
-  line-height: 1.62;
+  font-size: 0.92rem;
+  line-height: 1.56;
 }
 
 .selection-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .summary-chip-card {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.4rem;
   background: #f8fbff;
@@ -568,12 +611,12 @@ onMounted(async () => {
 .option-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .option-card {
-  min-height: 172px;
-  padding: 16px;
+  min-height: 156px;
+  padding: 14px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.5rem;
   background: #fff;
@@ -600,7 +643,7 @@ onMounted(async () => {
 
 .option-badge {
   display: inline-flex;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   background: rgba(7, 102, 255, 0.1);
@@ -611,30 +654,57 @@ onMounted(async () => {
 
 .option-total {
   display: block;
-  margin-bottom: 6px;
-  font-size: 1.15rem;
+  margin-bottom: 5px;
+  font-size: 1.06rem;
   font-weight: 800;
   line-height: 1.35;
 }
 
 .option-meta {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .option-breakdown {
   display: block;
+}
+
+.option-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.option-breakdown-item {
+  padding: 8px 7px;
+  border-radius: 0.95rem;
+  background: #f8fbff;
+  border: 1px solid rgba(7, 102, 255, 0.08);
+}
+
+.option-breakdown-label {
+  display: block;
+  margin-bottom: 4px;
   color: var(--color-text-muted);
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.option-breakdown-value {
+  display: block;
+  color: var(--color-primary-deep);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.3;
 }
 
 .option-budget-result {
-  margin-top: 12px;
-  padding-top: 10px;
+  margin-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid rgba(7, 102, 255, 0.12);
 }
 
@@ -649,7 +719,7 @@ onMounted(async () => {
 .option-budget-result-value {
   display: block;
   color: var(--color-primary-deep);
-  font-size: 1rem;
+  font-size: 0.94rem;
   font-weight: 800;
   line-height: 1.4;
 }
@@ -756,14 +826,19 @@ onMounted(async () => {
 
 .budget-modal-card {
   width: min(100%, 480px);
-  padding: 24px;
+  padding: 28px;
   border-radius: 2rem;
-  background: #fff;
-  box-shadow: 0 24px 60px rgba(5, 23, 102, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(7, 102, 255, 0.08), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  border: 1px solid rgba(7, 102, 255, 0.14);
+  box-shadow:
+    0 24px 60px rgba(5, 23, 102, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 .budget-modal-header {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .budget-modal-kicker {
@@ -781,44 +856,50 @@ onMounted(async () => {
 
 .budget-modal-title {
   color: var(--color-primary-deep);
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.24;
 }
 
-.budget-modal-summary {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.budget-modal-item {
+.budget-flow-summary {
+  margin-bottom: 14px;
   padding: 14px 16px;
-  border: 1px solid var(--color-primary-soft);
-  border-radius: 1.2rem;
-  background: #f8fbff;
+  border-radius: 1.25rem;
+  background: rgba(248, 251, 255, 0.92);
+  border: 1px solid rgba(7, 102, 255, 0.12);
 }
 
-.budget-modal-label {
+.budget-flow-summary.is-strong {
+  background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+}
+
+.budget-flow-label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   color: var(--color-text-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
 }
 
-.budget-modal-value {
+.budget-flow-text {
   color: var(--color-primary-deep);
-  font-size: 1rem;
+  font-size: 1.06rem;
   font-weight: 800;
-  line-height: 1.45;
+  line-height: 1.5;
+}
+
+.budget-flow-emphasis {
+  font-size: 1.1em;
+  font-weight: 900;
 }
 
 .budget-daily-banner {
   margin-bottom: 20px;
-  padding: 16px 18px;
-  border-radius: 1.25rem;
-  background: rgba(5, 23, 102, 0.06);
+  padding: 18px 20px;
+  border-radius: 1.35rem;
+  background: linear-gradient(135deg, rgba(5, 23, 102, 0.06) 0%, rgba(7, 102, 255, 0.06) 100%);
+  border: 1px solid rgba(7, 102, 255, 0.1);
 }
 
 .budget-daily-caption {
@@ -834,7 +915,7 @@ onMounted(async () => {
 .budget-daily-value {
   display: block;
   color: var(--color-primary-deep);
-  font-size: 1.22rem;
+  font-size: 1.18rem;
   font-weight: 800;
   line-height: 1.4;
 }
@@ -859,6 +940,12 @@ onMounted(async () => {
   font-weight: 700;
 }
 
+@media (max-width: 767px) {
+  .budget-modal-card {
+    padding: 22px;
+  }
+}
+
 @media (max-width: 991px) {
   .onboarding-card {
     max-width: 100%;
@@ -872,7 +959,7 @@ onMounted(async () => {
 
 @media (max-width: 767px) {
   .onboarding-page-bg {
-    padding: 12px;
+    padding: 10px 12px;
   }
 
   .section-title {
@@ -881,6 +968,10 @@ onMounted(async () => {
 
   .content-section {
     padding: 1.1rem !important;
+  }
+
+  .option-breakdown-grid {
+    grid-template-columns: 1fr;
   }
 }
 
