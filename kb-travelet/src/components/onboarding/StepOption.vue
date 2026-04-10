@@ -19,8 +19,7 @@
           <span class="copy-kicker">Trip Option</span>
           <h2 class="section-title mb-2">여행 유형을 정해주세요</h2>
           <p class="section-description mb-0">
-            선택한 여행지, 일정, 그리고 현재 재정 상황에 맞춰 예산 유형을 선택해
-            주세요.
+            선택한 여행지에서 일정동안 원하는 여행 유형을 선택해 주세요.
           </p>
         </div>
 
@@ -117,10 +116,10 @@
           </div>
 
           <div class="budget-daily-banner">
-            <span class="budget-daily-caption">Before Departure</span>
+            <span class="budget-daily-caption">여행 전까지</span>
             <strong class="budget-daily-value">{{ dailyBudgetGuide }}</strong>
             <p class="budget-daily-description mb-0">
-              여행 전까지 준비 기간을 기준으로 계산한 하루 예산 안내예요.
+              준비 기간을 기준으로 계산한 하루 예산 안내예요.
             </p>
           </div>
 
@@ -287,7 +286,7 @@ async function confirmOptionSelection() {
       hotelExpense: expensePreset.hotelExpense,
       flightExpense: expensePreset.flightExpense,
       checkedIn: true,
-      isCompleted: true,
+      isCompleted: false,
     });
     closeOptionModal();
     emit('next');
@@ -340,7 +339,7 @@ onMounted(async () => {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 24px 20px;
+  padding: 36px 20px 20px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -356,6 +355,10 @@ onMounted(async () => {
   border-radius: 2rem;
   overflow: visible;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+}
+
+.content-section {
+  padding-bottom: 18px;
 }
 
 .progress-container {
@@ -494,8 +497,8 @@ onMounted(async () => {
 }
 
 .option-card {
-  min-height: 188px;
-  padding: 20px 18px;
+  min-height: 172px;
+  padding: 18px 16px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.5rem;
   background: #fff;

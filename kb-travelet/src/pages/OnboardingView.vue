@@ -54,7 +54,8 @@ watch(
     const oldIndex = steps.findIndex((step) => step.routeName === oldName);
 
     if (newIndex !== -1 && oldIndex !== -1) {
-      transitionName.value = newIndex > oldIndex ? 'step-forward' : 'step-backward';
+      transitionName.value =
+        newIndex > oldIndex ? 'step-forward' : 'step-backward';
     }
   },
 );
@@ -98,36 +99,42 @@ onMounted(async () => {
   width: 100%;
   min-height: 100dvh;
   overflow: hidden;
+  background: #0766ff;
 }
 
 .step-forward-enter-active,
 .step-forward-leave-active,
 .step-backward-enter-active,
 .step-backward-leave-active {
-  width: 100%;
-  transition: transform 0.8s cubic-bezier(0.22, 0.8, 0.2, 1);
-}
-
-.step-forward-enter-active,
-.step-backward-enter-active {
-  position: relative;
-  z-index: 2;
-}
-
-.step-forward-leave-active,
-.step-backward-leave-active {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  width: 100%;
+  min-height: 100dvh;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 0.8, 0.2, 1),
+    opacity 0.2s ease;
+  will-change: transform, opacity;
 }
 
 .step-forward-enter-from,
 .step-backward-leave-to {
   transform: translateX(100%);
+  opacity: 1;
 }
 
 .step-forward-leave-to,
 .step-backward-enter-from {
   transform: translateX(-100%);
+  opacity: 1;
+}
+
+.step-forward-enter-active,
+.step-backward-enter-active {
+  z-index: 2;
+}
+
+.step-forward-leave-active,
+.step-backward-leave-active {
+  z-index: 1;
 }
 </style>

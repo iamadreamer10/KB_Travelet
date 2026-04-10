@@ -24,9 +24,9 @@
         <div class="content-section p-4 p-md-5">
           <div class="schedule-copy mb-4">
             <span class="copy-kicker">Schedule</span>
-            <h2 class="section-title mb-2">여행 일정을 정해주세요</h2>
+            <h2 class="section-title mb-2">언제 여행을</h2>
             <p class="section-description mb-0">
-              달력에서 출발일과 도착일을 순서대로 선택해주세요.
+              달력에서 출발일과 도착일을 순서대로 선택해주세요
             </p>
           </div>
 
@@ -168,7 +168,7 @@ const tripLengthLabel = computed(() => {
     (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
   );
 
-  return `${diffDays}일간의 여행이에요.`;
+  return `${diffDays}일간의 여행이에요`;
 });
 
 const calendarDays = computed(() => {
