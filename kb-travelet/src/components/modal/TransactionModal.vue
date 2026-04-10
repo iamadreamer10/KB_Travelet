@@ -241,10 +241,22 @@ const handleDelete = (id) => {
 
 .modal-content {
   width: 520px;
+  max-height: 80vh;   
+  overflow-y: auto;
   background: white;
   border-radius: 16px;
   padding: 24px;
   position: relative;
+  scroll-behavior: smooth;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
 }
 
 /* 닫기 */
