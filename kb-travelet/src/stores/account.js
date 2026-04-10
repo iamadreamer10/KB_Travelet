@@ -1,5 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import axios from 'axios';
+import { useAuthStore } from './auth';
 
 /*
 거래(Account) Store
@@ -23,34 +25,72 @@ export const useAccountStore = defineStore('account', () => {
     }
    */
 
+  // 거래 목록 저장
   const transactions = ref([]);
 
-  const addTransaction = (tx) => {
-    transactions.value.push({
-      ...tx,
-      id: tx.id ?? Date.now(),
-      userId: tx.userId ?? 'user1',
-    });
-  };
-
-  const deleteTransaction = (id) => {
-    transactions.value = transactions.value.filter((t) => t.id !== id);
-  };
-
-  const updateTransaction = (updated) => {
-    const idx = transactions.value.findIndex((t) => t.id === updated.id); // 수정할 거래의 위치(id) 찾기
-    if (idx !== -1) {
-      transactions.value[idx] = {
-        ...transactions.value[idx],
-        ...updated,
+  const addTransaction = async (tx) => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const newTx = {
+        ...tx,
+        id: tx.id ?? Date.now(),
+        userId: userId,
       };
-    } else {
-      console.warn('수정할 거래를 찾을 수 없습니다.');
+
+      const res = await axios.post('http://localhost:3000/transactions', newTx);
+
+      transactions.value.push(res.data);
+    } catch (err) {
+      console.error('거래 추가 실패: ', err);
+    }
+  };
+
+  const deleteTransaction = async (id) => {
+    console.log('삭제 id:', id);
+    try {
+      await axios.delete(`http://localhost:3000/transactions/${id}`);
+      transactions.value = transactions.value.filter((t) => t.id !== id);
+    } catch (err) {
+      console.error('삭제 실패: ', err);
+    }
+  };
+
+  const updateTransaction = async (updated) => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/transactions/${updated.id}`,
+        { ...updated, userId: userId },
+      );
+
+      const idx = transactions.value.findIndex((t) => t.id === updated.id);
+      if (idx !== -1) {
+        transactions.value[idx] = res.data;
+      }
+    } catch (err) {
+      console.error('수정 실패: ', err);
     }
   };
 
   const getTransactionByDate = (date) => {
     return transactions.value.filter((t) => t.date === date);
+  };
+
+  // 초기 데이터 불러오기
+  const fetchTransactions = async () => {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) return;
+
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/transactions?userId=${userId}`,
+      );
+
+      transactions.value = res.data;
+    } catch (err) {
+      console.error('거래 불러오기 실패: ', err);
+    }
   };
 
   return {
@@ -59,5 +99,6 @@ export const useAccountStore = defineStore('account', () => {
     deleteTransaction,
     updateTransaction,
     getTransactionByDate,
+    fetchTransactions,
   };
 });
