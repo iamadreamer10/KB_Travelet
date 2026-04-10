@@ -10,16 +10,40 @@
           TRAVEL PASS</span
         >
       </div>
-      <h4 class="fw-bold mb-0">권원영</h4>
-      <p class="text-muted small mb-3">onyo9@naver.com</p>
+      <h4 class="fw-bold mb-0">{{ userName }}</h4>
+      <p class="text-muted small mb-3">{{ userEmail }}</p>
       <div class="d-flex border-top pt-2 justify-content-between">
-        <div>
-          <span class="text-muted extra-small d-block">목적지</span>
-          <span class="fw-bold">스페인</span>
+        <div class="d-flex flex-column gap-1">
+          <span
+            class="text-muted extra-small fw-bold text-uppercase tracking-wider"
+            >Destination</span
+          >
+          <div class="d-flex align-items-center gap-2">
+            <div
+              class="bg-light rounded-3 p-1 text-center border"
+              style="min-width: 20px"
+            >
+              <span
+                class="d-block fw-black text-primary lh-1"
+                style="font-size: 0.6rem"
+                >{{ myTravelGoal?.destinationCode }}</span
+              >
+            </div>
+
+            <div class="flex-grow-1" style="max-width: 150px">
+              <span class="fw-bold fs-6 lh-sm d-block">{{
+                myTravelGoal?.destination
+              }}</span>
+            </div>
+          </div>
         </div>
         <div>
           <span class="text-muted extra-small d-block">일정</span>
-          <span class="fw-bold">2026-04-18</span>
+          <span class="fs-7 fw-bold"
+            >{{ myTravelGoal?.startDate }} <br />-{{
+              myTravelGoal?.endDate
+            }}</span
+          >
         </div>
       </div>
     </div>
@@ -53,18 +77,36 @@
         style="color: var(--color-primary-deep); line-height: 1.5"
       >
         <i class="fa-solid fa-circle-info me-1"></i>
-        스페인 여행을 위해 <br />하루에 <span class="text-primary">0원</span>씩
-        사용할 수 있어요
+        {{ myTravelGoal?.destination }} 여행을 위해 <br />하루에
+        <span class="text-primary">0원</span>씩 사용할 수 있어요
       </p>
     </div>
 
     <div class="mt-auto border-top border-white-50 pt-3">
-      <button class="btn btn-link text-white-50 p-0 text-decoration-none small">
+      <button
+        @click="logout"
+        class="btn btn-link text-white-50 p-0 text-decoration-none small"
+      >
         <i class="fas fa-sign-out-alt me-1"></i> 로그아웃
       </button>
     </div>
   </div>
 </template>
+
+<script setup>
+import { useAuthStore } from '@/stores/auth';
+import { useProfileStore } from '@/stores/profile.js';
+import { onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+
+const profileStore = useProfileStore();
+const { myTravelGoal } = storeToRefs(profileStore);
+
+const { logout } = useAuthStore();
+const userName = localStorage.getItem('userName') || '사용자';
+const userEmail = localStorage.getItem('userEmail') || 'abc@naver.com';
+const userId = localStorage.getItem('userId') || '';
+</script>
 
 <style scoped>
 .extra-small {

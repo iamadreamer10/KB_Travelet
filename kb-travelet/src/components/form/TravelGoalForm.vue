@@ -8,23 +8,30 @@
     </div>
 
     <div class="col-6">
-      <label class="text-muted small mb-1">목적지</label>
-      <input
-        v-model="modelValue.destination"
-        type="text"
-        class="form-control form-control-sm fw-bold"
-      />
-    </div>
-    <div class="col-6">
       <label class="text-muted small mb-1">대륙</label>
+      <select v-model="modelValue.continent" class="form-select fw-bold">
+        <option value="" disabled>선택</option>
+        <option v-for="opt in continentOptions" :key="opt.key" :value="opt.key">
+          {{ opt.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-6">
+      <label class="text-muted small mb-1">나라</label>
       <select
-        v-model="modelValue.continent"
-        class="form-select form-select-sm fw-bold"
+        v-model="modelValue.country"
+        class="form-select fw-bold"
+        :disabled="!modelValue.continent"
       >
-        <option>아시아</option>
-        <option>유럽</option>
-        <option>북미</option>
-        <option>남미</option>
+        <option value="" disabled>나라 선택</option>
+        <option
+          v-for="country in filteredCountries"
+          :key="country.name"
+          :value="country.name"
+        >
+          {{ country.name }}
+        </option>
       </select>
     </div>
     <div class="col-6">
@@ -67,13 +74,13 @@
             </div>
             <div class="extra-small text-muted vstack gap-1">
               <div class="d-flex justify-content-between">
+                <span>🍕</span> <span>{{ opt.dailyExpense / 10000 }}만/일</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>🏨</span> <span>{{ opt.hotelExpense / 10000 }}만/박</span>
+              </div>
+              <div class="d-flex justify-content-between">
                 <span>✈️</span> <span>{{ opt.flightExpense / 10000 }}만</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>🏨</span> <span>{{ opt.hotelExpense / 10000 }}만</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>🍕</span> <span>{{ opt.etcExpense / 10000 }}만</span>
               </div>
               <hr class="my-1 opacity-25" />
               <div
@@ -90,16 +97,16 @@
 
     <div class="col-12 mt-2 vstack gap-2 bg-light p-3 rounded-4">
       <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">비행기값</span>
+        <span class="small fw-bold">하루경비(1일)</span>
         <input
-          v-model.number="modelValue.flightExpense"
+          v-model.number="modelValue.dailyExpense"
           type="text"
           inputmode="numeric"
           class="form-control form-control-sm w-50 text-end border-0 bg-white"
         />
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">총 숙소비</span>
+        <span class="small fw-bold">숙소비(1박)</span>
         <input
           v-model.number="modelValue.hotelExpense"
           type="text"
@@ -108,9 +115,9 @@
         />
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">기타 경비</span>
+        <span class="small fw-bold">비행기값</span>
         <input
-          v-model.number="modelValue.etcExpense"
+          v-model.number="modelValue.flightExpense"
           type="text"
           inputmode="numeric"
           class="form-control form-control-sm w-50 text-end border-0 bg-white"
@@ -224,16 +231,58 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import axios from 'axios';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
 });
 
-// 1. 오늘 날짜 구하기 (YYYY-MM-DD 형식)
+const continentList = ref([]); // 데이터를 담을 반응형 변수
+const getContinents = async () => {
+  try {
+    const response = await axios.get('/api/continents');
+    continentList.value = response.data;
+
+    console.log('성공적으로 가져온 대륙들:', continentList.value);
+  } catch (error) {
+    console.error('데이터 로드 에러:', error);
+  }
+};
+
+// 1. 대륙 이름 한글 매핑 객체
+const continentNameMap = {
+  Asia: '아시아',
+  Europe: '유럽',
+  Americas: '아메리카',
+  Africa: '아프리카',
+};
+
+// 결과 예시: [{ key: 'Asia', label: '아시아' }, ...]
+const continentOptions = computed(() => {
+  return Object.keys(continentList.value).map((key) => ({
+    key: key,
+    label: continentNameMap[key] || key,
+  }));
+});
+
+const filteredCountries = computed(() => {
+  const selectedEngKey = props.modelValue.continent; // 'Asia'
+  if (!selectedEngKey || !continentList.value[selectedEngKey]) return [];
+
+  return continentList.value[selectedEngKey];
+});
+
+watch(
+  () => props.modelValue.continent,
+  () => {
+    props.modelValue.country = '';
+  },
+);
+
+// 2.  오늘 날짜 구하기 (YYYY-MM-DD 형식)
 const todayDate = new Date().toISOString().split('T')[0];
 
-// 2. 로직 검증 함수
 const validateDates = () => {
   const start = props.modelValue.startDate;
   const end = props.modelValue.endDate;
@@ -249,14 +298,14 @@ const validateDates = () => {
 
 const showOptions = ref(false);
 
-// 상세 내역을 포함한 추천 옵션
+// 3. 상세 내역을 포함한 추천 옵션
 const recommendOptions = [
   {
     title: '알뜰 가성비',
     class: 'bg-success-subtle text-success',
     flightExpense: 350000,
     hotelExpense: 600000,
-    etcExpense: 500000,
+    dailyExpense: 500000,
     total: 1450000,
   },
   {
@@ -264,7 +313,7 @@ const recommendOptions = [
     class: 'bg-primary-subtle text-primary',
     flightExpense: 550000,
     hotelExpense: 1500000,
-    etcExpense: 1200000,
+    dailyExpense: 1200000,
     total: 3250000,
   },
   {
@@ -272,7 +321,7 @@ const recommendOptions = [
     class: 'bg-danger-subtle text-danger',
     flightExpense: 1100000,
     hotelExpense: 3500000,
-    etcExpense: 2500000,
+    dailyExpense: 2500000,
     total: 7100000,
   },
 ];
@@ -280,8 +329,13 @@ const recommendOptions = [
 const applyOption = (opt) => {
   props.modelValue.flightExpense = opt.flightExpense;
   props.modelValue.hotelExpense = opt.hotelExpense;
-  props.modelValue.etcExpense = opt.etcExpense;
+  props.modelValue.dailyExpense = opt.dailyExpense;
 };
+
+onMounted(() => {
+  getContinents();
+  console.log('여행 옵션 추천을 위한 대륙 데이터:', continentList.value);
+});
 </script>
 
 <style scoped>

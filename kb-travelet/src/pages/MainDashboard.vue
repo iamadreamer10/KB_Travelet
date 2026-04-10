@@ -26,6 +26,8 @@ import CalendarMain from '@/components/calendar/CalendarMain.vue';
 import { onMounted } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { useAuthStore } from '@/stores/auth';
+import { useProfileStore } from '@/stores/profile';
+const profile = useProfileStore();
 
 const store = useAccountStore();
 const auth = useAuthStore();
@@ -35,6 +37,7 @@ onMounted(() => {
 
   if (userId) {
     store.fetchTransactions();
+    profile.fetchTravelGoal();
   }
 });
 
