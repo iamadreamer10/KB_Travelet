@@ -4,56 +4,64 @@
       class="align-items-center mb-4"
       style="display: grid; grid-template-columns: 1fr auto 1fr; width: 100%"
     >
-      <div class="d-flex justify-content-start">
-        <div class="btn-group shadow-sm">
-          <button
-            @click="prevMonth"
-            class="btn btn-sm btn-outline-primary px-2 border-2 me-1"
-          >
-            <i class="fas fa-chevron-left fa-xs"></i>
-          </button>
-          <button
-            @click="nextMonth"
-            class="btn btn-sm btn-outline-primary px-2 border-2"
-          >
-            <i class="fas fa-chevron-right fa-xs"></i>
-          </button>
+      <div></div>
+
+      <div class="d-flex align-items-center justify-content-center px-4">
+        <button
+          @click="prevMonth"
+          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0 d-flex align-items-center justify-content-center me-3"
+          style="width: 28px; height: 28px"
+        >
+          <i class="fas fa-chevron-left fa-xs"></i>
+        </button>
+
+        <div class="text-center">
+          <h6 class="text-secondary mb-0" style="font-size: 0.8rem">
+            {{ currentYear }}년
+          </h6>
+          <h4 class="fw-bold mb-0" style="min-width: 60px">
+            {{ currentMonth }}월
+          </h4>
         </div>
+
+        <button
+          @click="nextMonth"
+          class="btn btn-sm btn-outline-primary border-2 rounded-circle p-0 d-flex align-items-center justify-content-center ms-3"
+          style="width: 28px; height: 28px"
+        >
+          <i class="fas fa-chevron-right fa-xs"></i>
+        </button>
       </div>
 
-      <div class="text-center px-4">
-        <h6 class="text-secondary mb-0">{{ currentYear }}년</h6>
-        <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
-      </div>
       <div class="d-flex gap-2 justify-content-end">
         <div
           class="p-2 px-3 bg-white rounded-3 text-end border-top border-primary border-4 shadow-sm"
-          style="min-width: 120px"
+          style="min-width: 110px"
         >
           <div class="text-muted extra-small fw-bold">수익</div>
-          <div class="fw-bold text-primary" style="font-size: 0.9rem">
+          <div class="fw-bold text-primary" style="font-size: 0.85rem">
             + 2,678,123원
           </div>
         </div>
 
         <div
           class="p-2 px-3 bg-white rounded-3 text-end border-top border-danger border-4 shadow-sm"
-          style="min-width: 120px"
+          style="min-width: 110px"
         >
           <div class="text-muted extra-small fw-bold">지출</div>
-          <div class="fw-bold text-danger" style="font-size: 0.9rem">
+          <div class="fw-bold text-danger" style="font-size: 0.85rem">
             - 1,678,000원
           </div>
         </div>
 
         <div
           class="p-2 px-3 rounded-3 text-end shadow-sm d-flex flex-column justify-content-center"
-          style="background-color: var(--color-primary); min-width: 140px"
+          style="background-color: var(--color-primary); min-width: 130px"
         >
           <div class="text-white extra-small fw-bold">총 잔액</div>
           <div
             class="fw-bold"
-            style="color: var(--color-surface); font-size: 1rem"
+            style="color: var(--color-surface); font-size: 0.95rem"
           >
             + 1,000,123원
           </div>

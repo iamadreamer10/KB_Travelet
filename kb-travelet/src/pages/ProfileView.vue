@@ -88,6 +88,8 @@ const handleFinishGoal = (id) => {
   // 해당 id에 대한 목표 완료 여부를 수정해주세요. OR 삭제해주세요.
   console.log(`${id}번 목표 완료! 이제 다시 시작`);
   myTravelGoal.value = null;
+  
+  // ProgressBar도 초기화하는 로직이 필요함.
 };
 
 const createNewGoal = () => {

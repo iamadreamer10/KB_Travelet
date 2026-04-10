@@ -10,16 +10,18 @@
           TRAVEL PASS</span
         >
       </div>
-      <h4 class="fw-bold mb-0">권원영</h4>
-      <p class="text-muted small mb-3">onyo9@naver.com</p>
+      <h4 class="fw-bold mb-0">{{ userName }}</h4>
+      <p class="text-muted small mb-3">{{ userEmail }}</p>
       <div class="d-flex border-top pt-2 justify-content-between">
         <div>
           <span class="text-muted extra-small d-block">목적지</span>
-          <span class="fw-bold">스페인</span>
+          <span class="fw-bold">미국/{{ travelPass.destination }}</span>
         </div>
         <div>
           <span class="text-muted extra-small d-block">일정</span>
-          <span class="fw-bold">2026-04-18</span>
+          <span class="fw-bold"
+            >{{ travelPass.startDate }} <br />-{{ travelPass.endDate }}</span
+          >
         </div>
       </div>
     </div>
@@ -59,12 +61,42 @@
     </div>
 
     <div class="mt-auto border-top border-white-50 pt-3">
-      <button class="btn btn-link text-white-50 p-0 text-decoration-none small">
+      <button
+        @click="logout"
+        class="btn btn-link text-white-50 p-0 text-decoration-none small"
+      >
         <i class="fas fa-sign-out-alt me-1"></i> 로그아웃
       </button>
     </div>
   </div>
 </template>
+
+<script setup>
+import { useAuthStore } from '@/stores/auth';
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+
+const { logout } = useAuthStore();
+const userName = localStorage.getItem('userName') || '사용자';
+const userEmail = localStorage.getItem('userEmail') || 'abc@naver.com';
+const userId = localStorage.getItem('userId') || '';
+
+const travelPass = ref({});
+
+const fetchTravelPass = async () => {
+  try {
+    const response = await axios.get(`/api/profiles?memberId=${userId}`);
+    travelPass.value = response.data.length > 0 ? response.data[0] : null;
+    console.log('여행 패스 정보:', travelPass.value);
+  } catch (error) {
+    console.error('여행 패스 정보 로드 에러:', error);
+  }
+};
+
+onMounted(() => {
+  fetchTravelPass();
+});
+</script>
 
 <style scoped>
 .extra-small {

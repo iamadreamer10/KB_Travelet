@@ -9,16 +9,19 @@
           background-color: var(--color-primary);
         "
       >
-        공
+        {{ userName.charAt(0).toUpperCase() }}
       </div>
       <div>
-        <h5 class="fw-bold mb-1">공서연</h5>
-        <p class="text-muted mb-0 small">shift2013@naver.com</p>
+        <h5 class="fw-bold mb-1">{{ userName }}</h5>
+        <p class="text-muted mb-0 small">{{ userEmail }}</p>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const userName = localStorage.getItem('userName') || '사용자';
+const userEmail = localStorage.getItem('userEmail') || 'abc@naver.com';
+</script>
 
 <style scoped></style>

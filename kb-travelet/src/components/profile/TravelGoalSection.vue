@@ -59,13 +59,46 @@ const totalExpense = computed(() => {
 });
 
 const startEdit = () => {
-  tempData.value = { ...props.goal };
+  // 한글을 영문으로 역매핑 (Map을 뒤집음)
+  const reverseMap = {
+    아시아: 'Asia',
+    유럽: 'Europe',
+    아메리카: 'Americas',
+    아프리카: 'Africa',
+  };
+
+  const initialData = { ...props.goal };
+
+  // 만약 데이터가 한글이면 영문으로 치환해서 Form에 전달
+  if (initialData.continent && reverseMap[initialData.continent]) {
+    initialData.continent = reverseMap[initialData.continent];
+  }
+
+  tempData.value = initialData;
   isEditing.value = true;
 };
 
 const saveEdit = () => {
-  emit('update-goal', { ...tempData.value });
+  // 1. 변환용 맵 (Section에서 정의)
+  const continentNameMap = {
+    Asia: '아시아',
+    Europe: '유럽',
+    Americas: '아메리카',
+    Africa: '아프리카',
+  };
+
+  // 2. 서버로 보낼 데이터 복사본 생성
+  const finalData = { ...tempData.value };
+
+  // 3. 영문 Key가 있으면 한글 Label로 교체
+  if (finalData.continent && continentNameMap[finalData.continent]) {
+    finalData.continent = continentNameMap[finalData.continent];
+  }
+
+  // 4. 변환된 데이터를 부모(ProfileView 등)로 전달
+  emit('update-goal', finalData);
   isEditing.value = false;
+  console.log('저장된 여행 목표:', finalData);
 };
 
 const cancelEdit = () => {
