@@ -120,6 +120,7 @@ const store = useAccountStore(); // store 연결
 
 // 날짜 포맷
 const formattedDate = computed(() => {
+  console.log(props.date);
   const d = new Date(props.date);
   const week = ['일', '월', '화', '수', '목', '금', '토'];
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${week[d.getDay()]})`;

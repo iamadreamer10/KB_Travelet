@@ -3,13 +3,13 @@
     <div class="onboarding-card shadow-lg mx-auto">
       <div class="progress-container p-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="step-text">STEP 4/4</span>
+          <span class="step-text">STEP 5/5</span>
           <span class="step-label">여행 예산 선택</span>
         </div>
         <div class="progress-track">
           <div
             class="progress-bar-inner progress-animate"
-            style="--progress-start: 75%; --progress-end: 100%; width: 100%"
+            style="--progress-start: 80%; --progress-end: 100%; width: 100%"
           ></div>
         </div>
       </div>
@@ -17,10 +17,9 @@
       <div class="content-section p-4 p-md-5">
         <div class="option-copy mb-4">
           <span class="copy-kicker">Trip Option</span>
-          <h2 class="section-title mb-2">여행 유형을 정해주세요</h2>
+          <h2 class="section-title mb-2">여행 스타일을 골라볼까요?</h2>
           <p class="section-description mb-0">
-            선택한 여행지, 일정, 그리고 현재 재정 상황에 맞춰 예산 유형을 선택해
-            주세요.
+            예산에 맞는 여행 스타일을 추천해 드릴게요.
           </p>
         </div>
 
@@ -59,9 +58,14 @@
               일비 {{ option.dailyText }} · 숙박 {{ option.hotelText }} · 항공
               {{ option.flightText }}
             </span>
-            <span class="option-budget-state">
-              {{ option.budgetState }}
-            </span>
+            <div class="option-budget-result">
+              <span class="option-budget-result-label">
+                {{ option.dailyResultLabel }}
+              </span>
+              <strong class="option-budget-result-value">
+                {{ option.dailyResultText }}
+              </strong>
+            </div>
           </button>
         </div>
 
@@ -162,6 +166,22 @@ const arrival = computed(() => parseIsoDate(travelStore.returnDate));
 const availableBudget = computed(() =>
   Number(travelStore.availableBudget || 0),
 );
+const totalMonthlyFixed = computed(
+  () =>
+    (Number(travelStore.monthlyRent) || 0) +
+    (Number(travelStore.monthlyInsurance) || 0) +
+    (Number(travelStore.monthlyPhone) || 0) +
+    (Number(travelStore.monthlyTransport) || 0) +
+    (Number(travelStore.monthlySubscription) || 0) +
+    (Number(travelStore.monthlyOtherFixed) || 0),
+);
+const monthlyAvailable = computed(() =>
+  Math.max((Number(travelStore.monthlyIncome) || 0) - totalMonthlyFixed.value, 0),
+);
+const monthlySavingsForTravel = computed(() => monthlyAvailable.value);
+const dailySavingsForTravel = computed(() =>
+  Math.floor(monthlySavingsForTravel.value / 30),
+);
 
 const tripDays = computed(() => {
   if (!departure.value || !arrival.value) {
@@ -239,7 +259,22 @@ const budgetOptions = computed(() => {
     // 일비/숙박/항공을 합산해 총 예산을 계산한다.
     const total =
       (daily * tripDays.value + hotel * stayNights.value + flight) * 10000;
-    const isOverBudget = total > availableBudget.value;
+    const projectedFunds =
+      (Number(travelStore.assetAmount) || 0) +
+      dailySavingsForTravel.value * Math.max(daysUntilDeparture.value, 0);
+    const budgetGap = projectedFunds - total;
+    const dailyBudget =
+      daysUntilDeparture.value > 0
+        ? Math.floor(Math.abs(budgetGap) / daysUntilDeparture.value)
+        : 0;
+    const dailyResult = resolveDailyResult({
+      canSelectBudget: canSelectBudget.value,
+      daysUntilDeparture: daysUntilDeparture.value,
+      hasInvalidMonthlyBudget:
+        totalMonthlyFixed.value > (Number(travelStore.monthlyIncome) || 0),
+      budgetGap,
+      dailyBudget,
+    });
 
     return {
       ...option,
@@ -248,11 +283,8 @@ const budgetOptions = computed(() => {
       dailyText: formatWon(daily * 10000),
       hotelText: formatWon(hotel * 10000),
       flightText: formatWon(flight * 10000),
-      budgetState: canSelectBudget.value
-        ? isOverBudget
-          ? '가용 예산보다 높아요'
-          : '가용 예산 안에서 가능해요'
-        : '여행 정보 입력 후 확인 가능',
+      dailyResultLabel: dailyResult.label,
+      dailyResultText: dailyResult.text,
     };
   });
 });
@@ -326,6 +358,47 @@ function formatWon(amount) {
   }).format(amount);
 }
 
+function resolveDailyResult({
+  canSelectBudget,
+  daysUntilDeparture,
+  hasInvalidMonthlyBudget,
+  budgetGap,
+  dailyBudget,
+}) {
+  if (!canSelectBudget) {
+    return {
+      label: '예산 계산 결과',
+      text: '여행 일정 입력 후 확인 가능',
+    };
+  }
+
+  if (daysUntilDeparture === 0) {
+    return {
+      label: '예산 계산 결과',
+      text: '출발일 기준 재확인이 필요해요',
+    };
+  }
+
+  if (hasInvalidMonthlyBudget) {
+    return {
+      label: '예산 계산 결과',
+      text: '고정지출이 월 수입보다 많아요',
+    };
+  }
+
+  if (budgetGap >= 0) {
+    return {
+      label: '하루 사용 가능 금액',
+      text: formatWon(dailyBudget),
+    };
+  }
+
+  return {
+    label: '하루 절약 필요 금액',
+    text: formatWon(dailyBudget),
+  };
+}
+
 onMounted(async () => {
   try {
     // 저장된 여행 정보가 있으면 화면 초기 상태에 반영한다.
@@ -340,7 +413,7 @@ onMounted(async () => {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 24px 20px;
+  padding: 16px 20px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -461,12 +534,12 @@ onMounted(async () => {
 
 .selection-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .summary-chip-card {
-  padding: 16px 18px;
+  padding: 14px 16px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.4rem;
   background: #f8fbff;
@@ -490,12 +563,12 @@ onMounted(async () => {
 .option-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .option-card {
-  min-height: 188px;
-  padding: 20px 18px;
+  min-height: 172px;
+  padding: 16px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.5rem;
   background: #fff;
@@ -522,7 +595,7 @@ onMounted(async () => {
 
 .option-badge {
   display: inline-flex;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   background: rgba(7, 102, 255, 0.1);
@@ -533,36 +606,47 @@ onMounted(async () => {
 
 .option-total {
   display: block;
-  margin-bottom: 8px;
-  font-size: 1.25rem;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
   font-weight: 800;
   line-height: 1.35;
 }
 
 .option-meta {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: var(--color-text-muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
 }
 
 .option-breakdown {
   display: block;
   color: var(--color-text-muted);
-  font-size: 0.84rem;
-  line-height: 1.55;
+  font-size: 0.8rem;
+  line-height: 1.45;
 }
 
-.option-budget-state {
-  display: inline-flex;
+.option-budget-result {
   margin-top: 12px;
-  padding: 0.28rem 0.72rem;
-  border-radius: 999px;
-  background: rgba(7, 102, 255, 0.08);
-  color: var(--color-primary-deep);
+  padding-top: 10px;
+  border-top: 1px solid rgba(7, 102, 255, 0.12);
+}
+
+.option-budget-result-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
   font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.option-budget-result-value {
+  display: block;
+  color: var(--color-primary-deep);
+  font-size: 1rem;
   font-weight: 800;
+  line-height: 1.4;
 }
 
 .missing-note {
@@ -778,6 +862,20 @@ onMounted(async () => {
   .selection-summary-grid,
   .option-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .onboarding-page-bg {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .content-section {
+    padding: 1.1rem !important;
   }
 }
 
