@@ -11,7 +11,7 @@
       </div>
 
       <div class="p-4">
-        <div class="bg-white rounded-4 shadow-sm py-2 px-4">
+        <div class="bg-white rounded-4 shadow-sm p-4">
           <CalendarMain />
         </div>
       </div>

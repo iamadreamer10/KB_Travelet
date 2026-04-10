@@ -25,9 +25,9 @@
       </div>
 
       <div class="mb-4">
-        <div class="mb-3">
+        <div v-if="!isLoginMode" class="mb-3 animate-fade-in">
           <label class="form-label small fw-bold text-ka-deep ms-1"
-            >닉네임 (회원가입 시)</label
+            >닉네임</label
           >
           <input
             v-model="formData.name"
@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
           <label class="form-label small fw-bold text-ka-deep ms-1"
             >비밀번호</label
           >
@@ -63,28 +63,47 @@
             class="form-control form-control-lg py-3 rounded-3"
             placeholder="비밀번호를 입력하세요"
           />
-          <div v-if="emailError" class="text-danger small mt-2 ms-1">
-            올바른 이메일 형식을 입력해주세요.
-          </div>
         </div>
       </div>
 
       <div class="d-grid gap-3">
-        <button
-          @click="handleLogin"
-          class="btn btn-outline-primary btn-lg py-3 rounded-4 fw-bold"
-          :disabled="isProcessing || !canLogin"
-        >
-          로그인
-        </button>
+        <template v-if="isLoginMode">
+          <button
+            @click="handleLogin"
+            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
+            :disabled="isProcessing || !canLogin"
+          >
+            로그인
+          </button>
+          <div class="text-center mt-2">
+            <span class="text-muted small">아직 계정이 없으신가요? </span>
+            <button
+              @click="toggleMode"
+              class="btn btn-link btn-sm p-0 fw-bold text-decoration-none"
+            >
+              회원가입
+            </button>
+          </div>
+        </template>
 
-        <button
-          @click="handleRegister"
-          class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
-          :disabled="isProcessing || !canRegister"
-        >
-          회원가입
-        </button>
+        <template v-else>
+          <button
+            @click="handleRegister"
+            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
+            :disabled="isProcessing || !canRegister"
+          >
+            가입하기
+          </button>
+          <div class="text-center mt-2">
+            <span class="text-muted small">이미 회원이신가요? </span>
+            <button
+              @click="toggleMode"
+              class="btn btn-link btn-sm p-0 fw-bold text-decoration-none"
+            >
+              로그인
+            </button>
+          </div>
+        </template>
       </div>
     </main>
   </div>
@@ -101,22 +120,31 @@ const isProcessing = ref(false);
 const statusMessage = ref('');
 const statusType = ref('success');
 
+// 화면 전환 상태 관리 (true: 로그인, false: 회원가입)
+const isLoginMode = ref(true);
+
 const formData = reactive({
   name: '',
   email: '',
   password: '',
 });
 
-// 유효성 검사
+// 화면 전환 시 데이터 초기화 기능 (선택 사항)
+const toggleMode = () => {
+  isLoginMode.value = !isLoginMode.value;
+  statusMessage.value = ''; // 모드 변경 시 에러 메시지 삭제
+};
+
+// 유효성 검사 (기존 유지)
 const validateEmail = (email) =>
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
     String(email).toLowerCase(),
   );
+
 const emailError = computed(
   () => formData.email && !validateEmail(formData.email),
 );
 
-// 버튼 활성화 조건 분리
 const canLogin = computed(
   () => validateEmail(formData.email) && formData.password.length > 0,
 );
@@ -135,7 +163,6 @@ const showMsg = (msg, type = 'success') => {
 const handleLogin = async () => {
   isProcessing.value = true;
   try {
-    // 로그인 시 닉네임은 보내지 않음 (이메일/비밀번호만 사용)
     const res = await authStore.login({
       email: formData.email,
       password: formData.password,
@@ -172,12 +199,27 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
+/* 애니메이션 효과 추가 */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .logo-img {
   width: 80px;
   height: auto;
   display: block;
   margin: 0 auto;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
 }
 
 .rounded-4 {
@@ -188,13 +230,12 @@ const handleRegister = async () => {
   color: #020817;
 }
 
-/* 부트스트랩 에러 테두리 스타일 커스텀 */
 .form-control.is-invalid {
   border-color: #dc3545;
 }
 
-.text-danger {
-  font-size: 0.8rem;
-  font-weight: 500;
+.btn-link {
+  font-size: 0.875rem;
+  color: #0d6efd;
 }
 </style>

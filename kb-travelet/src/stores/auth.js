@@ -1,35 +1,40 @@
-// src/stores/auth.js
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null);
+  // 새로고침 시에도 사용자 정보를 로컬스토리지에서 가져옴
+  const user = ref(
+    localStorage.getItem('userId')
+      ? {
+          id: localStorage.getItem('userId'),
+          name: localStorage.getItem('userName'),
+        }
+      : null,
+  );
+
   const token = ref(localStorage.getItem('token') || null);
   const isAuthenticated = computed(() => !!token.value);
-  const API_URL = 'http://localhost:3000/members';
+  const API_URL = '/api/members'; // 프록시 사용
 
-  // 🚩 핵심: 로그인/회원가입 성공 시 사용자 정보를 저장하는 공통 함수
   const setSession = (userData) => {
     user.value = userData;
     token.value = `travelet-token-${userData.id}`;
 
-    // 브라우저를 껐다 켜도 유지되도록 로컬 스토리지에 저장
     localStorage.setItem('token', token.value);
-    localStorage.setItem('userName', userData.name); // 👈 여기서 닉네임 저장!
+    localStorage.setItem('userName', userData.name);
     localStorage.setItem('userId', userData.id);
+    localStorage.setItem('userPassword', userData.password);
   };
 
-  // 1. 로그인
   async function login(loginData) {
     try {
-      // 이메일과 비밀번호가 모두 일치하는 유저 조회
       const { data } = await axios.get(
         `${API_URL}?email=${loginData.email}&password=${loginData.password}`,
       );
 
       if (data.length > 0) {
-        setSession(data[0]); // 저장 로직 실행
+        setSession(data[0]);
         return { success: true, user: data[0] };
       }
       return {
@@ -38,42 +43,36 @@ export const useAuthStore = defineStore('auth', () => {
       };
     } catch (error) {
       console.error('로그인 오류:', error);
-      throw error;
+      return { success: false, message: '서버 통신 실패' };
     }
   }
 
-  // 2. 회원가입
   async function register(userData) {
     try {
-      // 이메일 중복 체크
       const check = await axios.get(`${API_URL}?email=${userData.email}`);
       if (check.data.length > 0) {
         return { success: false, message: '이미 가입된 이메일입니다.' };
       }
 
-      // 신규 유저 등록
       const { data } = await axios.post(API_URL, {
-        name: userData.name, // 닉네임
-        email: userData.email, // 아이디
-        password: userData.password, // 비밀번호
-        createdAt: new Date().toLocaleString('ko-KR', {
-          timeZone: 'Asia/Seoul',
-        }),
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        createdAt: new Date().toISOString(), // 표준 시간 포맷 권장
       });
 
-      setSession(data); // 저장 로직 실행
+      setSession(data);
       return { success: true, user: data };
     } catch (error) {
       console.error('회원가입 오류:', error);
-      throw error;
+      return { success: false, message: '회원가입 실패' };
     }
   }
 
-  // 3. 로그아웃
   function logout() {
     user.value = null;
     token.value = null;
-    localStorage.clear(); // 로컬 스토리지의 닉네임 등 모든 정보 삭제
+    localStorage.clear();
   }
 
   return { user, token, isAuthenticated, login, register, logout };

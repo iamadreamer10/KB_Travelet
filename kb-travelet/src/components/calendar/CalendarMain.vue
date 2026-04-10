@@ -6,24 +6,17 @@
     >
       <div class="d-flex justify-content-start">
         <div class="btn-group shadow-sm">
-          <button
-            @click="prevMonth"
-            class="btn btn-sm btn-outline-primary px-2 border-2 me-1"
-          >
+          <button class="btn btn-sm btn-outline-primary px-2 border-2 me-1">
             <i class="fas fa-chevron-left fa-xs"></i>
           </button>
-          <button
-            @click="nextMonth"
-            class="btn btn-sm btn-outline-primary px-2 border-2"
-          >
+          <button class="btn btn-sm btn-outline-primary px-2 border-2">
             <i class="fas fa-chevron-right fa-xs"></i>
           </button>
         </div>
       </div>
 
       <div class="text-center px-4">
-        <h6 class="text-secondary mb-0">{{ currentYear }}년</h6>
-        <h4 class="fw-bold mb-0">{{ currentMonth }}월</h4>
+        <h5 class="fw-bold mb-0">2026년 4월</h5>
       </div>
       <div class="d-flex gap-2 justify-content-end">
         <div
@@ -101,43 +94,27 @@ const currentMonth = ref(today.getMonth() + 1);
 const calendarDates = computed(() => {
   const year = currentYear.value;
   const month = currentMonth.value;
+
+  // 1. 해당 월의 1일이 무슨 요일인지 (0: 일요일, ..., 6: 토요일)
   const firstDay = new Date(year, month - 1, 1).getDay();
+
+  // 2. 해당 월의 마지막 날짜 (0을 넣으면 지난달의 마지막 날을 가져옴)
   const lastDate = new Date(year, month, 0).getDate();
 
   const result = [];
 
-  // 1일 앞은 그냥 '비어있는 객체'를 넣어서 자리만 차지하게 함
+  // 3. 1일 앞의 빈 칸 채우기 (지난달 날짜들)
   for (let i = 0; i < firstDay; i++) {
-    result.push({ year, month, date: null });
+    result.push({ date: null, currentMonth: false });
   }
 
-  // 실제 날짜만 채움
+  // 4. 실제 날짜 채우기
   for (let d = 1; d <= lastDate; d++) {
-    result.push({ year, month, date: d });
+    result.push({ date: d, currentMonth: true });
   }
 
   return result;
 });
-
-// 이전 달로 이동
-const prevMonth = () => {
-  if (currentMonth.value === 1) {
-    currentYear.value--;
-    currentMonth.value = 12;
-  } else {
-    currentMonth.value--;
-  }
-};
-
-// 다음 달로 이동
-const nextMonth = () => {
-  if (currentMonth.value === 12) {
-    currentYear.value++;
-    currentMonth.value = 1;
-  } else {
-    currentMonth.value++;
-  }
-};
 </script>
 
 <style scoped>

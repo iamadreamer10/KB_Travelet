@@ -25,45 +25,16 @@ const router = useRouter();
 const route = useRoute();
 const travelStore = useTravelStore();
 const transitionName = ref('step-forward');
-const isReady = ref(false);
-
-const steps = [
-  { key: 'region', routeName: 'step-region', component: StepRegion },
-  { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
-  { key: 'income', routeName: 'step-income', component: StepIncome },
-  { key: 'option', routeName: 'step-option', component: StepOption },
-];
-
-const currentStep = computed(() => {
-  const index = steps.findIndex((step) => step.routeName === route.name);
-  return index >= 0 ? index : 0;
-});
-
-const currentStepComponent = computed(() => steps[currentStep.value].component);
-const currentStepKey = computed(() => steps[currentStep.value].key);
-
-watch(
-  () => route.name,
-  (newName, oldName) => {
-    if (!oldName) {
-      return;
-    }
-
-    const newIndex = steps.findIndex((step) => step.routeName === newName);
-    const oldIndex = steps.findIndex((step) => step.routeName === oldName);
-
-    if (newIndex !== -1 && oldIndex !== -1) {
-      transitionName.value = newIndex > oldIndex ? 'step-forward' : 'step-backward';
-    }
-  },
-);
+const steps = [StepRegion, StepSchedule, StepOption, StepIncome];
 
 const nextStep = () => {
   if (currentStep.value < steps.length - 1) {
     router.push({ name: steps[currentStep.value + 1].routeName });
   } else {
+    // 🚩 핵심: 온보딩 완료 기록 저장
+    localStorage.setItem('onboarded', 'true');
     alert('모든 설정 완료! 메인으로 이동합니다.');
-    router.push('/main');
+    router.push({ name: 'step-region' });
   }
 };
 
@@ -91,33 +62,28 @@ onMounted(async () => {
   min-height: 100dvh;
   overflow: hidden;
 }
-
 .step-forward-enter-active,
 .step-forward-leave-active,
 .step-backward-enter-active,
 .step-backward-leave-active {
   width: 100%;
-  transition: transform 0.8s cubic-bezier(0.22, 0.8, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 .step-forward-enter-active,
 .step-backward-enter-active {
   position: relative;
   z-index: 2;
 }
-
 .step-forward-leave-active,
 .step-backward-leave-active {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
-
 .step-forward-enter-from,
 .step-backward-leave-to {
   transform: translateX(100%);
 }
-
 .step-forward-leave-to,
 .step-backward-enter-from {
   transform: translateX(-100%);
