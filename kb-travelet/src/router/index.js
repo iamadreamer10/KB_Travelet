@@ -13,10 +13,34 @@ const routes = [
     name: 'onboarding',
     component: () => import('@/pages/OnboardingView.vue'),
     meta: { requiresAuth: true },
+    redirect: { name: 'step-region' },
+    children: [
+      {
+        path: 'region',
+        name: 'step-region',
+        component: () => import('@/components/onboarding/StepRegion.vue'),
+      },
+      // 🚩 에러 해결: 누락된 온보딩 단계들을 모두 등록합니다.
+      {
+        path: 'schedule',
+        name: 'step-schedule', // OnboardingView.vue에서 찾는 이름과 일치해야 함
+        component: () => import('@/components/onboarding/StepSchedule.vue'),
+      },
+      {
+        path: 'income',
+        name: 'step-income',
+        component: () => import('@/components/onboarding/StepIncome.vue'),
+      },
+      {
+        path: 'option',
+        name: 'step-option',
+        component: () => import('@/components/onboarding/StepOption.vue'),
+      },
+    ],
   },
   {
     path: '/main',
-    name: 'step-region', // 메인 대시보드
+    name: 'main-dashboard',
     component: () => import('@/pages/MainDashboard.vue'),
     meta: { requiresAuth: true },
   },
@@ -27,25 +51,31 @@ const router = createRouter({
   routes,
 });
 
+/**
+ * 네비게이션 가드
+ */
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token');
   const isOnboarded = localStorage.getItem('onboarded') === 'true';
 
-  // 1. 로그인 안 된 유저가 보호된 페이지 접근 시 -> 로그인창으로
+  // 1. 인증 체크: 로그인 안 된 유저가 보호된 페이지 접근 시
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'landing' });
+    return next({ name: 'landing' });
   }
-  // 2. 로그인 된 유저가 로그인창('/') 접근 시
-  else if (to.name === 'landing' && isAuthenticated) {
-    // 온보딩 여부에 따라 온보딩 혹은 메인으로 토스
-    isOnboarded ? next({ name: 'step-region' }) : next({ name: 'onboarding' });
+
+  // 2. 로그인 된 유저가 로그인창('/') 접근 시 -> 상태에 따라 리다이렉트
+  if (to.name === 'landing' && isAuthenticated) {
+    return isOnboarded
+      ? next({ name: 'main-dashboard' })
+      : next({ name: 'step-region' });
   }
-  // 3. 온보딩 안 한 유저가 메인('/main') 접근 시 -> 온보딩으로 강제 이동
-  else if (to.name === 'step-region' && isAuthenticated && !isOnboarded) {
-    next({ name: 'onboarding' });
-  } else {
-    next();
+
+  // 3. 온보딩 체크: 로그인 했으나 온보딩 안 한 유저가 메인('/main') 접근 시
+  if (to.name === 'main-dashboard' && isAuthenticated && !isOnboarded) {
+    return next({ name: 'step-region' });
   }
+
+  next();
 });
 
 export default router;

@@ -25,7 +25,7 @@
       </div>
 
       <div class="mb-4">
-        <div class="mb-3">
+        <div v-if="!isLoginMode" class="mb-3 animate-fade-in">
           <label class="form-label small fw-bold text-ka-deep ms-1">이름</label>
           <input
             v-model="formData.name"
@@ -60,6 +60,7 @@
             type="password"
             class="form-control form-control-lg py-3 rounded-3"
             placeholder="비밀번호를 입력해 주세요"
+            @keyup.enter="isLoginMode ? handleLogin() : handleRegister()"
           />
         </div>
       </div>
@@ -71,7 +72,7 @@
             class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
             :disabled="isProcessing || !canLogin"
           >
-            로그인
+            {{ isProcessing ? '로그인 중...' : '로그인' }}
           </button>
           <div class="text-center mt-2">
             <span class="text-muted small">아직 계정이 없으신가요? </span>
@@ -90,7 +91,7 @@
             class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
             :disabled="isProcessing || !canRegister"
           >
-            가입하기
+            {{ isProcessing ? '가입 중...' : '가입하기' }}
           </button>
           <div class="text-center mt-2">
             <span class="text-muted small">이미 회원이신가요? </span>
@@ -121,7 +122,7 @@ const isProcessing = ref(false);
 const statusMessage = ref('');
 const statusType = ref('success');
 
-// 화면 전환 상태 관리 (true: 로그인, false: 회원가입)
+// 🚩 로그인 모드를 기본으로 설정
 const isLoginMode = ref(true);
 
 const formData = reactive({
@@ -129,6 +130,17 @@ const formData = reactive({
   email: '',
   password: '',
 });
+
+/**
+ * 🚩 모드 전환 및 데이터 초기화
+ */
+function toggleMode() {
+  isLoginMode.value = !isLoginMode.value;
+  formData.name = '';
+  formData.email = '';
+  formData.password = '';
+  statusMessage.value = '';
+}
 
 const validateEmail = (email) =>
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
@@ -154,6 +166,7 @@ function showMsg(msg, type = 'success') {
 }
 
 async function handleLogin() {
+  if (!canLogin.value || isProcessing.value) return;
   isProcessing.value = true;
 
   try {
@@ -169,14 +182,17 @@ async function handleLogin() {
 
     showMsg(`${res.user.name}님, 어서오세요`, 'success');
 
-    // 로그인한 사용자의 저장된 여행 프로필이 있으면 바로 대시보드로 이동한다.
+    // 🚩 토큰 저장 (라우터 가드용)
+    localStorage.setItem('token', res.token || 'temp-token');
+
     const profile = await travelStore.loadProfile();
     if (profile?.checkedIn) {
+      localStorage.setItem('onboarded', 'true');
       setTimeout(() => router.push('/main'), 500);
-      return;
+    } else {
+      localStorage.setItem('onboarded', 'false');
+      setTimeout(() => router.push({ name: 'step-region' }), 500);
     }
-
-    setTimeout(() => router.push({ name: 'step-region' }), 800);
   } catch (error) {
     showMsg('서버 연결 오류가 발생했습니다.', 'danger');
   } finally {
@@ -185,6 +201,7 @@ async function handleLogin() {
 }
 
 async function handleRegister() {
+  if (!canRegister.value || isProcessing.value) return;
   isProcessing.value = true;
 
   try {
@@ -194,8 +211,11 @@ async function handleRegister() {
       return;
     }
 
-    showMsg('가입이 완료되었습니다.', 'success');
-    setTimeout(() => router.push({ name: 'step-region' }), 800);
+    showMsg('가입이 완료되었습니다. 로그인을 진행해주세요.', 'success');
+    // 가입 성공 시 자동으로 로그인 모드로 전환
+    setTimeout(() => {
+      toggleMode();
+    }, 1500);
   } catch (error) {
     showMsg('가입 처리 중 오류가 발생했습니다.', 'danger');
   } finally {
@@ -205,7 +225,6 @@ async function handleRegister() {
 </script>
 
 <style scoped>
-/* 애니메이션 효과 추가 */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -243,5 +262,6 @@ async function handleRegister() {
 .btn-link {
   font-size: 0.875rem;
   color: #0d6efd;
+  cursor: pointer;
 }
 </style>

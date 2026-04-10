@@ -58,7 +58,11 @@ export const useAuthStore = defineStore('auth', () => {
         name: userData.name,
         email: userData.email,
         password: userData.password,
-        createdAt: new Date().toISOString(), // 표준 시간 포맷 권장
+        createdAt: new Date().toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
       });
 
       setSession(data);
