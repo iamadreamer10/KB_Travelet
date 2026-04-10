@@ -17,7 +17,7 @@
       <div class="content-section p-4 p-md-5">
         <div class="option-copy mb-4">
           <span class="copy-kicker">Trip Option</span>
-          <h2 class="section-title mb-2">여행 예산을 정해주세요</h2>
+          <h2 class="section-title mb-2">여행 유형을 정해주세요</h2>
           <p class="section-description mb-0">
             선택한 여행지, 일정, 그리고 현재 재정 상황에 맞춰 예산 유형을 선택해
             주세요.

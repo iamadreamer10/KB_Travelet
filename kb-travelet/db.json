@@ -20,6 +20,20 @@
       "password": "123",
       "createdAt": "2026. 4. 10. 오전 9:43:29",
       "id": "Arfb-aB"
+    },
+    {
+      "name": "qwe",
+      "email": "qweqwe@naver.com",
+      "password": "qwe",
+      "createdAt": "2026. 4. 10. 오전 10:14:43",
+      "id": "1FFyc9c"
+    },
+    {
+      "name": "choi",
+      "email": "choi@naver.com",
+      "password": "choi",
+      "createdAt": "2026. 4. 10. 오전 10:18:27",
+      "id": "FcJoUEH"
     }
   ],
   "continents": {
@@ -636,6 +650,19 @@
       "checkedIn": false,
       "isCompleted": false,
       "id": "tmn7iPv"
+    },
+    {
+      "memberId": "FcJoUEH",
+      "destination": "TW",
+      "startDate": "2026-09-04",
+      "endDate": "2026-09-11",
+      "currentAsset": 190000000,
+      "monthlyIncome": 3000000,
+      "budgetOption": "",
+      "checkedIn": false,
+      "isCompleted": false,
+      "id": "x3wXCym",
+      "destinationCode": ""
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

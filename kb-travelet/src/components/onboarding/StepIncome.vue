@@ -22,20 +22,19 @@
 
       <div class="content-section p-4 p-md-5">
         <div class="income-copy mb-4">
-          <span class="copy-kicker">SEEDMONEY</span>
+          <span class="copy-kicker">money for trip</span>
           <h2 class="section-title mb-2">
-            현재 자산과 월 수입을 입력해 주세요
+            시드 머니와 한달 수입을 입력해 주세요
           </h2>
           <p class="section-description mb-0">
-            다음 단계에서 여행 옵션을 추천하고 계산하는 기준이
-            됩니다.
+            다음 단계에서 여행 옵션을 추천하고 계산하는 기준이 됩니다.
           </p>
         </div>
 
         <div class="row g-3 income-field-grid">
           <div class="col-12 col-md-6">
             <label class="field-card" for="asset-input">
-              <span class="field-label">현재 자산 금액</span>
+              <span class="field-label">시드 머니</span>
               <div class="input-shell">
                 <input
                   id="asset-input"
@@ -44,7 +43,7 @@
                   class="form-control form-control-lg input-field"
                   type="text"
                   inputmode="numeric"
-                  placeholder="5000000"
+                  placeholder="예) 5,000,000"
                 />
                 <div class="stepper-controls" aria-hidden="true">
                   <button
@@ -78,7 +77,7 @@
                   class="form-control form-control-lg input-field"
                   type="text"
                   inputmode="numeric"
-                  placeholder="3000000"
+                  placeholder="예) 1,000,000"
                 />
                 <div class="stepper-controls" aria-hidden="true">
                   <button
@@ -101,18 +100,6 @@
               <span class="field-preview">{{ monthlyIncomePreview }}</span>
             </label>
           </div>
-        </div>
-
-        <div class="income-summary-card mt-4">
-          <span class="summary-caption">Current Snapshot</span>
-          <strong class="summary-value">
-            가지고 있는 금액 {{ assetAmountPreview }} · 월 수입
-            {{ monthlyIncomePreview }}
-          </strong>
-          <p class="summary-description mb-0">
-            입력한 값은 저장 후 다음 단계에서 여행 옵션과 예상 금액 비교에
-            사용됩니다.
-          </p>
         </div>
 
         <div class="action-row mt-4">
@@ -161,7 +148,7 @@ const checkInComplete = async () => {
 };
 
 function formatToKoreanAmount(value) {
-  // 숫자를 "n억원 m만원" 형식으로 읽기 쉽게 바꾼다.
+  // 숫자를 "n억 m만 x원" 형식으로 읽기 쉽게 바꾼다.
   const amount = Number(value) || 0;
 
   if (amount <= 0) {
@@ -170,18 +157,27 @@ function formatToKoreanAmount(value) {
 
   const eok = Math.floor(amount / 100000000);
   const man = Math.floor((amount % 100000000) / 10000);
+  const won = amount % 10000;
   const parts = [];
 
   if (eok > 0) {
-    parts.push(`${eok}억원`);
+    parts.push(`${eok.toLocaleString('ko-KR')}억`);
   }
 
   if (man > 0) {
-    parts.push(`${man.toLocaleString('ko-KR')}만원`);
+    parts.push(`${man.toLocaleString('ko-KR')}만`);
+  }
+
+  if (won > 0) {
+    parts.push(`${won.toLocaleString('ko-KR')}원`);
   }
 
   if (parts.length === 0) {
     return `${amount.toLocaleString('ko-KR')}원`;
+  }
+
+  if (won === 0) {
+    return `${parts.join(' ')} 원`;
   }
 
   return parts.join(' ');

@@ -30,6 +30,7 @@ export const useTravelStore = defineStore('travel', () => {
     return {
       memberId,
       destination: '',
+      destinationCode: '',
       startDate: '',
       endDate: '',
       currentAsset: 0,
@@ -74,7 +75,8 @@ export const useTravelStore = defineStore('travel', () => {
       ...createDefaultProfile(memberId),
       ...(profile ?? {}),
     };
-    const { continent, country } = findCountryByCode(nextProfile.destination);
+    const resolvedCode = nextProfile.destinationCode || nextProfile.destination;
+    const { continent, country } = findCountryByCode(resolvedCode);
 
     selectedContinent.value = continent;
     selectedCountry.value = country;
@@ -175,7 +177,8 @@ export const useTravelStore = defineStore('travel', () => {
 
     // 목적지는 선택 즉시 서버에도 저장한다.
     return saveProfile({
-      destination: country?.code || '',
+      destination: country?.name || '',
+      destinationCode: country?.code || '',
       checkedIn: false,
       isCompleted: false,
     });
