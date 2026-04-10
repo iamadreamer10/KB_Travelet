@@ -18,8 +18,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import StepRegion from '@/components/onboarding/StepRegion.vue';
+import StepSchedule from '@/components/onboarding/StepSchedule.vue';
+import StepOption from '@/components/onboarding/StepOption.vue';
+import StepIncome from '@/components/onboarding/StepIncome.vue';
+import StepFixedExpense from '@/components/onboarding/StepFixedExpense.vue';
 import { useTravelStore } from '@/stores/travel';
 
 const router = useRouter();
@@ -32,10 +37,12 @@ const transitionName = ref('step-forward');
 
 // 순서 정의
 const steps = [
-  { key: 'region', routeName: 'step-region' },
-  { key: 'schedule', routeName: 'step-schedule' },
-  { key: 'income', routeName: 'step-income' },
-  { key: 'option', routeName: 'step-option' },
+  // URL 순서와 실제 온보딩 순서를 1:1로 맞춘다.
+  { key: 'region', routeName: 'step-region', component: StepRegion },
+  { key: 'schedule', routeName: 'step-schedule', component: StepSchedule },
+  { key: 'income', routeName: 'step-income', component: StepIncome },
+  { key: 'fixed-expense', routeName: 'step-fixed-expense', component: StepFixedExpense },
+  { key: 'option', routeName: 'step-option', component: StepOption },
 ];
 
 // 현재 몇 번째 단계인지 계산 (0, 1, 2, 3)

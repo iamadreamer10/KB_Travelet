@@ -23,9 +23,9 @@
       <div class="content-section p-4 p-md-5">
         <div class="expense-copy mb-4">
           <span class="copy-kicker">fixed monthly expense</span>
-          <h2 class="section-title mb-2">월 고정지출을 입력해 주세요</h2>
+          <h2 class="section-title mb-2">고정으로 나가는 비용이 있나요?</h2>
           <p class="section-description mb-0">
-            여행 예산 추천 전에 매달 빠져나가는 비용을 먼저 반영할게요.
+            여행 계획에 반영해서 계산해드릴게요.
           </p>
         </div>
 
