@@ -75,16 +75,23 @@
           v-if="dayObj.date"
           :calendar-date="dayObj"
           :key="dayObj.date"
+          @selectDate="handleClickDate"
         />
         <div v-else class="h-100 p-2 opacity-25"></div>
       </div>
     </div>
   </div>
+  <TransactionModal
+    v-if="selectedDate"
+    :date="selectedDate"
+    @close="selectedDate = null"
+  />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import CalendarDayBar from './CalendarDayBar.vue';
+import TransactionModal from '../modal/TransactionModal.vue';
 
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const today = new Date();
@@ -115,6 +122,35 @@ const calendarDates = computed(() => {
 
   return result;
 });
+
+// 이전 달로 이동
+const prevMonth = () => {
+  if (currentMonth.value === 1) {
+    currentYear.value--;
+    currentMonth.value = 12;
+  } else {
+    currentMonth.value--;
+  }
+};
+
+// 다음 달로 이동
+const nextMonth = () => {
+  if (currentMonth.value === 12) {
+    currentYear.value++;
+    currentMonth.value = 1;
+  } else {
+    currentMonth.value++;
+  }
+};
+
+/* ---------------------------------------------------------
+캘린더와 모달 연결
+*/
+const selectedDate = ref(null);
+
+const handleClickDate = (date) => {
+  selectedDate.value = date;
+};
 </script>
 
 <style scoped>
