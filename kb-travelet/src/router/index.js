@@ -11,7 +11,8 @@ const routes = [
     meta: { title: '시작하기', requiresAuth: false },
   },
   {
-    path: '/onboarding',
+    path: '/check-in',
+    name: 'onboarding',
     component: () => import('@/pages/OnboardingView.vue'),
     meta: { requiresAuth: true }, // 로그인 필요
     children: [

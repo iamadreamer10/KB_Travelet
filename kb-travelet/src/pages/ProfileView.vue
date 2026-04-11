@@ -151,7 +151,7 @@ const getTravelGoal = async () => {
 
 const createNewGoal = () => {
   if (confirm('새 여행 목표를 등록하러 가볼까요?')) {
-    router.push('/onboarding');
+    router.push('/check-in');
   }
 };
 

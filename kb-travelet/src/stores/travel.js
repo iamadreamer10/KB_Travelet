@@ -138,6 +138,12 @@ export const useTravelStore = defineStore('travel', () => {
       if (error.response && error.response.status === 404) return null;
       throw error;
     }
+
+    const profiles = await api.get('/profiles', {
+      params: { memberId, isCompleted: false },
+    });
+
+    return Array.isArray(profiles) ? (profiles[0] ?? null) : null;
   }
 
   async function loadProfile() {
