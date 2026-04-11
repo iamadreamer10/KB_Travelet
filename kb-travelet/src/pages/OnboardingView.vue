@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="onboarding-transition-shell">
     <router-view v-slot="{ Component }">
-      <Transition :name="transitionName" mode="out-in">
+      <Transition :name="transitionName">
         <component
           v-if="isReady"
           :is="Component"
@@ -84,7 +84,6 @@ const nextStep = () => {
   } else {
     // 🚩 마지막 스텝 완료 시 처리
     localStorage.setItem('onboarded', 'true');
-    alert('모든 설정 완료! 메인으로 이동합니다.');
     router.push({ name: 'main-dashboard' }); // 메인 대시보드 이름 확인
   }
 };
@@ -125,14 +124,16 @@ onMounted(async () => {
   width: 100%;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: #fff;
+  background: linear-gradient(180deg, #0766ff 0%, #0a5be0 100%);
 }
 
 .loading-screen {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100dvh;
+  color: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(180deg, #0766ff 0%, #0a5be0 100%);
 }
 
 /* 트랜지션 스타일 */

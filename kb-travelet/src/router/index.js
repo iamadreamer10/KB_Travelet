@@ -9,7 +9,7 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: '/onboarding',
+    path: '/check-in',
     name: 'onboarding',
     component: () => import('@/pages/OnboardingView.vue'),
     meta: { requiresAuth: true },

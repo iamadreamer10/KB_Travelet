@@ -23,7 +23,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-const isOnboardingRoute = computed(() => route.path.startsWith('/onboarding'));
+const isOnboardingRoute = computed(() => route.path.startsWith('/check-in'));
 const appContainerClasses = computed(() => [
   'app-container',
   'min-h-screen',
@@ -41,7 +41,7 @@ const mainContainerClasses = computed(() => [
   isOnboardingRoute.value ? 'onboarding-main' : 'overflow-y-auto',
 ]);
 
-const isLoading = computed(() => true);
+const isLoading = computed(() => false);
 </script>
 
 <style>
