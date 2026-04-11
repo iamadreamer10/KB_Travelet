@@ -1,5 +1,13 @@
 {
-  "members": [],
+  "members": [
+    {
+      "name": "최윤호",
+      "email": "c@c.com",
+      "password": "c",
+      "createdAt": "2026년 4월 12일",
+      "id": "_WEzbRT8Jig"
+    }
+  ],
   "continents": {
     "Asia": [
       {

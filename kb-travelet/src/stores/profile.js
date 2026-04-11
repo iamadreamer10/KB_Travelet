@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import api from '@/api';
 
 export const useProfileStore = defineStore('profile', () => {
   // 1. 상태(State)
@@ -17,10 +17,10 @@ export const useProfileStore = defineStore('profile', () => {
   // 목표 불러오기 (진행 중인 것만)
   const fetchTravelGoal = async () => {
     try {
-      const response = await axios.get(
-        `/api/profiles?memberId=${userId}&isCompleted=false`,
-      );
-      myTravelGoal.value = response.data.length > 0 ? response.data[0] : null;
+      const response = await api.get('/profiles', {
+        params: { memberId: userId, isCompleted: false },
+      });
+      myTravelGoal.value = response.length > 0 ? response[0] : null;
       console.log('목표 로드 성공:', myTravelGoal.value);
     } catch (error) {
       console.error('여행 목표 로드 실패:', error);
@@ -30,11 +30,9 @@ export const useProfileStore = defineStore('profile', () => {
   // 목표 수정
   const updateTravelGoal = async (newData) => {
     try {
-      const response = await axios.put(`/api/profiles/${newData.id}`, newData);
-      if (response.status === 200) {
-        myTravelGoal.value = { ...response.data };
-        return true;
-      }
+      const response = await api.put(`/profiles/${newData.id}`, newData);
+      myTravelGoal.value = { ...response };
+      return true;
     } catch (error) {
       console.error('목표 수정 실패:', error);
       return false;
@@ -44,13 +42,11 @@ export const useProfileStore = defineStore('profile', () => {
   // 목표 완료/종료 처리
   const finishTravelGoal = async (id) => {
     try {
-      const response = await axios.patch(`/api/profiles/${id}`, {
+      await api.patch(`/profiles/${id}`, {
         isCompleted: true,
       });
-      if (response.status === 200) {
-        myTravelGoal.value = null; // 스토어를 비우면 사이드바도 즉시 바뀜
-        return true;
-      }
+      myTravelGoal.value = null; // 스토어를 비우면 사이드바도 즉시 바뀜
+      return true;
     } catch (error) {
       console.error('목표 완료 실패:', error);
       return false;

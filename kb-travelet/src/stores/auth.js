@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   // 새로고침 시에도 사용자 정보를 로컬스토리지에서 가져옴
@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const token = ref(localStorage.getItem('token') || null);
   const isAuthenticated = computed(() => !!token.value);
-  const API_URL = '/api/members'; // 프록시 사용
+  const API_URL = '/members';
 
   const setSession = (userData) => {
     user.value = userData;
@@ -29,9 +29,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function login(loginData) {
     try {
-      const { data } = await axios.get(
-        `${API_URL}?email=${loginData.email}&password=${loginData.password}`,
-      );
+      const data = await api.get(API_URL, {
+        params: {
+          email: loginData.email,
+          password: loginData.password,
+        },
+      });
 
       if (data.length > 0) {
         setSession(data[0]);
@@ -49,12 +52,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(userData) {
     try {
-      const check = await axios.get(`${API_URL}?email=${userData.email}`);
-      if (check.data.length > 0) {
+      const check = await api.get(API_URL, {
+        params: { email: userData.email },
+      });
+      if (check.length > 0) {
         return { success: false, message: '이미 가입된 이메일입니다.' };
       }
 
-      const { data } = await axios.post(API_URL, {
+      const data = await api.post(API_URL, {
         name: userData.name,
         email: userData.email,
         password: userData.password,

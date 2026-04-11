@@ -2,13 +2,16 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
+const apiBaseUrl = (
+  import.meta.env.VITE_API_BASE_URL?.trim() || '/api'
+).replace(/\/+$/, '');
+
 /**
  * Axios 인스턴스 생성
- * vite.config.js의 proxy 설정('/api')을 이용하기 위해
- * baseURL을 상대 경로인 '/api'로 설정합니다.
+ * 개발 환경에서는 '/api' 프록시를, 배포 환경에서는 환경변수 기반 API 주소를 사용합니다.
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBaseUrl,
   timeout: 8000, // 통신 타임아웃 (8초)
   headers: {
     'Content-Type': 'application/json',
@@ -83,7 +86,7 @@ api.interceptors.response.use(
     } else if (error.request) {
       // 요청은 보냈으나 응답을 받지 못한 경우 (네트워크 에러 등)
       console.error(
-        '[Network Error] 서버와 연결할 수 없습니다. 프록시 설정을 확인하세요.',
+        '[Network Error] 서버와 연결할 수 없습니다. API 주소 설정을 확인하세요.',
       );
     } else {
       console.error('[API Error]', error.message);
@@ -94,3 +97,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { apiBaseUrl };

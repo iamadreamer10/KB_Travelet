@@ -1,7 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios';
-import { useAuthStore } from './auth';
+import api from '@/api';
 
 /*
 거래(Account) Store
@@ -37,9 +36,8 @@ export const useAccountStore = defineStore('account', () => {
         userId: userId,
       };
 
-      const res = await axios.post('http://localhost:3000/transactions', newTx);
-
-      transactions.value.push(res.data);
+      const savedTx = await api.post('/transactions', newTx);
+      transactions.value.push(savedTx);
     } catch (err) {
       console.error('거래 추가 실패: ', err);
     }
@@ -48,7 +46,7 @@ export const useAccountStore = defineStore('account', () => {
   const deleteTransaction = async (id) => {
     console.log('삭제 id:', id);
     try {
-      await axios.delete(`http://localhost:3000/transactions/${id}`);
+      await api.delete(`/transactions/${id}`);
       transactions.value = transactions.value.filter((t) => t.id !== id);
     } catch (err) {
       console.error('삭제 실패: ', err);
@@ -58,14 +56,14 @@ export const useAccountStore = defineStore('account', () => {
   const updateTransaction = async (updated) => {
     const userId = localStorage.getItem('userId');
     try {
-      const res = await axios.put(
-        `http://localhost:3000/transactions/${updated.id}`,
+      const savedTx = await api.put(
+        `/transactions/${updated.id}`,
         { ...updated, userId: userId },
       );
 
       const idx = transactions.value.findIndex((t) => t.id === updated.id);
       if (idx !== -1) {
-        transactions.value[idx] = res.data;
+        transactions.value[idx] = savedTx;
       }
     } catch (err) {
       console.error('수정 실패: ', err);
@@ -83,11 +81,11 @@ export const useAccountStore = defineStore('account', () => {
     if (!userId) return;
 
     try {
-      const res = await axios.get(
-        `http://localhost:3000/transactions?userId=${userId}`,
-      );
+      const data = await api.get('/transactions', {
+        params: { userId },
+      });
 
-      transactions.value = res.data;
+      transactions.value = data;
     } catch (err) {
       console.error('거래 불러오기 실패: ', err);
     }
