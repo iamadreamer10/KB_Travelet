@@ -1,6 +1,12 @@
 {
   "members": [
-    
+    {
+      "name": "최윤호",
+      "email": "qwe@qwe.com",
+      "password": "qwe",
+      "createdAt": "2026년 4월 11일",
+      "id": "0zaQjyak5hA"
+    }
   ],
   "continents": {
     "Asia": [
@@ -535,6 +541,7 @@
           ]
         }
       }
+    ],
     "Oceania": [
       {
         "name": "호주",
@@ -578,33 +585,44 @@
           ]
         }
       }
-    ],
-    "Oceania": [
-      {
-        "name": "호주",
-        "code": "AU",
-        "levels": {
-          "eco": [9, 10, 82],
-          "std": [22, 28, 150],
-          "lux": [55, 70, 470]
-        }
-      },
-      {
-        "name": "뉴질랜드",
-        "code": "NZ",
-        "levels": {
-          "eco": [10, 12, 105],
-          "std": [24, 30, 185],
-          "lux": [60, 80, 520]
-        }
-      }
     ]
   },
-  "transactions": [
-   
-  ],
+  "transactions": [],
   "profiles": [
-    
+    {
+      "memberId": "0zaQjyak5hA",
+      "destination": "스위스",
+      "destinationCode": "CH",
+      "startDate": "2026-07-24",
+      "endDate": "2026-07-31",
+      "currentAsset": 1000000,
+      "monthlyIncome": 4500000,
+      "budgetOption": "standard",
+      "dailyTravelExpense": 300000,
+      "dailyAvailableBudget": 89500,
+      "hotelExpense": 450000,
+      "flightExpense": 1800000,
+      "checkedIn": true,
+      "isCompleted": true,
+      "id": "h6NJNHd4xo4"
+    },
+    {
+      "memberId": "0zaQjyak5hA",
+      "destination": "스페인",
+      "destinationCode": "ES",
+      "startDate": "2026-10-03",
+      "endDate": "2026-10-10",
+      "currentAsset": 10000000,
+      "monthlyIncome": 4500000,
+      "budgetOption": "luxury",
+      "dailyTravelExpense": 500000,
+      "dailyAvailableBudget": 128600,
+      "hotelExpense": 650000,
+      "flightExpense": 5200000,
+      "checkedIn": true,
+      "isCompleted": false,
+      "id": "Qg2s6Srqssc"
+    }
   ],
   "$schema": "./node_modules/json-server/schema.json"
 }

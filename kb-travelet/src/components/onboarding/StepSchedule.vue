@@ -166,11 +166,13 @@ const tripLengthLabel = computed(() => {
     return '';
   }
 
-  // 출발일과 도착일 차이를 기준으로 n박 n일 문구를 만든다.
-  const diffDays = Math.round(
-    (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
+  const diffNights = Math.max(
+    Math.round(
+      (returnDate.value - departureDate.value) / (1000 * 60 * 60 * 24),
+    ),
+    0,
   );
-  const diffNights = Math.max(diffDays - 1, 0);
+  const diffDays = diffNights + 1;
 
   return `${diffNights}박 ${diffDays}일`;
 });

@@ -145,7 +145,7 @@
           <div class="budget-daily-banner">
             <span class="budget-daily-caption">여행 전까지</span>
             <strong class="budget-daily-value">
-              하루 약 {{ dailyBudget }}을 쓸 수 있어요.
+              {{ modalDailyMessage }}
             </strong>
           </div>
 
@@ -168,16 +168,38 @@
         </div>
       </div>
     </Transition>
+
+    <Transition name="budget-modal">
+      <div v-if="showSavedModal" class="budget-modal-backdrop is-success">
+        <div
+          class="budget-modal-card success-modal-card"
+          role="status"
+          aria-live="polite"
+        >
+          <div class="budget-modal-header mb-0">
+            <span class="budget-modal-kicker">Saved</span>
+            <h3 class="budget-modal-title mb-2">
+              여행 정보가 저장되었어요.
+            </h3>
+            <p class="success-modal-description mb-0">
+              가계부를 적어볼까요?
+            </p>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useTravelStore } from '@/stores/travel';
 
 const emit = defineEmits(['prev', 'next']);
 const travelStore = useTravelStore();
 const pendingOption = ref(null);
+const showSavedModal = ref(false);
+let savedModalTimer = null;
 
 const dayMs = 1000 * 60 * 60 * 24;
 const today = startOfDay(new Date());
@@ -212,9 +234,11 @@ const tripDays = computed(() => {
     return 0;
   }
 
-  // 여행 일수는 도착일 - 출발일 기준으로 계산한다.
-  const diff = Math.round((arrival.value - departure.value) / dayMs);
-  return Math.max(diff, 1);
+  const diffNights = Math.max(
+    Math.round((arrival.value - departure.value) / dayMs),
+    0,
+  );
+  return diffNights + 1;
 });
 
 const stayNights = computed(() => {
@@ -222,9 +246,7 @@ const stayNights = computed(() => {
     return 0;
   }
 
-  // 숙박 박수는 "전체 일수 - 1"로 계산한다.
-  const diff = Math.round((arrival.value - departure.value) / dayMs);
-  return Math.max(diff - 1, 0);
+  return Math.max(Math.round((arrival.value - departure.value) / dayMs), 0);
 });
 
 const selectedDestinationText = computed(() => {
@@ -269,6 +291,21 @@ const dailyBudget = computed(() => {
   }
 
   return formatDisplayWon(pendingOption.value.rawDailyBudget);
+});
+const modalDailyMessage = computed(() => {
+  if (!pendingOption.value) {
+    return '';
+  }
+
+  if (pendingOption.value.dailyResultLabel === '하루 절약 필요 금액') {
+    return `하루 약 ${dailyBudget.value}을 아껴야 해요.`;
+  }
+
+  if (pendingOption.value.dailyResultLabel === '하루 약 사용 가능 금액') {
+    return `하루 약 ${dailyBudget.value}을 쓸 수 있어요.`;
+  }
+
+  return pendingOption.value.dailyResultText;
 });
 
 const budgetOptions = computed(() => {
@@ -330,6 +367,13 @@ function closeOptionModal() {
   pendingOption.value = null;
 }
 
+function clearSavedModalTimer() {
+  if (savedModalTimer) {
+    clearTimeout(savedModalTimer);
+    savedModalTimer = null;
+  }
+}
+
 async function confirmOptionSelection() {
   if (!pendingOption.value) {
     return;
@@ -351,7 +395,13 @@ async function confirmOptionSelection() {
       isCompleted: false,
     });
     closeOptionModal();
-    emit('next');
+    showSavedModal.value = true;
+    clearSavedModalTimer();
+    savedModalTimer = setTimeout(() => {
+      showSavedModal.value = false;
+      savedModalTimer = null;
+      emit('next');
+    }, 2000);
   } catch (error) {
     console.error('프로필 완료 처리 실패:', error);
     alert('프로필을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
@@ -450,6 +500,10 @@ onMounted(async () => {
   } catch (error) {
     console.error('옵션 페이지 프로필 불러오기 실패:', error);
   }
+});
+
+onBeforeUnmount(() => {
+  clearSavedModalTimer();
 });
 </script>
 
@@ -794,6 +848,10 @@ onMounted(async () => {
   contain: paint;
 }
 
+.budget-modal-backdrop.is-success {
+  background: rgba(5, 23, 102, 0.28);
+}
+
 .budget-modal-enter-active,
 .budget-modal-leave-active {
   transition: opacity 0.22s linear;
@@ -835,6 +893,17 @@ onMounted(async () => {
   box-shadow:
     0 24px 60px rgba(5, 23, 102, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.success-modal-card {
+  width: min(100%, 430px);
+  text-align: center;
+}
+
+.success-modal-description {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .budget-modal-header {
