@@ -140,7 +140,9 @@ export const useTravelStore = defineStore('travel', () => {
     if (!memberId) throw new Error('사용자 정보를 찾을 수 없습니다.');
 
     try {
-      const profiles = await api.get('/profiles', { params: { memberId } });
+      const profiles = await api.get('/profiles', {
+        params: { memberId, isCompleted: false },
+      });
       return Array.isArray(profiles) && profiles.length > 0
         ? profiles[0]
         : null;
@@ -148,12 +150,6 @@ export const useTravelStore = defineStore('travel', () => {
       if (error.response && error.response.status === 404) return null;
       throw error;
     }
-
-    const profiles = await api.get('/profiles', {
-      params: { memberId, isCompleted: false },
-    });
-
-    return Array.isArray(profiles) ? (profiles[0] ?? null) : null;
   }
 
   async function loadProfile() {
@@ -305,7 +301,7 @@ export const useTravelStore = defineStore('travel', () => {
   }
 
   async function saveFixedExpenses(ex = {}) {
-    const nEx = {
+    const normalizedExpenses = {
       rent: Number(ex.rent) || 0,
       insurance: Number(ex.insurance) || 0,
       phone: Number(ex.phone) || 0,
@@ -351,8 +347,14 @@ export const useTravelStore = defineStore('travel', () => {
   async function saveFinanceInfo(fi = {}) {
     setFinanceInfo(fi);
     return saveProfile({
-      currentAsset: Number(currentAssetVal) || 0,
-      monthlyIncome: Number(monthlyIncomeVal) || 0,
+      currentAsset: Number(fi.currentAssetVal) || 0,
+      monthlyIncome: Number(fi.monthlyIncomeVal) || 0,
+      monthlyRent: Number(fi.rentVal) || 0,
+      monthlyInsurance: Number(fi.insuranceVal) || 0,
+      monthlyPhone: Number(fi.phoneVal) || 0,
+      monthlyTransport: Number(fi.transportVal) || 0,
+      monthlySubscription: Number(fi.subscriptionVal) || 0,
+      monthlyOtherFixed: Number(fi.otherFixedVal) || 0,
     });
   }
 
