@@ -1,68 +1,42 @@
-// index.js
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
+import router from '@/router'; // 라우터 추가
 
-/**
- * Axios 인스턴스 생성
- * vite.config.js의 proxy 설정('/api')을 이용하기 위해
- * baseURL을 상대 경로인 '/api'로 설정합니다.
- */
 const api = axios.create({
   baseURL: '/api',
-  timeout: 8000, // 통신 타임아웃 (8초)
+  timeout: 8000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-/**
- * [요청 인터셉터]
- * 서버로 요청을 보내기 직전에 실행됩니다.
- */
 api.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore();
-
-    // Pinia에 저장된 토큰이 있다면 Authorization 헤더에 Bearer 토큰 추가
     if (authStore.token) {
       config.headers.Authorization = `Bearer ${authStore.token}`;
     }
-
-    // 로딩 시작 등의 처리를 여기서 할 수 있습니다.
     return config;
   },
   (error) => {
-    console.error('[API Request Error]', error);
     return Promise.reject(error);
   },
 );
 
-/**
- * [응답 인터셉터]
- * 서버로부터 응답을 받은 직후, 컴포넌트의 .then()이나 .catch()로 전달되기 전에 실행됩니다.
- */
 api.interceptors.response.use(
   (response) => {
-    /**
-     * 프록시를 통해 들어온 응답 데이터(response.data)만 반환하여
-     * 컴포넌트에서 데이터 접근을 편리하게 만듭니다.
-     */
     return response.data;
   },
   (error) => {
-    // 공통 에러 핸들링 로직
     if (error.response) {
-      const { status } = error.response;
+      const { status, config } = error.response;
       const authStore = useAuthStore();
 
       switch (status) {
         case 401:
-          // 인증되지 않음: 로그인 페이지로 리다이렉트 하거나 토큰 갱신
-          console.warn(
-            '[401] 인증 세션이 만료되었습니다. 로그인이 필요합니다.',
-          );
-          authStore.logout(); // Pinia 내 로그아웃 액션 실행
-          window.location.href = '/'; // 랜딩 페이지로 강제 이동
+          console.warn('[401] 세션 만료. 로그인이 필요합니다.');
+          authStore.logout();
+          router.push({ name: 'landing' }); // router 사용으로 변경
           break;
 
         case 403:
@@ -70,25 +44,24 @@ api.interceptors.response.use(
           break;
 
         case 404:
-          console.error('[404] 요청하신 페이지를 찾을 수 없습니다.');
+          /**
+           * 🚩 팁: 특정 API(예: 프로필 조회)의 404는
+           * 시스템 에러가 아니므로 콘솔 출력을 생략하거나 약하게 처리합니다.
+           */
+          if (!config.url.includes('members')) {
+            console.error('[404] 리소스를 찾을 수 없습니다.');
+          }
           break;
 
         case 500:
-          console.error('[500] 서버 내부 오류가 발생했습니다.');
+          console.error('[500] 서버 오류 발생');
           break;
-
-        default:
-          console.error(`[${status}] 알 수 없는 에러가 발생했습니다.`);
       }
     } else if (error.request) {
-      // 요청은 보냈으나 응답을 받지 못한 경우 (네트워크 에러 등)
-      console.error(
-        '[Network Error] 서버와 연결할 수 없습니다. 프록시 설정을 확인하세요.',
-      );
-    } else {
-      console.error('[API Error]', error.message);
+      console.error('[Network Error] 서버 응답 없음');
     }
 
+    // 에러를 컴포넌트의 .catch()나 try-catch로 넘겨줌
     return Promise.reject(error);
   },
 );

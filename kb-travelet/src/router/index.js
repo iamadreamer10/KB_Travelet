@@ -1,35 +1,42 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingView from '@/pages/LandingView.vue';
+
+// 페이지별 타이틀을 설정하기 위한 유틸리티 (선택 사항)
+const DEFAULT_TITLE = 'Travelet';
 
 const routes = [
   {
     path: '/',
     name: 'landing',
-    component: LandingView,
-    meta: { requiresAuth: false },
+    component: () => import('@/pages/LandingView.vue'),
+    meta: { title: '시작하기', requiresAuth: false },
   },
   {
     path: '/check-in',
     name: 'onboarding',
     component: () => import('@/pages/OnboardingView.vue'),
-    meta: { requiresAuth: true },
-    redirect: { name: 'step-region' },
+    meta: { requiresAuth: true }, // 로그인 필요
     children: [
+      {
+        path: '',
+        redirect: { name: 'step-region' },
+      },
       {
         path: 'region',
         name: 'step-region',
         component: () => import('@/components/onboarding/StepRegion.vue'),
+        meta: { title: '지역 선택', step: 1 },
       },
-      // 🚩 에러 해결: 누락된 온보딩 단계들을 모두 등록합니다.
       {
         path: 'schedule',
-        name: 'step-schedule', // OnboardingView.vue에서 찾는 이름과 일치해야 함
+        name: 'step-schedule',
         component: () => import('@/components/onboarding/StepSchedule.vue'),
+        meta: { title: '일정 설정', step: 2 },
       },
       {
         path: 'income',
         name: 'step-income',
         component: () => import('@/components/onboarding/StepIncome.vue'),
+        meta: { title: '수입 입력', step: 3 },
       },
       {
         path: 'fixed-expense',
@@ -41,7 +48,7 @@ const routes = [
         path: 'option',
         name: 'step-option',
         component: () => import('@/components/onboarding/StepOption.vue'),
-        meta: { step: 5 },
+        meta: { title: '추가 옵션', step: 5 },
       },
     ],
   },
@@ -49,42 +56,54 @@ const routes = [
     path: '/main',
     name: 'main-dashboard',
     component: () => import('@/pages/MainDashboard.vue'),
-    meta: { requiresAuth: true },
+    meta: { title: '대시보드', requiresAuth: true }, // 로그인 필요
   },
   {
     path: '/profile',
     name: 'profile',
     component: () => import('@/pages/ProfileView.vue'),
-    meta: { title: '설정' },
+    meta: { title: '설정', requiresAuth: true }, // 로그인 필요
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return { top: 0 };
+  },
 });
 
 /**
- * 네비게이션 가드
+ * 🚩 네비게이션 가드: 인증 및 온보딩 체크
  */
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token');
+  // 브라우저 탭 타이틀 변경
+  document.title = to.meta.title
+    ? `${to.meta.title} - Travelet`
+    : DEFAULT_TITLE;
+
+  const token = localStorage.getItem('token');
   const isOnboarded = localStorage.getItem('onboarded') === 'true';
 
-  // 1. 인증 체크: 로그인 안 된 유저가 보호된 페이지 접근 시
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  // 1. 로그인이 필요한 페이지인데 토큰이 없는 경우 -> 랜딩으로
+  if (to.meta.requiresAuth && !token) {
     return next({ name: 'landing' });
   }
 
-  // 2. 로그인 된 유저가 로그인창('/') 접근 시 -> 상태에 따라 리다이렉트
-  if (to.name === 'landing' && isAuthenticated) {
+  // 2. 이미 로그인했는데 랜딩('/') 페이지로 가려는 경우 -> 메인이나 온보딩으로 가로채기
+  if (to.name === 'landing' && token) {
     return isOnboarded
       ? next({ name: 'main-dashboard' })
       : next({ name: 'step-region' });
   }
 
-  // 3. 온보딩 체크: 로그인 했으나 온보딩 안 한 유저가 메인('/main') 접근 시
-  if (to.name === 'main-dashboard' && isAuthenticated && !isOnboarded) {
+  // 3. 로그인은 했으나 온보딩을 안 했는데 메인으로 가려는 경우 -> 온보딩으로
+  if (to.name === 'main-dashboard' && token && !isOnboarded) {
     return next({ name: 'step-region' });
   }
 
