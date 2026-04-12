@@ -41,5 +41,5 @@ onMounted(() => {
   }
 });
 
-console.log('user:', auth.user);
+// console.log('user:', auth.user);
 </script>

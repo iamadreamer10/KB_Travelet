@@ -235,23 +235,15 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import api from '@/api';
+import { useProfileStore } from '@/stores/profile';
+import { storeToRefs } from 'pinia';
+const profileStore = useProfileStore();
+const { continentList } = storeToRefs(profileStore);
+const { fetchContinents } = profileStore;
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
 });
-
-const continentList = ref([]); // 데이터를 담을 반응형 변수
-const getContinents = async () => {
-  try {
-    const response = await api.get('/continents');
-    continentList.value = response;
-
-    console.log('성공적으로 가져온 대륙들:', continentList.value);
-  } catch (error) {
-    console.error('데이터 로드 에러:', error);
-  }
-};
 
 // 1. 대륙 이름 한글 매핑 객체
 const continentNameMap = {
@@ -356,8 +348,18 @@ const updateDestinationCode = () => {
 };
 
 onMounted(() => {
-  getContinents();
-  // console.log('여행 옵션 추천을 위한 대륙 데이터:', continentList.value);
+  profileStore.fetchContinents();
+
+  if (!props.modelValue.continent) {
+    const travelGoal = profileStore.myTravelGoal;
+    if (travelGoal && travelGoal.continent) {
+      // 한글 맵핑을 거치지 말고 Store에 있는 영문 키('Americas' 등)를 그대로 넣으세요!
+      props.modelValue.continent = travelGoal.continent;
+      props.modelValue.country = travelGoal.destination || '';
+    }
+
+    console.log('초기 여행 목표 데이터:', props.modelValue);
+  }
 });
 </script>
 
