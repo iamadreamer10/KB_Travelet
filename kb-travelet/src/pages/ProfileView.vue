@@ -61,8 +61,9 @@ import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 
 const profileStore = useProfileStore();
-const { updateTravelGoal, finishTravelGoal, createNewGoal } = useProfileStore();
-const { myTravelGoal, hasGoal } = storeToRefs(profileStore); // 반응성 유지
+const { updateTravelGoal, finishTravelGoal } = profileStore;
+const { myTravelGoal } = storeToRefs(profileStore);
+const router = useRouter();
 
 const handleGoalUpdate = async (newData) => {
   const success = await updateTravelGoal(newData);
@@ -76,23 +77,12 @@ const handleFinishGoal = async (id) => {
 
 onMounted(() => {
   profileStore.fetchTravelGoal();
-  getTravelGoal();
 });
 
-const router = useRouter();
-const userId = localStorage.getItem('userId');
-
-const getTravelGoal = async () => {
-  // 실제로는 여기서 axios 같은 거로 서버에 GET 요청을 보냅니다.
-  // 예시 응답 데이터:
-  try {
-    const response = await axios.get(
-      `/api/profiles?memberId=${userId}&isCompleted=false`,
-    );
-    myTravelGoal.value = response.data[0] || {}; // 데이터가 없으면 빈 객체로 초기화
-    console.log('로드된 여행 목표:', myTravelGoal.value);
-  } catch (error) {
-    console.error('여행 목표 로드 에러:', error);
+const createNewGoal = () => {
+  if (confirm('새 여행 목표를 등록하러 가볼까요?')) {
+    localStorage.setItem('onboarded', 'false');
+    router.push('/check-in');
   }
 };
 </script>

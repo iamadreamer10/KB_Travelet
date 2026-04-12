@@ -3,10 +3,16 @@ import { useAuthStore } from '@/stores/auth';
 import router from '@/router'; // 라우터 추가
 
 /**
+ * [중요] 빌드 에러 해결을 위한 변수 정의 및 export
+ * Vercel 배포 시 vercel.json의 rewrites 설정과 연결되도록 '/api'를 기본값으로 사용합니다.
+ */
+export const apiBaseUrl = '/api';
+
+/**
  * Axios 인스턴스 생성
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBaseUrl, // 위에서 정의한 변수 사용
   timeout: 8000, // 통신 타임아웃 (8초)
   headers: {
     'Content-Type': 'application/json',
