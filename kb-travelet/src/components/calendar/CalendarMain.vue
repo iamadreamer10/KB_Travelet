@@ -294,8 +294,7 @@ const updateWidth = () => {
 
 onMounted(() => {
   window.addEventListener('resize', updateWidth);
-
-  console.log('myTravelGoal:', myTravelGoal.value);
+  // console.log('myTravelGoal:', myTravelGoal.value);
   profileStore.fetchTravelGoal();
 });
 </script>

@@ -6,6 +6,17 @@ export const useProfileStore = defineStore('profile', () => {
   // 1. 상태(State)
   const myTravelGoal = ref(null);
   const userId = localStorage.getItem('userId');
+  const continentList = ref([]); // 데이터를 담을 반응형 변수
+  const fetchContinents = async () => {
+    try {
+      const response = await api.get('/continents');
+      continentList.value = response;
+
+      // console.log('성공적으로 가져온 대륙들:', continentList.value);
+    } catch (error) {
+      console.error('데이터 로드 에러:', error);
+    }
+  };
 
   // 2. 게터(Getters) - 목표 존재 여부 확인용
   const hasGoal = computed(
@@ -41,7 +52,7 @@ export const useProfileStore = defineStore('profile', () => {
         params: { memberId: userId, isCompleted: false },
       });
       myTravelGoal.value = response.length > 0 ? response[0] : null;
-      console.log('목표 로드 성공:', myTravelGoal.value);
+      // console.log('목표 로드 성공:', myTravelGoal.value);
     } catch (error) {
       console.error('여행 목표 로드 실패:', error);
     }
@@ -79,6 +90,8 @@ export const useProfileStore = defineStore('profile', () => {
     fixedExpensesTotal,
     monthlyIncomeTotal,
     hasGoal,
+    continentList,
+    fetchContinents,
     fetchTravelGoal,
     updateTravelGoal,
     finishTravelGoal,

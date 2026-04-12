@@ -15,7 +15,6 @@
 
     <div v-if="isEditing">
       <TravelGoalForm v-model="tempData" />
-
       <div class="d-flex gap-2 mt-4 pt-3 border-top">
         <button
           @click="cancelEdit"
@@ -55,6 +54,12 @@ import TravelGoalDisplay from './TravelGoalDisplay.vue';
 import TravelGoalForm from '../form/TravelGoalForm.vue';
 import GoalBudgetCalculationDisplay from './GoalBudgetCalculationDisplay.vue';
 import { useGoalBudgetCalculation } from '@/composables/useGoalBudgetCalculation';
+import { useProfileStore } from '@/stores/profile';
+import { storeToRefs } from 'pinia';
+
+const profileStore = useProfileStore();
+const { fetchContinents } = profileStore;
+const { continentList } = storeToRefs(profileStore);
 
 const props = defineProps({
   goal: { type: Object, required: true },
@@ -116,8 +121,7 @@ const budgetCalculation = computed(() => {
   });
 });
 
-const startEdit = () => {
-  // 한글을 영문으로 역매핑 (Map을 뒤집음)
+const startEdit = async () => {
   const reverseMap = {
     아시아: 'Asia',
     유럽: 'Europe',
@@ -126,11 +130,26 @@ const startEdit = () => {
     오세아니아: 'Oceania',
   };
 
+  // 1. 데이터가 없으면 가져올 때까지 대기
+  if (!continentList.value || Object.keys(continentList.value).length === 0) {
+    await fetchContinents();
+  }
+
   const initialData = { ...props.goal };
 
-  // 만약 데이터가 한글이면 영문으로 치환해서 Form에 전달
+  // 2. destination -> country 매핑
+  if (initialData.destination && !initialData.country) {
+    initialData.country = initialData.destination;
+  }
+
+  // 3. continent 변환 및 역추적
   if (initialData.continent && reverseMap[initialData.continent]) {
     initialData.continent = reverseMap[initialData.continent];
+  } else if (!initialData.continent && initialData.country) {
+    const foundKey = Object.keys(continentList.value).find((key) =>
+      continentList.value[key].some((c) => c.name === initialData.country),
+    );
+    if (foundKey) initialData.continent = foundKey;
   }
 
   tempData.value = initialData;
@@ -161,7 +180,6 @@ const saveEdit = () => {
   // 4. 변환된 데이터를 부모(ProfileView 등)로 전달
   emit('update-goal', finalData);
   isEditing.value = false;
-  console.log('저장된 여행 목표:', finalData);
 };
 
 const cancelEdit = () => {
@@ -169,7 +187,7 @@ const cancelEdit = () => {
 };
 
 onMounted(() => {
-  console.log('초기 여행 목표 데이터:', props.goal);
+  // console.log('초기 여행 목표 데이터:', props.goal);
 });
 </script>
 
