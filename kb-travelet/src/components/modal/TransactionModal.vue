@@ -51,7 +51,7 @@
               <option value="식비/카페">식비/카페</option>
               <option value="교통">교통</option>
               <option value="쇼핑">쇼핑</option>
-              <option value="고정지출">고정지출</option>
+              <option value="문화생활">문화생활</option>
               <option value="기타">기타</option>
             </select>
           </div>
@@ -241,7 +241,7 @@ const handleDelete = (id) => {
 
 .modal-content {
   width: 520px;
-  max-height: 80vh;   
+  max-height: 80vh;
   overflow-y: auto;
   background: white;
   border-radius: 16px;

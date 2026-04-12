@@ -1,11 +1,11 @@
 {
   "members": [
     {
-      "name": "권실장",
-      "email": "abc@abc.com",
-      "password": "abc",
-      "createdAt": "2026년 4월 10일",
-      "id": "7jCO9J_qYY8"
+      "name": "qwe",
+      "email": "qwe@naver.com",
+      "password": "qwe",
+      "createdAt": "2026년 4월 12일",
+      "id": 1
     }
   ],
   "continents": {
@@ -14,72 +14,168 @@
         "name": "일본",
         "code": "JP",
         "levels": {
-          "eco": [6, 5, 23],
-          "std": [15, 18, 45],
-          "lux": [40, 60, 100]
+          "eco": [
+            6,
+            5,
+            23
+          ],
+          "std": [
+            15,
+            18,
+            45
+          ],
+          "lux": [
+            40,
+            60,
+            100
+          ]
         }
       },
       {
         "name": "중국",
         "code": "CN",
         "levels": {
-          "eco": [4, 4, 20],
-          "std": [10, 12, 40],
-          "lux": [30, 40, 90]
+          "eco": [
+            4,
+            4,
+            20
+          ],
+          "std": [
+            10,
+            12,
+            40
+          ],
+          "lux": [
+            30,
+            40,
+            90
+          ]
         }
       },
       {
         "name": "대만",
         "code": "TW",
         "levels": {
-          "eco": [5, 5, 25],
-          "std": [11, 13, 48],
-          "lux": [25, 35, 105]
+          "eco": [
+            5,
+            5,
+            25
+          ],
+          "std": [
+            11,
+            13,
+            48
+          ],
+          "lux": [
+            25,
+            35,
+            105
+          ]
         }
       },
       {
         "name": "태국",
         "code": "TH",
         "levels": {
-          "eco": [4, 3, 37],
-          "std": [9, 10, 65],
-          "lux": [25, 35, 160]
+          "eco": [
+            4,
+            3,
+            37
+          ],
+          "std": [
+            9,
+            10,
+            65
+          ],
+          "lux": [
+            25,
+            35,
+            160
+          ]
         }
       },
       {
         "name": "필리핀",
         "code": "PH",
         "levels": {
-          "eco": [3, 3, 30],
-          "std": [8, 9, 52],
-          "lux": [20, 30, 125]
+          "eco": [
+            3,
+            3,
+            30
+          ],
+          "std": [
+            8,
+            9,
+            52
+          ],
+          "lux": [
+            20,
+            30,
+            125
+          ]
         }
       },
       {
         "name": "베트남",
         "code": "VN",
         "levels": {
-          "eco": [3, 2, 33],
-          "std": [7, 8, 55],
-          "lux": [20, 30, 135]
+          "eco": [
+            3,
+            2,
+            33
+          ],
+          "std": [
+            7,
+            8,
+            55
+          ],
+          "lux": [
+            20,
+            30,
+            135
+          ]
         }
       },
       {
         "name": "싱가포르",
         "code": "SG",
         "levels": {
-          "eco": [8, 10, 42],
-          "std": [18, 25, 80],
-          "lux": [45, 60, 220]
+          "eco": [
+            8,
+            10,
+            42
+          ],
+          "std": [
+            18,
+            25,
+            80
+          ],
+          "lux": [
+            45,
+            60,
+            220
+          ]
         }
       },
       {
         "name": "홍콩",
         "code": "HK",
         "levels": {
-          "eco": [7, 9, 27],
-          "std": [16, 22, 50],
-          "lux": [40, 55, 115]
+          "eco": [
+            7,
+            9,
+            27
+          ],
+          "std": [
+            16,
+            22,
+            50
+          ],
+          "lux": [
+            40,
+            55,
+            115
+          ]
         }
       }
     ],
@@ -88,81 +184,189 @@
         "name": "프랑스",
         "code": "FR",
         "levels": {
-          "eco": [10, 12, 105],
-          "std": [22, 30, 165],
-          "lux": [60, 80, 580]
+          "eco": [
+            10,
+            12,
+            105
+          ],
+          "std": [
+            22,
+            30,
+            165
+          ],
+          "lux": [
+            60,
+            80,
+            580
+          ]
         }
       },
       {
         "name": "이탈리아",
         "code": "IT",
         "levels": {
-          "eco": [9, 10, 100],
-          "std": [20, 28, 155],
-          "lux": [55, 75, 520]
+          "eco": [
+            9,
+            10,
+            100
+          ],
+          "std": [
+            20,
+            28,
+            155
+          ],
+          "lux": [
+            55,
+            75,
+            520
+          ]
         }
       },
       {
         "name": "스위스",
         "code": "CH",
         "levels": {
-          "eco": [15, 18, 110],
-          "std": [30, 45, 180],
-          "lux": [70, 100, 600]
+          "eco": [
+            15,
+            18,
+            110
+          ],
+          "std": [
+            30,
+            45,
+            180
+          ],
+          "lux": [
+            70,
+            100,
+            600
+          ]
         }
       },
       {
         "name": "영국",
         "code": "GB",
         "levels": {
-          "eco": [12, 15, 105],
-          "std": [25, 35, 165],
-          "lux": [65, 90, 580]
+          "eco": [
+            12,
+            15,
+            105
+          ],
+          "std": [
+            25,
+            35,
+            165
+          ],
+          "lux": [
+            65,
+            90,
+            580
+          ]
         }
       },
       {
         "name": "스페인",
         "code": "ES",
         "levels": {
-          "eco": [8, 8, 100],
-          "std": [18, 25, 155],
-          "lux": [50, 65, 520]
+          "eco": [
+            8,
+            8,
+            100
+          ],
+          "std": [
+            18,
+            25,
+            155
+          ],
+          "lux": [
+            50,
+            65,
+            520
+          ]
         }
       },
       {
         "name": "독일",
         "code": "DE",
         "levels": {
-          "eco": [9, 10, 110],
-          "std": [20, 25, 180],
-          "lux": [50, 70, 600]
+          "eco": [
+            9,
+            10,
+            110
+          ],
+          "std": [
+            20,
+            25,
+            180
+          ],
+          "lux": [
+            50,
+            70,
+            600
+          ]
         }
       },
       {
         "name": "체코",
         "code": "CZ",
         "levels": {
-          "eco": [7, 7, 95],
-          "std": [15, 18, 150],
-          "lux": [40, 50, 490]
+          "eco": [
+            7,
+            7,
+            95
+          ],
+          "std": [
+            15,
+            18,
+            150
+          ],
+          "lux": [
+            40,
+            50,
+            490
+          ]
         }
       },
       {
         "name": "아이슬란드",
         "code": "IS",
         "levels": {
-          "eco": [14, 16, 135],
-          "std": [32, 40, 215],
-          "lux": [75, 95, 670]
+          "eco": [
+            14,
+            16,
+            135
+          ],
+          "std": [
+            32,
+            40,
+            215
+          ],
+          "lux": [
+            75,
+            95,
+            670
+          ]
         }
       },
       {
         "name": "오스트리아",
         "code": "AT",
         "levels": {
-          "eco": [10, 12, 105],
-          "std": [22, 30, 165],
-          "lux": [55, 75, 550]
+          "eco": [
+            10,
+            12,
+            105
+          ],
+          "std": [
+            22,
+            30,
+            165
+          ],
+          "lux": [
+            55,
+            75,
+            550
+          ]
         }
       }
     ],
@@ -171,36 +375,84 @@
         "name": "미국",
         "code": "US",
         "levels": {
-          "eco": [12, 15, 125],
-          "std": [28, 35, 200],
-          "lux": [70, 85, 700]
+          "eco": [
+            12,
+            15,
+            125
+          ],
+          "std": [
+            28,
+            35,
+            200
+          ],
+          "lux": [
+            70,
+            85,
+            700
+          ]
         }
       },
       {
         "name": "캐나다",
         "code": "CA",
         "levels": {
-          "eco": [10, 13, 115],
-          "std": [24, 30, 185],
-          "lux": [60, 75, 620]
+          "eco": [
+            10,
+            13,
+            115
+          ],
+          "std": [
+            24,
+            30,
+            185
+          ],
+          "lux": [
+            60,
+            75,
+            620
+          ]
         }
       },
       {
         "name": "멕시코",
         "code": "MX",
         "levels": {
-          "eco": [5, 4, 145],
-          "std": [12, 15, 235],
-          "lux": [35, 50, 750]
+          "eco": [
+            5,
+            4,
+            145
+          ],
+          "std": [
+            12,
+            15,
+            235
+          ],
+          "lux": [
+            35,
+            50,
+            750
+          ]
         }
       },
       {
         "name": "브라질",
         "code": "BR",
         "levels": {
-          "eco": [6, 5, 195],
-          "std": [14, 18, 315],
-          "lux": [40, 60, 950]
+          "eco": [
+            6,
+            5,
+            195
+          ],
+          "std": [
+            14,
+            18,
+            315
+          ],
+          "lux": [
+            40,
+            60,
+            950
+          ]
         }
       }
     ],
@@ -209,114 +461,179 @@
         "name": "모로코",
         "code": "MA",
         "levels": {
-          "eco": [4, 3, 125],
-          "std": [10, 12, 195],
-          "lux": [30, 45, 600]
+          "eco": [
+            4,
+            3,
+            125
+          ],
+          "std": [
+            10,
+            12,
+            195
+          ],
+          "lux": [
+            30,
+            45,
+            600
+          ]
         }
       },
       {
         "name": "이집트",
         "code": "EG",
         "levels": {
-          "eco": [4, 3, 125],
-          "std": [10, 12, 195],
-          "lux": [30, 45, 600]
+          "eco": [
+            4,
+            3,
+            125
+          ],
+          "std": [
+            10,
+            12,
+            195
+          ],
+          "lux": [
+            30,
+            45,
+            600
+          ]
         }
       },
       {
         "name": "탄자니아",
         "code": "TZ",
         "levels": {
-          "eco": [7, 6, 145],
-          "std": [25, 35, 220],
-          "lux": [80, 120, 670]
+          "eco": [
+            7,
+            6,
+            145
+          ],
+          "std": [
+            25,
+            35,
+            220
+          ],
+          "lux": [
+            80,
+            120,
+            670
+          ]
         }
       },
       {
         "name": "케냐",
         "code": "KE",
         "levels": {
-          "eco": [7, 6, 145],
-          "std": [25, 35, 220],
-          "lux": [80, 120, 670]
-        }
-      }
-    ],
-    "Oceania": [
-      {
-        "name": "호주",
-        "code": "AU",
-        "levels": {
-          "eco": [9, 10, 82],
-          "std": [22, 28, 150],
-          "lux": [55, 70, 470]
-        }
-      },
-      {
-        "name": "뉴질랜드",
-        "code": "NZ",
-        "levels": {
-          "eco": [10, 12, 105],
-          "std": [24, 30, 185],
-          "lux": [60, 80, 520]
+          "eco": [
+            7,
+            6,
+            145
+          ],
+          "std": [
+            25,
+            35,
+            220
+          ],
+          "lux": [
+            80,
+            120,
+            670
+          ]
         }
       }
     ]
   },
   "transactions": [
     {
-      "date": "2026-04-07",
+      "date": "2026-04-08",
       "type": "expense",
       "category": "식비/카페",
-      "amount": 20000,
-      "memo": "비싼밥",
-      "id": "IyTa5Ug531M",
-      "userId": "7jCO9J_qYY8"
+      "amount": 2000,
+      "memo": "아메리카노",
+      "id": 1775969822620,
+      "userId": "1"
     },
     {
       "date": "2026-04-07",
+      "type": "expense",
+      "category": "고정지출",
+      "amount": 30000,
+      "memo": "??",
+      "id": 1775969911799,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-08",
       "type": "income",
       "category": "식비/카페",
+      "amount": 50000,
+      "memo": "행운",
+      "id": 1775973574124,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-07",
+      "type": "expense",
+      "category": "쇼핑",
+      "amount": 80000,
+      "memo": "옷",
+      "id": 1775974077769,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-08",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 83000,
+      "memo": "",
+      "id": 1775974580303,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-08",
+      "type": "expense",
+      "category": "쇼핑",
+      "amount": 50000,
+      "memo": "",
+      "id": 1775974607339,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-09",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 2000,
+      "memo": "",
+      "id": 1775974642195,
+      "userId": "1"
+    },
+    {
+      "date": "2026-04-06",
+      "type": "expense",
+      "category": "문화생활",
       "amount": 30000,
-      "memo": "로또 당첨",
-      "id": "ejn8rZHk_Os",
-      "userId": "7jCO9J_qYY8"
+      "memo": "영화",
+      "id": 1775975226949,
+      "userId": "1"
     }
   ],
   "profiles": [
     {
-      "memberId": "7jCO9J_qYY8",
-      "destination": "멕시코",
-      "destinationCode": "MX",
-      "startDate": "2026-04-22",
-      "endDate": "2026-04-29",
-      "currentAsset": 6000000,
-      "monthlyIncome": 3000000,
+      "memberId": 1,
+      "destination": "대만",
+      "destinationCode": "TW",
+      "startDate": "2026-04-29",
+      "endDate": "2026-05-01",
+      "currentAsset": 500000,
+      "monthlyIncome": 3500000,
       "budgetOption": "standard",
-      "dailyTravelExpense": 120000,
-      "dailyAvailableBudget": 249000,
-      "hotelExpense": 150000,
-      "flightExpense": 2350000,
-      "checkedIn": true,
-      "isCompleted": true,
-      "id": "91bSMZnJLkI"
-    },
-    {
-      "memberId": "7jCO9J_qYY8",
-      "destination": "독일",
-      "destinationCode": "DE",
-      "startDate": "2026-05-26",
-      "endDate": "2026-06-04",
-      "currentAsset": 6000000,
-      "monthlyIncome": 3000000,
-      "budgetOption": "standard",
-      "dailyTravelExpense": 200000,
-      "dailyAvailableBudget": 98800,
-      "hotelExpense": 250000,
-      "flightExpense": 1800000,
+      "dailyTravelExpense": 110000,
+      "dailyAvailableBudget": 84900,
+      "hotelExpense": 130000,
+      "flightExpense": 480000,
       "checkedIn": true,
       "isCompleted": false,
-      "id": "P2i4pddqt08"
+      "id": 1
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

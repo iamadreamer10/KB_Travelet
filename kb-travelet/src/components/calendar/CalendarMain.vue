@@ -158,6 +158,7 @@
           v-if="dayObj.date"
           :calendar-date="dayObj"
           :daily-summary="dailySummary"
+          :daily-budget="myTravelGoal?.dailyAvailableBudget"
           :key="dayObj.date"
           @selectDate="handleClickDate"
         />

@@ -8,6 +8,7 @@
     <span class="text-center fw-bold small" :style="getDateColor()">
       {{ calendarDate.date }}
     </span>
+
     <!-- 날짜별 총수입, 총지출위한 코드 -->
     <div class="mt-auto text-center small">
       <div v-if="summary?.income > 0" style="color: green">
@@ -18,9 +19,11 @@
         -{{ summary.expense.toLocaleString() }}
       </div>
     </div>
-  </div>
 
-  <div v-else class="h-100" style="min-height: 75px; opacity: 0"></div>
+    <div v-if="hasTransaction" class="bar-wrapper">
+      <div class="bar" :class="isOverBudget ? 'over' : 'normal'"></div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -34,6 +37,7 @@ const props = defineProps({
     // 기대 구조: { year: Number, month: Number, date: Number | null }
   },
   dailySummary: Object,
+  dailyBudget: Number,
 });
 
 // 오늘 날짜 확인 (date가 null이면 false 반환)
@@ -97,6 +101,23 @@ const summary = computed(() => {
     }
   );
 });
+
+/* 지출 기준으로 하루에 소비해야 하는 비용 초과인지 아닌지 계산 */
+
+// 잔액 계산
+const balance = computed(() => {
+  return summary.value.income - summary.value.expense;
+});
+
+// 초과 여부 계산
+const isOverBudget = computed(() => {
+  return balance.value < -props.dailyBudget;
+});
+
+// 수입/지출 아예 없는날은 바 표시 안하기 위해 트랜잭션 있는지 확인
+const hasTransaction = computed(() => {
+  return summary.value.income > 0 || summary.value.expense > 0;
+});
 </script>
 
 <style scoped>
@@ -104,6 +125,7 @@ const summary = computed(() => {
   min-height: 75px;
   transition: all 0.2s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .date-card:hover {
@@ -121,5 +143,25 @@ const summary = computed(() => {
 
 .border-primary.border-2 {
   box-shadow: 0 4px 12px rgba(5, 23, 102, 0.15) !important;
+}
+
+.bar-wrapper {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  right: 8px;
+}
+
+.bar {
+  height: 4px;
+  border-radius: 4px;
+}
+
+.bar.normal {
+  background: #0766ff; /* 파랑 */
+}
+
+.bar.over {
+  background: #dc2626; /* 빨강 */
 }
 </style>
