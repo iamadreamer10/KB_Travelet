@@ -1,22 +1,24 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
 export const useAuthStore = defineStore('auth', () => {
-  // 새로고침 시에도 사용자 정보를 로컬스토리지에서 가져옴
+  // 🚩 새로고침 시 email 정보도 포함하여 복구
   const user = ref(
     localStorage.getItem('userId')
       ? {
           id: localStorage.getItem('userId'),
           name: localStorage.getItem('userName'),
+          email: localStorage.getItem('userEmail'), // 추가
         }
       : null,
   );
 
   const token = ref(localStorage.getItem('token') || null);
   const isAuthenticated = computed(() => !!token.value);
-  const API_URL = '/api/members'; // 프록시 사용
+  const API_URL = '/api/members';
+  const router = useRouter();
 
   const setSession = (userData) => {
     user.value = userData;
@@ -28,20 +30,36 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('userEmail', userData.email);
   };
 
+  /**
+   * 🚩 피드백 반영: 상세한 에러 메시지 처리를 위해 로직 분리
+   */
   async function login(loginData) {
     try {
-      const { data } = await axios.get(
-        `${API_URL}?email=${loginData.email}&password=${loginData.password}`,
+      // 1. 먼저 해당 이메일을 가진 사용자가 있는지 확인
+      const { data: members } = await axios.get(
+        `${API_URL}?email=${loginData.email}`,
       );
 
-      if (data.length > 0) {
-        setSession(data[0]);
-        return { success: true, user: data[0] };
+      if (members.length === 0) {
+        return {
+          success: false,
+          message: '존재하지 않는 이메일입니다.', // 상세 메시지
+        };
       }
-      return {
-        success: false,
-        message: '이메일 또는 비밀번호가 잘못되었습니다.',
-      };
+
+      const foundUser = members[0];
+
+      // 2. 이메일은 있지만 비밀번호가 틀린 경우
+      if (foundUser.password !== loginData.password) {
+        return {
+          success: false,
+          message: '비밀번호가 일치하지 않습니다.', // 상세 메시지
+        };
+      }
+
+      // 3. 로그인 성공
+      setSession(foundUser);
+      return { success: true, user: foundUser };
     } catch (error) {
       console.error('로그인 오류:', error);
       return { success: false, message: '서버 통신 실패' };
@@ -50,20 +68,18 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(userData) {
     try {
-      const check = await axios.get(`${API_URL}?email=${userData.email}`);
-      if (check.data.length > 0) {
+      const check = await api.get(API_URL, {
+        params: { email: userData.email },
+      });
+      if (check.length > 0) {
         return { success: false, message: '이미 가입된 이메일입니다.' };
       }
 
-      const { data } = await axios.post(API_URL, {
+      const data = await api.post(API_URL, {
         name: userData.name,
         email: userData.email,
         password: userData.password,
-        createdAt: new Date().toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        }),
+        createdAt: new Date().toLocaleString('ko-KR'),
       });
 
       setSession(data);
@@ -78,7 +94,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
     token.value = null;
     localStorage.clear();
-    router.push({ name: 'landing' }); // 추가요.
+    router.push({ name: 'landing' });
   }
 
   return { user, token, isAuthenticated, login, register, logout };

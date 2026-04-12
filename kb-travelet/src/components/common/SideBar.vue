@@ -59,7 +59,11 @@
 
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <RouterLink to="/main" class="nav-link text-white rounded-3 py-3 mb-2">
+        <RouterLink
+          to="/main"
+          class="nav-link text-white rounded-3 py-3 mb-2"
+          active-class="router-link-active fw-bold"
+        >
           <i class="fas fa-home me-2"></i> 홈
         </RouterLink>
       </li>
@@ -67,6 +71,7 @@
         <RouterLink
           to="/profile"
           class="nav-link text-white rounded-3 py-3 mb-2"
+          active-class="router-link-active fw-bold"
         >
           <i class="fas fa-cog me-2"></i> 설정
         </RouterLink>
@@ -88,7 +93,9 @@
       >
         <i class="fa-solid fa-circle-info me-1"></i>
         {{ myTravelGoal?.destination }} 여행을 위해 <br />하루에
-        <span class="text-primary">{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span>씩 사용할 수 있어요
+        <span class="text-primary"
+          >{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span
+        >씩 사용할 수 있어요
       </p>
     </div>
     <div
@@ -115,7 +122,7 @@
 
     <div class="mt-auto border-top border-white-50 pt-3">
       <button
-        @click="logout"
+        @click="handleLogout"
         class="btn btn-link text-white-50 p-0 text-decoration-none small"
       >
         <i class="fas fa-sign-out-alt me-1"></i> 로그아웃
@@ -125,18 +132,31 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profile.js';
 import { storeToRefs } from 'pinia';
 
+const router = useRouter();
+const authStore = useAuthStore();
 const profileStore = useProfileStore();
 const { createNewGoal } = profileStore;
 const { myTravelGoal } = storeToRefs(profileStore);
 
-const { logout } = useAuthStore();
-const userName = localStorage.getItem('userName') || '사용자';
-const userEmail = localStorage.getItem('userEmail') || 'abc@naver.com';
-const userId = localStorage.getItem('userId') || '';
+const userName = localStorage.getItem('userName') || '여행자';
+const userEmail = localStorage.getItem('userEmail') || '이메일 정보 없음';
+
+const handleLogout = () => {
+  if (confirm('로그아웃 하시겠습니까?')) {
+    // 1. auth 스토어의 logout 실행 (localStorage 비우기 및 상태 초기화)
+    authStore.logout();
+
+    // 2. 로그인(랜딩) 페이지로 이동 및 페이지 새로고침(완전한 초기화)
+    router.push('/').then(() => {
+      window.location.reload();
+    });
+  }
+};
 </script>
 
 <style scoped>
@@ -146,5 +166,12 @@ const userId = localStorage.getItem('userId') || '';
 .nav-link:hover {
   color: white !important;
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.router-link-active {
+  background-color: white !important; /* 버튼 배경을 흰색으로 확 밝게! */
+  color: var(--color-primary) !important; /* 글자색은 메인 파란색으로 반전 */
+  font-weight: 800 !important; /* 글씨도 아주 진하게 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 약간의 그림자로 튀어나온 느낌 */
 }
 </style>

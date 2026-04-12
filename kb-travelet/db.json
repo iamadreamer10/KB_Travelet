@@ -1,13 +1,5 @@
 {
-  "members": [
-    {
-      "name": "qwe",
-      "email": "qwe@naver.com",
-      "password": "qwe",
-      "createdAt": "2026년 4월 12일",
-      "id": 1
-    }
-  ],
+  "members": [],
   "continents": {
     "Asia": [
       {
@@ -541,100 +533,53 @@
           ]
         }
       }
+    ],
+    "Oceania": [
+      {
+        "name": "호주",
+        "code": "AU",
+        "levels": {
+          "eco": [
+            9,
+            10,
+            82
+          ],
+          "std": [
+            22,
+            28,
+            150
+          ],
+          "lux": [
+            55,
+            70,
+            470
+          ]
+        }
+      },
+      {
+        "name": "뉴질랜드",
+        "code": "NZ",
+        "levels": {
+          "eco": [
+            10,
+            12,
+            105
+          ],
+          "std": [
+            24,
+            30,
+            185
+          ],
+          "lux": [
+            60,
+            80,
+            520
+          ]
+        }
+      }
     ]
   },
-  "transactions": [
-    {
-      "date": "2026-04-08",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 2000,
-      "memo": "아메리카노",
-      "id": 1775969822620,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-07",
-      "type": "expense",
-      "category": "고정지출",
-      "amount": 30000,
-      "memo": "??",
-      "id": 1775969911799,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-08",
-      "type": "income",
-      "category": "식비/카페",
-      "amount": 50000,
-      "memo": "행운",
-      "id": 1775973574124,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-07",
-      "type": "expense",
-      "category": "쇼핑",
-      "amount": 80000,
-      "memo": "옷",
-      "id": 1775974077769,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-08",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 83000,
-      "memo": "",
-      "id": 1775974580303,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-08",
-      "type": "expense",
-      "category": "쇼핑",
-      "amount": 50000,
-      "memo": "",
-      "id": 1775974607339,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-09",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 2000,
-      "memo": "",
-      "id": 1775974642195,
-      "userId": "1"
-    },
-    {
-      "date": "2026-04-06",
-      "type": "expense",
-      "category": "문화생활",
-      "amount": 30000,
-      "memo": "영화",
-      "id": 1775975226949,
-      "userId": "1"
-    }
-  ],
-  "profiles": [
-    {
-      "memberId": 1,
-      "destination": "대만",
-      "destinationCode": "TW",
-      "startDate": "2026-04-29",
-      "endDate": "2026-05-01",
-      "currentAsset": 500000,
-      "monthlyIncome": 3500000,
-      "budgetOption": "standard",
-      "dailyTravelExpense": 110000,
-      "dailyAvailableBudget": 84900,
-      "hotelExpense": 130000,
-      "flightExpense": 480000,
-      "checkedIn": true,
-      "isCompleted": false,
-      "id": 1
-    }
-  ],
+  "transactions": [],
+  "profiles": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

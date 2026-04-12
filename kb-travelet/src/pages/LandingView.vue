@@ -16,13 +16,24 @@
         <p class="text-muted small">여행 계획을 시작해보세요.</p>
       </header>
 
-      <div
-        v-if="statusMessage"
-        class="alert mb-4 animate-fade-in text-center"
-        :class="statusType === 'success' ? 'alert-success' : 'alert-danger'"
-      >
-        {{ statusMessage }}
-      </div>
+      <transition name="slide-fade">
+        <div
+          v-if="statusMessage"
+          class="alert mb-4 text-center py-2 shadow-sm"
+          :class="statusType === 'success' ? 'alert-success' : 'alert-danger'"
+          role="alert"
+        >
+          <i
+            class="bi"
+            :class="
+              statusType === 'success'
+                ? 'bi-check-circle-fill'
+                : 'bi-exclamation-triangle-fill'
+            "
+          ></i>
+          {{ statusMessage }}
+        </div>
+      </transition>
 
       <div class="mb-4">
         <div v-if="!isLoginMode" class="mb-3 animate-fade-in">
@@ -69,10 +80,15 @@
         <template v-if="isLoginMode">
           <button
             @click="handleLogin"
-            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
+            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm d-flex align-items-center justify-content-center"
             :disabled="isProcessing || !canLogin"
           >
-            {{ isProcessing ? '로그인 중...' : '로그인' }}
+            <span
+              v-if="isProcessing"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+            ></span>
+            <span>{{ isProcessing ? '로그인 중' : '로그인' }}</span>
           </button>
           <div class="text-center mt-2">
             <span class="text-muted small">아직 계정이 없으신가요? </span>
@@ -88,10 +104,15 @@
         <template v-else>
           <button
             @click="handleRegister"
-            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm"
+            class="btn btn-primary btn-lg py-3 rounded-4 fw-bold shadow-sm d-flex align-items-center justify-content-center"
             :disabled="isProcessing || !canRegister"
           >
-            {{ isProcessing ? '가입 중...' : '가입하기' }}
+            <span
+              v-if="isProcessing"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+            ></span>
+            <span>{{ isProcessing ? '가입 중' : '가입하기' }}</span>
           </button>
           <div class="text-center mt-2">
             <span class="text-muted small">이미 회원이신가요? </span>
@@ -121,8 +142,6 @@ const travelStore = useTravelStore();
 const isProcessing = ref(false);
 const statusMessage = ref('');
 const statusType = ref('success');
-
-// 🚩 로그인 모드를 기본으로 설정
 const isLoginMode = ref(true);
 
 const formData = reactive({
@@ -131,21 +150,14 @@ const formData = reactive({
   password: '',
 });
 
-/**
- * 🚩 모드 전환 및 데이터 초기화
- */
 function toggleMode() {
   isLoginMode.value = !isLoginMode.value;
-  formData.name = '';
-  formData.email = '';
-  formData.password = '';
+  Object.assign(formData, { name: '', email: '', password: '' });
   statusMessage.value = '';
 }
 
 const validateEmail = (email) =>
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-    String(email).toLowerCase(),
-  );
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
 
 const emailError = computed(
   () => formData.email && !validateEmail(formData.email),
@@ -160,6 +172,7 @@ const canRegister = computed(
 function showMsg(msg, type = 'success') {
   statusMessage.value = msg;
   statusType.value = type;
+  // 🚩 3초 후 페이드 아웃 효과를 위해 메시지 초기화
   setTimeout(() => {
     statusMessage.value = '';
   }, 3000);
@@ -175,26 +188,28 @@ async function handleLogin() {
       password: formData.password,
     });
 
+    // 🚩 피드백 반영: res.message에 "존재하지 않는 이메일" 등이 담겨옵니다.
     if (!res.success) {
       showMsg(res.message, 'danger');
       return;
     }
 
-    showMsg(`${res.user.name}님, 어서오세요`, 'success');
+    showMsg(`${res.user.name}님, 반갑습니다!`, 'success');
 
-    // 🚩 토큰 저장 (라우터 가드용)
-    localStorage.setItem('token', res.token || 'temp-token');
-
-    const profile = await travelStore.loadProfile();
-    if (profile?.checkedIn) {
-      localStorage.setItem('onboarded', 'true');
-      setTimeout(() => router.push('/main'), 500);
-    } else {
-      localStorage.setItem('onboarded', 'false');
-      setTimeout(() => router.push({ name: 'step-region' }), 500);
+    // 데이터 로드 및 온보딩 체크
+    let profile = null;
+    try {
+      profile = await travelStore.loadProfile();
+    } catch (err) {
+      if (err.response?.status !== 404) throw err;
     }
+
+    const targetRoute = profile?.checkedIn ? 'main-dashboard' : 'step-region';
+    localStorage.setItem('onboarded', profile?.checkedIn ? 'true' : 'false');
+
+    setTimeout(() => router.push({ name: targetRoute }), 800);
   } catch (error) {
-    showMsg('서버 연결 오류가 발생했습니다.', 'danger');
+    showMsg('서버와의 연결이 원활하지 않습니다.', 'danger');
   } finally {
     isProcessing.value = false;
   }
@@ -210,14 +225,11 @@ async function handleRegister() {
       showMsg(res.message, 'danger');
       return;
     }
-
-    showMsg('가입이 완료되었습니다. 로그인을 진행해주세요.', 'success');
-    // 가입 성공 시 자동으로 로그인 모드로 전환
-    setTimeout(() => {
-      toggleMode();
-    }, 1500);
+    showMsg('회원가입 성공! 여행 설정을 시작합니다.', 'success');
+    localStorage.setItem('onboarded', 'false');
+    setTimeout(() => router.push({ name: 'step-region' }), 1500);
   } catch (error) {
-    showMsg('가입 처리 중 오류가 발생했습니다.', 'danger');
+    showMsg('가입 중 오류가 발생했습니다.', 'danger');
   } finally {
     isProcessing.value = false;
   }
@@ -225,6 +237,19 @@ async function handleRegister() {
 </script>
 
 <style scoped>
+/* 🚩 알림창 슬라이드 & 페이드 애니메이션 */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+.slide-fade-leave-active {
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -241,27 +266,26 @@ async function handleRegister() {
 }
 
 .logo-img {
-  width: 80px;
+  width: 70px;
   height: auto;
-  display: block;
-  margin: 0 auto;
 }
 
 .rounded-4 {
-  border-radius: 1.25rem !important;
+  border-radius: 1rem !important;
 }
 
 .text-dark-navy {
-  color: #020817;
+  color: #1a1f36;
 }
 
-.form-control.is-invalid {
-  border-color: #dc3545;
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+  transition: all 0.2s ease;
 }
 
-.btn-link {
-  font-size: 0.875rem;
-  color: #0d6efd;
-  cursor: pointer;
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-1px);
 }
 </style>
