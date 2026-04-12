@@ -88,7 +88,9 @@
       >
         <i class="fa-solid fa-circle-info me-1"></i>
         {{ myTravelGoal?.destination }} 여행을 위해 <br />하루에
-        <span class="text-primary">{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span>씩 사용할 수 있어요
+        <span class="text-primary"
+          >{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span
+        >씩 사용할 수 있어요
       </p>
     </div>
     <div
@@ -125,31 +127,46 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'; // onMounted 추가
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-<<<<<<< HEAD
-
-const router = useRouter();
-const authStore = useAuthStore();
-=======
 import { useProfileStore } from '@/stores/profile.js';
 import { storeToRefs } from 'pinia';
 
+const router = useRouter();
+const authStore = useAuthStore(); // 🚩 이 줄이 빠져있었습니다.
 const profileStore = useProfileStore();
+
 const { createNewGoal } = profileStore;
 const { myTravelGoal } = storeToRefs(profileStore);
->>>>>>> ed8eb3bd9fdabe4c164daf11a2e992c35075316a
+
+// 🚩 유저 정보 (authStore에서 가져옴)
+const userName = computed(() => authStore.user?.name || '사용자');
+const userEmail = computed(() => authStore.user?.email || '');
+
+/**
+ * 🚩 데이터 로드: 로그인한 유저의 ID로 프로필 정보를 가져옵니다.
+ */
+onMounted(async () => {
+  if (authStore.user?.id) {
+    // profileStore에 정의된 데이터 로드 함수를 호출하세요.
+    // 함수명이 fetchProfile인지 loadProfile인지 확인이 필요합니다.
+    await profileStore.fetchProfile(authStore.user.id);
+  }
+});
 
 /**
  * 🚩 로그아웃 처리
  */
 const handleLogout = () => {
   if (confirm('로그아웃 하시겠습니까?')) {
-    // 1. auth 스토어의 logout 실행 (내부에서 localStorage.clear()와 상태 초기화 수행)
+    // 1. auth 스토어의 logout 실행 (localStorage 비우기 및 상태 초기화)
     authStore.logout();
 
-    // 2. 랜딩 페이지로 이동 (LandingView.vue 경로)
-    router.push('/');
+    // 2. 로그인(랜딩) 페이지로 이동 및 페이지 새로고침(완전한 초기화)
+    router.push('/').then(() => {
+      window.location.reload();
+    });
   }
 };
 </script>
