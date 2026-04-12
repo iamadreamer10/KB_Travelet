@@ -2,11 +2,14 @@
 
 ## Vercel
 
-Set the frontend project root to this repository and add:
+Set the frontend project root to this repository.
 
-`VITE_API_BASE_URL=https://your-railway-app.up.railway.app`
+Recommended Vercel environment variable:
+
+`VITE_API_BASE_URL=/api`
 
 This project uses Vue Router history mode, so `vercel.json` rewrites all routes to `index.html`.
+API requests should go through the Vercel rewrite at `/api/*`, which forwards to Railway.
 
 ## Railway
 
