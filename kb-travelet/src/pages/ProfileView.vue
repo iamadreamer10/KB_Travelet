@@ -31,7 +31,7 @@
                 새로운 여행 계획을 세우고 자산을 관리해보세요!
               </p>
               <button
-                @click="createNewGoal"
+                @click="createNewGoal()"
                 class="btn px-4"
                 style="background-color: var(--color-primary); color: white"
               >
@@ -61,24 +61,24 @@ import axios from 'axios';
 import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 
-
 const profileStore = useProfileStore();
+const { updateTravelGoal, finishTravelGoal, createNewGoal } = useProfileStore();
 const { myTravelGoal, hasGoal } = storeToRefs(profileStore); // 반응성 유지
 
 const handleGoalUpdate = async (newData) => {
-  const success = await profileStore.updateTravelGoal(newData);
+  const success = await updateTravelGoal(newData);
   if (success) alert('수정 완료! 🛫');
 };
 
 const handleFinishGoal = async (id) => {
-  const success = await profileStore.finishTravelGoal(id);
+  const success = await finishTravelGoal(id);
   if (success) alert('목표 달성! 🎉');
 };
 
 onMounted(() => {
   profileStore.fetchTravelGoal();
+  getTravelGoal();
 });
-
 
 const router = useRouter();
 const userId = localStorage.getItem('userId');
@@ -96,68 +96,6 @@ const getTravelGoal = async () => {
     console.error('여행 목표 로드 에러:', error);
   }
 };
-
-// const handleGoalUpdate = async (newData) => {
-//   try {
-//     // 1. 서버에 수정 요청 보내기 (id 기반)
-//     // newData 안에 이미 id(난수 혹은 숫자)가 포함되어 있어야 합니다.
-//     const response = await axios.put(`/api/profiles/${newData.id}`, newData);
-
-//     if (response.status === 200) {
-//       myTravelGoal.value = { ...response.data };
-
-//       alert('여행 목표가 성공적으로 수정되었습니다! 🛫');
-//     }
-//   } catch (error) {
-//     console.error('목표 수정 중 에러 발생:', error);
-
-//     // 에러 상황에 대한 피드백
-//     if (error.response && error.response.status === 404) {
-//       alert('데이터를 찾을 수 없습니다. 다시 시도해주세요.');
-//     } else {
-//       alert('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
-//     }
-//   }
-// };
-
-// const handleFinishGoal = async (id) => {
-//   try {
-//     // 1. 서버에 '이 목표 완료됐음'이라고 알리기 (PATCH 사용)
-//     const response = await axios.patch(`/api/profiles/${id}`, {
-//       isCompleted: true,
-//     });
-
-//     if (response.status === 200) {
-//       // 2. 서버 업데이트 성공 시 로컬 상태 초기화
-//       console.log(`${id}번 목표 완료 처리 성공!`);
-
-//       // 현재 활성화된 목표를 화면에서 제거
-//       myTravelGoal.value = null;
-
-//       // 3. ProgressBar 및 관련 데이터 초기화
-//       // 만약 ProgressBar가 myTravelGoal을 참조하고 있다면 자동으로 0이 되겠지만,
-//       // 별도의 reactive 변수를 쓰고 있다면 여기서 초기화해줍니다.
-//       // if (typeof resetProgressBar === 'function') {
-//       //   resetProgressBar();
-//       // }
-
-//       alert('축하합니다! 여행 목표를 달성하셨습니다. 🎉');
-//     }
-//   } catch (error) {
-//     console.error('목표 완료 처리 중 에러:', error);
-//     alert('상태 업데이트에 실패했습니다. 다시 시도해주세요.');
-//   }
-// };
-
-const createNewGoal = () => {
-  if (confirm('새 여행 목표를 등록하러 가볼까요?')) {
-    router.push('/check-in');
-  }
-};
-
-onMounted(() => {
-  getTravelGoal();
-});
 </script>
 
 <style scoped>

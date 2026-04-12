@@ -1,5 +1,13 @@
 {
-  "members": [],
+  "members": [
+    {
+      "name": "권실장",
+      "email": "abc@abc.com",
+      "password": "abc",
+      "createdAt": "2026년 4월 10일",
+      "id": "7jCO9J_qYY8"
+    }
+  ],
   "continents": {
     "Asia": [
       {
@@ -233,9 +241,83 @@
           "lux": [80, 120, 670]
         }
       }
+    ],
+    "Oceania": [
+      {
+        "name": "호주",
+        "code": "AU",
+        "levels": {
+          "eco": [9, 10, 82],
+          "std": [22, 28, 150],
+          "lux": [55, 70, 470]
+        }
+      },
+      {
+        "name": "뉴질랜드",
+        "code": "NZ",
+        "levels": {
+          "eco": [10, 12, 105],
+          "std": [24, 30, 185],
+          "lux": [60, 80, 520]
+        }
+      }
     ]
   },
-  "transactions": [],
-  "profiles": [],
+  "transactions": [
+    {
+      "date": "2026-04-07",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 20000,
+      "memo": "비싼밥",
+      "id": "IyTa5Ug531M",
+      "userId": "7jCO9J_qYY8"
+    },
+    {
+      "date": "2026-04-07",
+      "type": "income",
+      "category": "식비/카페",
+      "amount": 30000,
+      "memo": "로또 당첨",
+      "id": "ejn8rZHk_Os",
+      "userId": "7jCO9J_qYY8"
+    }
+  ],
+  "profiles": [
+    {
+      "memberId": "7jCO9J_qYY8",
+      "destination": "멕시코",
+      "destinationCode": "MX",
+      "startDate": "2026-04-22",
+      "endDate": "2026-04-29",
+      "currentAsset": 6000000,
+      "monthlyIncome": 3000000,
+      "budgetOption": "standard",
+      "dailyTravelExpense": 120000,
+      "dailyAvailableBudget": 249000,
+      "hotelExpense": 150000,
+      "flightExpense": 2350000,
+      "checkedIn": true,
+      "isCompleted": true,
+      "id": "91bSMZnJLkI"
+    },
+    {
+      "memberId": "7jCO9J_qYY8",
+      "destination": "독일",
+      "destinationCode": "DE",
+      "startDate": "2026-05-26",
+      "endDate": "2026-06-04",
+      "currentAsset": 6000000,
+      "monthlyIncome": 3000000,
+      "budgetOption": "standard",
+      "dailyTravelExpense": 200000,
+      "dailyAvailableBudget": 98800,
+      "hotelExpense": 250000,
+      "flightExpense": 1800000,
+      "checkedIn": true,
+      "isCompleted": false,
+      "id": "P2i4pddqt08"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

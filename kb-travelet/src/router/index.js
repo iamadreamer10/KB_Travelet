@@ -42,7 +42,7 @@ const routes = [
         path: 'fixed-expense',
         name: 'step-fixed-expense',
         component: () => import('@/components/onboarding/StepFixedExpense.vue'),
-        meta: { title: '고정 지출', step: 4 },
+        meta: { step: 4 },
       },
       {
         path: 'option',

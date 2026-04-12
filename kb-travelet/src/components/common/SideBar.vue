@@ -12,7 +12,10 @@
       </div>
       <h4 class="fw-bold mb-0">{{ userName }}</h4>
       <p class="text-muted small mb-3">{{ userEmail }}</p>
-      <div class="d-flex border-top pt-2 justify-content-between">
+      <div
+        v-if="myTravelGoal && myTravelGoal.id"
+        class="d-flex border-top pt-2 justify-content-between"
+      >
         <div class="d-flex flex-column gap-1">
           <span
             class="text-muted extra-small fw-bold text-uppercase tracking-wider"
@@ -46,6 +49,12 @@
           >
         </div>
       </div>
+      <div v-else class="text-center py-3">
+        <hr />
+        <span class="fw-bold text-muted ms-2"
+          >다음 여행지는 이미 당신을 기다리고 있어요.</span
+        >
+      </div>
     </div>
 
     <ul class="nav nav-pills flex-column mb-auto">
@@ -64,6 +73,7 @@
       </li>
     </ul>
     <div
+      v-if="myTravelGoal && myTravelGoal.id"
       class="flex-grow-1 rounded-3 p-3 my-3 bg-white d-flex flex-column align-items-center justify-content-center"
     >
       <p>
@@ -78,8 +88,29 @@
       >
         <i class="fa-solid fa-circle-info me-1"></i>
         {{ myTravelGoal?.destination }} 여행을 위해 <br />하루에
-        <span class="text-primary">0원</span>씩 사용할 수 있어요
+        <span class="text-primary">{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span>씩 사용할 수 있어요
       </p>
+    </div>
+    <div
+      v-else
+      class="flex-grow-1 rounded-3 p-3 my-3 bg-white d-flex flex-column align-items-center justify-content-center"
+    >
+      <p>
+        <i
+          class="fa-solid fa-sack-xmark fa-2xl m-2"
+          style="color: var(--color-primary)"
+        ></i>
+      </p>
+      <p class="fw-bold text-black-50 m-3 fs-7 text-center">
+        텅 빈 여행 가방을 꿈으로 채워보세요.
+      </p>
+      <button
+        @click="createNewGoal()"
+        class="btn px-4"
+        style="background-color: var(--color-primary); color: white"
+      >
+        목표 만들기
+      </button>
     </div>
 
     <div class="mt-auto border-top border-white-50 pt-3">
@@ -96,9 +127,18 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+<<<<<<< HEAD
 
 const router = useRouter();
 const authStore = useAuthStore();
+=======
+import { useProfileStore } from '@/stores/profile.js';
+import { storeToRefs } from 'pinia';
+
+const profileStore = useProfileStore();
+const { createNewGoal } = profileStore;
+const { myTravelGoal } = storeToRefs(profileStore);
+>>>>>>> ed8eb3bd9fdabe4c164daf11a2e992c35075316a
 
 /**
  * 🚩 로그아웃 처리
