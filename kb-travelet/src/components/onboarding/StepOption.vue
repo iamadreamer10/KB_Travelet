@@ -46,9 +46,12 @@
             :key="option.key"
             type="button"
             class="option-card"
-            :disabled="!canSelectBudget"
+            :disabled="!canSelectBudget || !option.isSelectable"
             @click="selectOption(option)"
           >
+            <span v-if="!option.isSelectable" class="option-warning">
+              현재 상태로는 어려워요.
+            </span>
             <span class="option-badge">{{ option.label }}</span>
             <strong class="option-total">{{ option.totalText }}</strong>
             <span class="option-meta"
@@ -350,6 +353,7 @@ const budgetOptions = computed(() => {
       dailyAvailableBudget: budgetGap >= 0 ? normalizedDailyBudget : 0,
       dailyResultLabel: dailyResult.label,
       dailyResultText: dailyResult.text,
+      isSelectable: budgetGap >= 0 && normalizedDailyBudget > 0,
     };
   });
 });
@@ -704,6 +708,15 @@ onBeforeUnmount(() => {
   color: var(--color-primary);
   font-size: 0.8rem;
   font-weight: 800;
+}
+
+.option-warning {
+  display: block;
+  margin-bottom: 8px;
+  color: #c2410c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .option-total {
