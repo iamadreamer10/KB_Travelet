@@ -1,17 +1,24 @@
 <template>
-  <div class="row g-4 mb-4">
-    <div class="col-6">
+  <div class="row g-3 g-md-4 mb-4">
+    <div class="col-12 col-md-6">
       <div class="text-muted small">목적지</div>
-      <div class="fw-bold fs-5">{{ goal.destination }}</div>
+      <div class="fw-bold fs-5 text-truncate">{{ goal.destination }}</div>
     </div>
-    <div class="col-6"></div>
-    <div class="col-6">
+
+    <div class="col-12 col-md-6 d-none d-md-block"></div>
+
+    <div class="col-12 col-md-6">
       <div class="text-muted small">출발일</div>
-      <div class="fw-bold fs-5">{{ goal.startDate }}</div>
+      <div class="fw-bold fs-5" style="white-space: nowrap">
+        {{ goal.startDate }}
+      </div>
     </div>
-    <div class="col-6">
+
+    <div class="col-12 col-md-6">
       <div class="text-muted small">귀국일</div>
-      <div class="fw-bold fs-5">{{ goal.endDate }}</div>
+      <div class="fw-bold fs-5" style="white-space: nowrap">
+        {{ goal.endDate }}
+      </div>
     </div>
   </div>
   <div>
@@ -21,7 +28,7 @@
     <div class="vstack gap-2">
       <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted">일일 경비</span>
-        <span class="fw-bold">{{ formatNumber(goal.dailyExpense) }}원</span>
+        <span class="fw-bold">{{ formatNumber(goal.dailyTravelExpense) }}원</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted">숙소비(1박)</span>

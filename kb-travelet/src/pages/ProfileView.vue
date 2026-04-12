@@ -31,7 +31,7 @@
                 새로운 여행 계획을 세우고 자산을 관리해보세요!
               </p>
               <button
-                @click="createNewGoal"
+                @click="createNewGoal()"
                 class="btn px-4"
                 style="background-color: var(--color-primary); color: white"
               >
@@ -60,33 +60,41 @@ import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 
-
 const profileStore = useProfileStore();
-const { myTravelGoal } = storeToRefs(profileStore); // 반응성 유지
+const { updateTravelGoal, finishTravelGoal, createNewGoal } = useProfileStore();
+const { myTravelGoal, hasGoal } = storeToRefs(profileStore); // 반응성 유지
 
 const handleGoalUpdate = async (newData) => {
-  const success = await profileStore.updateTravelGoal(newData);
+  const success = await updateTravelGoal(newData);
   if (success) alert('수정 완료! 🛫');
 };
 
 const handleFinishGoal = async (id) => {
-  const success = await profileStore.finishTravelGoal(id);
+  const success = await finishTravelGoal(id);
   if (success) alert('목표 달성! 🎉');
 };
 
 onMounted(() => {
   profileStore.fetchTravelGoal();
+  getTravelGoal();
 });
 
-
 const router = useRouter();
+const userId = localStorage.getItem('userId');
 
-const createNewGoal = () => {
-  if (confirm('새 여행 목표를 등록하러 가볼까요?')) {
-    router.push('/check-in');
+const getTravelGoal = async () => {
+  // 실제로는 여기서 axios 같은 거로 서버에 GET 요청을 보냅니다.
+  // 예시 응답 데이터:
+  try {
+    const response = await axios.get(
+      `/api/profiles?memberId=${userId}&isCompleted=false`,
+    );
+    myTravelGoal.value = response.data[0] || {}; // 데이터가 없으면 빈 객체로 초기화
+    console.log('로드된 여행 목표:', myTravelGoal.value);
+  } catch (error) {
+    console.error('여행 목표 로드 에러:', error);
   }
 };
-
 </script>
 
 <style scoped>

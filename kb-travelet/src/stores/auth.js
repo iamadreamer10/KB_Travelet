@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('token', token.value);
     localStorage.setItem('userName', userData.name);
     localStorage.setItem('userId', userData.id);
-    localStorage.setItem('userPassword', userData.password);
+    localStorage.setItem('userEmail', userData.email);
   };
 
   async function login(loginData) {
@@ -82,6 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
     token.value = null;
     localStorage.clear();
+    router.push({ name: 'landing' }); // 추가요.
   }
 
   return { user, token, isAuthenticated, login, register, logout };

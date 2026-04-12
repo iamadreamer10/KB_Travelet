@@ -55,75 +55,6 @@
         @change="validateDates"
       />
     </div>
-    <div class="col-12 mb-3">
-      <button
-        @click="showOptions = !showOptions"
-        class="btn btn-sm btn-outline-primary w-100 border-2 fw-bold mb-2"
-      >
-        <i class="fas fa-magic me-1"></i> 여행 옵션 추천 (가이드 보기)
-      </button>
-
-      <div v-if="showOptions" class="row g-2">
-        <div v-for="(opt, idx) in recommendOptions" :key="idx" class="col-4">
-          <div
-            @click="applyOption(opt)"
-            class="recommend-card p-2 border rounded-3 h-100 shadow-sm"
-          >
-            <div class="text-center mb-2">
-              <span class="badge" :class="opt.class">{{ opt.title }}</span>
-            </div>
-            <div class="extra-small text-muted vstack gap-1">
-              <div class="d-flex justify-content-between">
-                <span>🍕</span> <span>{{ opt.dailyExpense / 10000 }}만/일</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>🏨</span> <span>{{ opt.hotelExpense / 10000 }}만/박</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>✈️</span> <span>{{ opt.flightExpense / 10000 }}만</span>
-              </div>
-              <hr class="my-1 opacity-25" />
-              <div
-                class="fw-bold text-dark text-center"
-                style="font-size: 0.8rem"
-              >
-                총 {{ opt.total / 10000 }}만원
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 mt-2 vstack gap-2 bg-light p-3 rounded-4">
-      <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">하루경비(1일)</span>
-        <input
-          v-model.number="modelValue.dailyExpense"
-          type="text"
-          inputmode="numeric"
-          class="form-control form-control-sm w-50 text-end border-0 bg-white"
-        />
-      </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">숙소비(1박)</span>
-        <input
-          v-model.number="modelValue.hotelExpense"
-          type="text"
-          inputmode="numeric"
-          class="form-control form-control-sm w-50 text-end border-0 bg-white"
-        />
-      </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <span class="small fw-bold">비행기값</span>
-        <input
-          v-model.number="modelValue.flightExpense"
-          type="text"
-          inputmode="numeric"
-          class="form-control form-control-sm w-50 text-end border-0 bg-white"
-        />
-      </div>
-    </div>
 
     <!-- 재정 정보 섹션 -->
     <div class="col-12 mt-4">
@@ -223,6 +154,77 @@
             inputmode="numeric"
             placeholder="0"
             class="form-control form-control-sm w-40 text-end border-0 bg-white"
+          />
+        </div>
+      </div>
+      <div class="col-12 mb-3">
+        <button
+          @click="showOptions = !showOptions"
+          class="btn btn-sm btn-outline-primary w-100 border-2 fw-bold mb-2"
+        >
+          <i class="fas fa-magic me-1"></i> 여행 옵션 추천 (가이드 보기)
+        </button>
+
+        <div v-if="showOptions" class="row g-2">
+          <div v-for="(opt, idx) in recommendOptions" :key="idx" class="col-4">
+            <div
+              @click="applyOption(opt)"
+              class="recommend-card p-2 border rounded-3 h-100 shadow-sm"
+            >
+              <div class="text-center mb-2">
+                <span class="badge" :class="opt.class">{{ opt.title }}</span>
+              </div>
+              <div class="extra-small text-muted vstack gap-1">
+                <div class="d-flex justify-content-between">
+                  <span>🍕</span>
+                  <span>{{ opt.dailyExpense / 10000 }}만/일</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>🏨</span>
+                  <span>{{ opt.hotelExpense / 10000 }}만/박</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>✈️</span> <span>{{ opt.flightExpense / 10000 }}만</span>
+                </div>
+                <hr class="my-1 opacity-25" />
+                <div
+                  class="fw-bold text-dark text-center"
+                  style="font-size: 0.8rem"
+                >
+                  총 {{ opt.total / 10000 }}만원
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2 vstack gap-2 bg-light p-3 rounded-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="small fw-bold">하루경비(1일)</span>
+          <input
+            v-model.number="modelValue.dailyTravelExpense"
+            type="text"
+            inputmode="numeric"
+            class="form-control form-control-sm w-50 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="small fw-bold">숙소비(1박)</span>
+          <input
+            v-model.number="modelValue.hotelExpense"
+            type="text"
+            inputmode="numeric"
+            class="form-control form-control-sm w-50 text-end border-0 bg-white"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="small fw-bold">비행기값</span>
+          <input
+            v-model.number="modelValue.flightExpense"
+            type="text"
+            inputmode="numeric"
+            class="form-control form-control-sm w-50 text-end border-0 bg-white"
           />
         </div>
       </div>
