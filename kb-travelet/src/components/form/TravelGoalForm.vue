@@ -160,7 +160,7 @@
       </div>
       <div class="col-12 mb-3">
         <button
-          @click="showOptions = !showOptions"
+          @click="toggleOptions"
           class="btn btn-sm btn-outline-primary w-100 border-2 fw-bold mb-2"
         >
           <i class="fas fa-magic me-1"></i> 여행 옵션 추천 (가이드 보기)
@@ -170,29 +170,72 @@
           <div v-for="(opt, idx) in recommendOptions" :key="idx" class="col-4">
             <div
               @click="applyOption(opt)"
-              class="recommend-card p-2 border rounded-3 h-100 shadow-sm"
+              class="recommend-card p-2 border rounded-4 h-100 shadow-sm transition-all position-relative"
+              :class="{
+                'bg-white': opt.isSelectable,
+                'bg-danger-subtle border-danger opacity-75': !opt.isSelectable, // 🚩 예산 부족 시 빨간 배경
+                'cursor-not-allowed': !opt.isSelectable,
+              }"
+              :style="
+                !opt.isSelectable ? 'cursor: not-allowed;' : 'cursor: pointer;'
+              "
             >
-              <div class="text-center mb-2">
-                <span class="badge" :class="opt.class">{{ opt.title }}</span>
-              </div>
-              <div class="extra-small text-muted vstack gap-1">
-                <div class="d-flex justify-content-between">
-                  <span>🍕</span>
-                  <span>{{ opt.dailyExpense / 10000 }}만/일</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span>🏨</span>
-                  <span>{{ opt.hotelExpense / 10000 }}만/박</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span>✈️</span> <span>{{ opt.flightExpense / 10000 }}만</span>
-                </div>
-                <hr class="my-1 opacity-25" />
-                <div
-                  class="fw-bold text-dark text-center"
-                  style="font-size: 0.8rem"
+              <div
+                v-if="!opt.isSelectable"
+                class="position-absolute top-0 start-50 translate-middle"
+              >
+                <span
+                  class="badge rounded-pill bg-danger"
+                  style="font-size: 0.6rem"
+                  >예산 부족</span
                 >
-                  총 {{ opt.total / 10000 }}만원
+              </div>
+
+              <div class="text-center mb-2">
+                <span
+                  class="badge"
+                  :class="
+                    opt.isSelectable ? opt.class : 'bg-secondary text-white'
+                  "
+                >
+                  {{ opt.title }}
+                </span>
+              </div>
+
+              <div
+                class="extra-small vstack gap-1"
+                :class="opt.isSelectable ? 'text-muted' : 'text-danger'"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>🍕 식비/일</span>
+                  <span>{{ opt.dailyTravelExpense / 10000 }}만</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>🏨 숙소/박</span>
+                  <span>{{ opt.hotelExpense / 10000 }}만</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>✈️ 항공</span>
+                  <span>{{ opt.flightExpense / 10000 }}만</span>
+                </div>
+
+                <hr class="my-1 opacity-25" />
+
+                <div class="text-center mt-1">
+                  <div class="fw-bold" style="font-size: 0.7rem">
+                    여행 중 하루에
+                  </div>
+                  <div
+                    class="fw-extrabold text-dark"
+                    style="font-size: 0.85rem"
+                  >
+                    {{
+                      opt.isSelectable
+                        ? opt.dailyAvailable.toLocaleString()
+                        : '0'
+                    }}원
+                  </div>
+                  <div class="small">사용 가능</div>
                 </div>
               </div>
             </div>
@@ -235,17 +278,22 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
-const profileStore = useProfileStore();
-const { continentList } = storeToRefs(profileStore);
-const { fetchContinents } = profileStore;
+import { useProfileStore } from '@/stores/profile';
+import { useTravelStore } from '@/stores/travel';
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
 });
 
-// 1. 대륙 이름 한글 매핑 객체
+const profileStore = useProfileStore();
+const travelStore = useTravelStore();
+const { continentList } = storeToRefs(profileStore);
+const { fetchContinents } = profileStore;
+
+const showOptions = ref(false);
+const todayDate = new Date().toISOString().split('T')[0];
+
 const continentNameMap = {
   Asia: '아시아',
   Europe: '유럽',
@@ -254,7 +302,7 @@ const continentNameMap = {
   Oceania: '오세아니아',
 };
 
-// 결과 예시: [{ key: 'Asia', label: '아시아' }, ...]
+// --- Computed ---
 const continentOptions = computed(() => {
   return Object.keys(continentList.value).map((key) => ({
     key: key,
@@ -263,12 +311,138 @@ const continentOptions = computed(() => {
 });
 
 const filteredCountries = computed(() => {
-  const selectedEngKey = props.modelValue.continent; // 'Asia'
+  const selectedEngKey = props.modelValue.continent;
   if (!selectedEngKey || !continentList.value[selectedEngKey]) return [];
-
   return continentList.value[selectedEngKey];
 });
 
+const totalMonthlyFixed = computed(
+  () =>
+    (Number(props.modelValue.monthlyRent) || 0) +
+    (Number(props.modelValue.monthlyInsurance) || 0) +
+    (Number(props.modelValue.monthlyPhone) || 0) +
+    (Number(props.modelValue.monthlyTransport) || 0) +
+    (Number(props.modelValue.monthlySubscription) || 0) +
+    (Number(props.modelValue.monthlyOtherFixed) || 0),
+);
+
+const monthlyAvailable = computed(() =>
+  Math.max(
+    (Number(props.modelValue.monthlyIncome) || 0) - totalMonthlyFixed.value,
+    0,
+  ),
+);
+
+const daysUntilDeparture = computed(() => {
+  if (!props.modelValue.startDate) return 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(props.modelValue.startDate);
+  start.setHours(0, 0, 0, 0);
+  return Math.max(Math.ceil((start - today) / (1000 * 60 * 60 * 24)), 0);
+});
+
+const projectedFunds = computed(() => {
+  const dailySavings = Math.floor(monthlyAvailable.value / 30);
+  return (
+    (Number(props.modelValue.currentAsset) || 0) +
+    dailySavings * daysUntilDeparture.value
+  );
+});
+
+const stayNights = computed(() => {
+  if (!props.modelValue.startDate || !props.modelValue.endDate) return 0;
+  const start = new Date(props.modelValue.startDate);
+  const end = new Date(props.modelValue.endDate);
+  return Math.max(Math.round((end - start) / (1000 * 60 * 60 * 24)), 0);
+});
+
+const tripDays = computed(() => stayNights.value + 1);
+
+const recommendOptions = computed(() => {
+  const levels = travelStore.selectedCountry?.levels ?? {
+    eco: [5, 7, 40],
+    std: [12, 18, 60],
+    lux: [28, 40, 120],
+  };
+
+  const optionConfig = [
+    {
+      key: 'eco',
+      title: '알뜰 가성비',
+      class: 'bg-success-subtle text-success',
+    },
+    {
+      key: 'std',
+      title: '평범한 표준',
+      class: 'bg-primary-subtle text-primary',
+    },
+    {
+      key: 'lux',
+      title: '플렉스 럭셔리',
+      class: 'bg-danger-subtle text-danger',
+    },
+  ];
+
+  return optionConfig.map((opt) => {
+    const [daily, hotel, flight] = levels[opt.key];
+    const total =
+      (daily * tripDays.value + hotel * stayNights.value + flight) * 10000;
+    const budgetGap = projectedFunds.value - total;
+    const dailyAvailable =
+      tripDays.value > 0 ? Math.floor(budgetGap / tripDays.value) : 0;
+
+    return {
+      ...opt,
+      dailyTravelExpense: daily * 10000,
+      hotelExpense: hotel * 10000,
+      flightExpense: flight * 10000,
+      total,
+      dailyAvailable,
+      isSelectable: budgetGap >= 0,
+    };
+  });
+});
+
+// --- Methods ---
+const toggleOptions = () => {
+  if (!props.modelValue.startDate || !props.modelValue.country) {
+    alert('여행지와 날짜를 먼저 선택해야 정확한 예산 가이드를 드릴 수 있어요!');
+    return;
+  }
+  showOptions.value = !showOptions.value;
+};
+
+const applyOption = (opt) => {
+  if (!opt.isSelectable) return;
+  props.modelValue.flightExpense = opt.flightExpense;
+  props.modelValue.hotelExpense = opt.hotelExpense;
+  props.modelValue.dailyTravelExpense = opt.dailyTravelExpense;
+  props.modelValue.dailyAvailableBudget = opt.dailyAvailable;
+};
+
+const validateDates = () => {
+  const start = props.modelValue.startDate;
+  const end = props.modelValue.endDate;
+  if (!start) return;
+  if (end && start > end) {
+    alert('귀국일은 출발일보다 빠를 수 없습니다!');
+    props.modelValue.endDate = start;
+  }
+};
+
+const updateDestinationCode = () => {
+  const selectedCountryName = props.modelValue.country;
+  const countryObj = filteredCountries.value.find(
+    (c) => c.name === selectedCountryName,
+  );
+  if (countryObj) {
+    props.modelValue.destination = countryObj.name;
+    props.modelValue.destinationCode = countryObj.code;
+  }
+};
+
+// --- Watch & Lifecycle ---
 watch(
   () => props.modelValue.continent,
   (newContinent, oldContinent) => {
@@ -280,85 +454,14 @@ watch(
   },
 );
 
-// 2.  오늘 날짜 구하기 (YYYY-MM-DD 형식)
-const todayDate = new Date().toISOString().split('T')[0];
-
-const validateDates = () => {
-  const start = props.modelValue.startDate;
-  const end = props.modelValue.endDate;
-
-  if (!start) return;
-
-  // 귀국일이 출발일보다 빠르면 귀국일을 출발일로 맞춤
-  if (end && start > end) {
-    alert('귀국일은 출발일보다 빠를 수 없습니다!');
-    props.modelValue.endDate = start;
-  }
-};
-
-const showOptions = ref(false);
-
-// 3. 상세 내역을 포함한 추천 옵션
-const recommendOptions = [
-  {
-    title: '알뜰 가성비',
-    class: 'bg-success-subtle text-success',
-    flightExpense: 350000,
-    hotelExpense: 600000,
-    dailyExpense: 500000,
-    total: 1450000,
-  },
-  {
-    title: '평범한 표준',
-    class: 'bg-primary-subtle text-primary',
-    flightExpense: 550000,
-    hotelExpense: 1500000,
-    dailyExpense: 1200000,
-    total: 3250000,
-  },
-  {
-    title: '플렉스 럭셔리',
-    class: 'bg-danger-subtle text-danger',
-    flightExpense: 1100000,
-    hotelExpense: 3500000,
-    dailyExpense: 2500000,
-    total: 7100000,
-  },
-];
-
-const applyOption = (opt) => {
-  props.modelValue.flightExpense = opt.flightExpense;
-  props.modelValue.hotelExpense = opt.hotelExpense;
-  props.modelValue.dailyExpense = opt.dailyExpense;
-};
-
-const updateDestinationCode = () => {
-  const selectedCountryName = props.modelValue.country;
-
-  // 현재 선택된 대륙의 국가 리스트에서 선택한 국가 객체 찾기
-  const countryObj = filteredCountries.value.find(
-    (c) => c.name === selectedCountryName,
-  );
-
-  if (countryObj) {
-    // 🚩 여기서 destinationCode와 destination을 동시에 동기화합니다.
-    props.modelValue.destination = countryObj.name;
-    props.modelValue.destinationCode = countryObj.code; // 예: 'US', 'JP' 등
-  }
-};
-
 onMounted(() => {
-  profileStore.fetchContinents();
-
+  fetchContinents();
   if (!props.modelValue.continent) {
     const travelGoal = profileStore.myTravelGoal;
     if (travelGoal && travelGoal.continent) {
-      // 한글 맵핑을 거치지 말고 Store에 있는 영문 키('Americas' 등)를 그대로 넣으세요!
       props.modelValue.continent = travelGoal.continent;
       props.modelValue.country = travelGoal.destination || '';
     }
-
-    console.log('초기 여행 목표 데이터:', props.modelValue);
   }
 });
 </script>
