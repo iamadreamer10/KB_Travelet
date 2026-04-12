@@ -7,7 +7,9 @@ import vueDevTools from 'vite-plugin-vue-devtools';
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:3000';
+  const proxyTarget =
+    env.VITE_API_PROXY_TARGET ||
+    'https://kb-travelet-production.up.railway.app';
   const isProduction = mode === 'production';
 
   return {
