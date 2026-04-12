@@ -181,8 +181,7 @@ import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 
 const profileStore = useProfileStore();
-const { myTravelGoal, fixedExpensesTotal, monthlyIncomeTotal } =
-  storeToRefs(profileStore);
+const { myTravelGoal, monthlyIncomeTotal } = storeToRefs(profileStore);
 const store = useAccountStore();
 
 // script setup 내부
@@ -300,14 +299,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 7열 그리드를 위한 커스텀 스타일 */
-.col-1-7 {
-  flex: 0 0 14.285%;
-  max-width: 14.285%;
-}
-</style>
-
-<style scoped>
 /* 1. 상단 컨테이너 레이아웃 */
 .header-container {
   display: flex;
@@ -422,11 +413,5 @@ onMounted(() => {
 .price {
   font-size: 0.85rem;
   font-weight: bold;
-}
-
-/* 7열 그리드는 이미 잘 짜셔서 그대로 두셔도 됩니다! */
-.col-1-7 {
-  flex: 0 0 14.285%;
-  max-width: 14.285%;
 }
 </style>

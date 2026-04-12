@@ -263,7 +263,26 @@
       }
     ]
   },
-  "transactions": [],
+  "transactions": [
+    {
+      "date": "2026-04-07",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 20000,
+      "memo": "비싼밥",
+      "id": "IyTa5Ug531M",
+      "userId": "7jCO9J_qYY8"
+    },
+    {
+      "date": "2026-04-07",
+      "type": "income",
+      "category": "식비/카페",
+      "amount": 30000,
+      "memo": "로또 당첨",
+      "id": "ejn8rZHk_Os",
+      "userId": "7jCO9J_qYY8"
+    }
+  ],
   "profiles": [
     {
       "memberId": "7jCO9J_qYY8",
