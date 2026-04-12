@@ -5,7 +5,11 @@
       "destination": "https://kbtravelet-production.up.railway.app/:path*"
     },
     {
-      "source": "/:path*",
+      "source": "/assets/:path*",
+      "destination": "/assets/:path*"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
