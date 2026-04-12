@@ -26,7 +26,7 @@
           >
             <div class="text-white extra-small fw-bold">고정 지출</div>
             <div class="fw-bold text-white" style="font-size: 0.9rem">
-              - {{ (monthlyExpensesTotal || 0).toLocaleString() }}원
+              - {{ (fixedExpensesTotal || 0).toLocaleString() }}원
             </div>
           </div>
         </div>
@@ -182,7 +182,8 @@ import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 
 const profileStore = useProfileStore();
-const { myTravelGoal, monthlyIncomeTotal } = storeToRefs(profileStore);
+const { myTravelGoal, monthlyIncomeTotal, fixedExpensesTotal } =
+  storeToRefs(profileStore);
 const store = useAccountStore();
 
 // script setup 내부

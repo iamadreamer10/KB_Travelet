@@ -123,6 +123,7 @@ const startEdit = () => {
     유럽: 'Europe',
     아메리카: 'Americas',
     아프리카: 'Africa',
+    오세아니아: 'Oceania',
   };
 
   const initialData = { ...props.goal };
@@ -151,6 +152,10 @@ const saveEdit = () => {
   // 3. 영문 Key가 있으면 한글 Label로 교체
   if (finalData.continent && continentNameMap[finalData.continent]) {
     finalData.continent = continentNameMap[finalData.continent];
+  }
+
+  if (finalData.country) {
+    finalData.destination = finalData.country;
   }
 
   // 4. 변환된 데이터를 부모(ProfileView 등)로 전달

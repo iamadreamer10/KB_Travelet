@@ -23,6 +23,7 @@
         v-model="modelValue.country"
         class="form-select fw-bold"
         :disabled="!modelValue.continent"
+        @change="updateDestinationCode"
       >
         <option value="" disabled>나라 선택</option>
         <option
@@ -278,8 +279,12 @@ const filteredCountries = computed(() => {
 
 watch(
   () => props.modelValue.continent,
-  () => {
-    props.modelValue.country = '';
+  (newContinent, oldContinent) => {
+    if (oldContinent) {
+      props.modelValue.country = '';
+      props.modelValue.destination = '';
+      props.modelValue.destinationCode = '';
+    }
   },
 );
 
@@ -335,9 +340,24 @@ const applyOption = (opt) => {
   props.modelValue.dailyExpense = opt.dailyExpense;
 };
 
+const updateDestinationCode = () => {
+  const selectedCountryName = props.modelValue.country;
+
+  // 현재 선택된 대륙의 국가 리스트에서 선택한 국가 객체 찾기
+  const countryObj = filteredCountries.value.find(
+    (c) => c.name === selectedCountryName,
+  );
+
+  if (countryObj) {
+    // 🚩 여기서 destinationCode와 destination을 동시에 동기화합니다.
+    props.modelValue.destination = countryObj.name;
+    props.modelValue.destinationCode = countryObj.code; // 예: 'US', 'JP' 등
+  }
+};
+
 onMounted(() => {
   getContinents();
-  console.log('여행 옵션 추천을 위한 대륙 데이터:', continentList.value);
+  // console.log('여행 옵션 추천을 위한 대륙 데이터:', continentList.value);
 });
 </script>
 
