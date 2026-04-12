@@ -1,7 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import api from '@/api';
 
 export const useProfileStore = defineStore('profile', () => {
   // 1. 상태(State)
@@ -34,14 +33,6 @@ export const useProfileStore = defineStore('profile', () => {
   });
 
   // 3. 액션(Actions)
-  const router = useRouter();
-
-  const createNewGoal = () => {
-    if (confirm('새 여행 목표를 등록하러 가볼까요?')) {
-      localStorage.setItem('onboarded', 'false'); // 온보딩 상태 초기화
-      router.push('/check-in');
-    }
-  };
 
   // 목표 불러오기 (진행 중인 것만)
   const fetchTravelGoal = async () => {
@@ -74,11 +65,9 @@ export const useProfileStore = defineStore('profile', () => {
       await api.patch(`/profiles/${id}`, {
         isCompleted: true,
       });
-      if (response.status === 200) {
-        myTravelGoal.value = null; // 스토어를 비우면 사이드바도 즉시 바뀜
-        localStorage.setItem('onboarded', false);
-        return true;
-      }
+      myTravelGoal.value = null; // 스토어를 비우면 사이드바도 즉시 바뀜
+      localStorage.setItem('onboarded', 'false');
+      return true;
     } catch (error) {
       console.error('목표 완료 실패:', error);
       return false;
@@ -90,7 +79,6 @@ export const useProfileStore = defineStore('profile', () => {
     fixedExpensesTotal,
     monthlyIncomeTotal,
     hasGoal,
-    createNewGoal,
     fetchTravelGoal,
     updateTravelGoal,
     finishTravelGoal,

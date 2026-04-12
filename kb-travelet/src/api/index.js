@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-import router from '@/router'; // 라우터 추가
 
 /**
  * Axios 인스턴스 생성
@@ -40,7 +39,7 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      const { status, config } = error.response;
+      const { status } = error.response;
       const authStore = useAuthStore();
 
       switch (status) {

@@ -60,7 +60,14 @@
         <!-- 금액 + 메모 -->
         <div class="col-full">
           <label>금액 (원)</label>
-          <input v-model="amount" type="number" class="input" />
+          <input
+            v-model="amount"
+            type="number"
+            class="input"
+            placeholder="금액을 입력하세요(숫자만)"
+            @keydown="blockInvalidKeys"
+            @input="sanitizeAmount"
+          />
         </div>
 
         <div class="col-full">
@@ -173,7 +180,7 @@ const add = async () => {
   // 입력 초기화
   amount.value = '';
   memo.value = '';
-  category.value = '';
+  category.value = '식비/카페';
   type.value = 'expense';
 
   showForm.value = false;
@@ -222,6 +229,20 @@ const handleDelete = (id) => {
   if (ok) {
     store.deleteTransaction(id);
   }
+};
+
+/* 금액 입력 시 부적절한 값 처리 */
+const blockInvalidKeys = (e) => {
+  const invalidKeys = ['-', '+', 'e', 'E'];
+
+  if (invalidKeys.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+
+// 붙여넣기 값 방어
+const sanitizeAmount = () => {
+  amount.value = String(amount.value).replace(/[^0-9]/g, '');
 };
 </script>
 
