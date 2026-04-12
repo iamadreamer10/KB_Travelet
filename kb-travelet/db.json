@@ -1,20 +1,5 @@
 {
-  "members": [
-    {
-      "name": "최최",
-      "email": "zxc@zxc.com",
-      "password": "zxc",
-      "createdAt": "2026년 4월 12일",
-      "id": 1
-    },
-    {
-      "name": "zxcv",
-      "email": "zxcv@zxcv.com",
-      "password": "zxcv",
-      "createdAt": "2026년 4월 12일",
-      "id": 2
-    }
-  ],
+  "members": [],
   "continents": {
     "Asia": [
       {
@@ -595,55 +580,6 @@
     ]
   },
   "transactions": [],
-  "profiles": [
-    {
-      "memberId": 1,
-      "createdAt": "2026-04-12T06:38:02.950Z",
-      "destination": "미국",
-      "destinationCode": "US",
-      "startDate": "2026-11-24",
-      "endDate": "2026-11-30",
-      "currentAsset": 10000000,
-      "monthlyIncome": 4300000,
-      "budgetOption": "standard",
-      "dailyTravelExpense": 280000,
-      "dailyAvailableBudget": 125600,
-      "hotelExpense": 350000,
-      "flightExpense": 2000000,
-      "checkedIn": true,
-      "isCompleted": false,
-      "id": 1,
-      "monthlyRent": 600000,
-      "monthlyInsurance": 300000,
-      "monthlyPhone": 50000,
-      "monthlyTransport": 70000,
-      "monthlySubscription": 32500,
-      "monthlyOtherFixed": 0
-    },
-    {
-      "memberId": 2,
-      "createdAt": "2026-04-12",
-      "destination": "호주",
-      "destinationCode": "AU",
-      "startDate": "2026-08-27",
-      "endDate": "2026-08-31",
-      "currentAsset": 4000000,
-      "monthlyIncome": 4500000,
-      "budgetOption": "standard",
-      "dailyTravelExpense": 220000,
-      "dailyAvailableBudget": 129400,
-      "hotelExpense": 280000,
-      "flightExpense": 1500000,
-      "checkedIn": true,
-      "isCompleted": false,
-      "id": 2,
-      "monthlyRent": 111111,
-      "monthlyInsurance": 444444,
-      "monthlyPhone": 33333,
-      "monthlyTransport": 56000,
-      "monthlySubscription": 33333,
-      "monthlyOtherFixed": 0
-    }
-  ],
+  "profiles": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

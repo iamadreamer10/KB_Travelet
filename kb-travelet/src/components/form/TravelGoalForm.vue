@@ -258,6 +258,7 @@ const continentNameMap = {
   Europe: '유럽',
   Americas: '아메리카',
   Africa: '아프리카',
+  Oceania: '오세아니아',
 };
 
 // 결과 예시: [{ key: 'Asia', label: '아시아' }, ...]
