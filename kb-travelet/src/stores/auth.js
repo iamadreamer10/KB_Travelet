@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import router from '@/router';
 
 export const useAuthStore = defineStore('auth', () => {
   // 새로고침 시에도 사용자 정보를 로컬스토리지에서 가져옴
@@ -24,7 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('token', token.value);
     localStorage.setItem('userName', userData.name);
     localStorage.setItem('userId', userData.id);
-    localStorage.setItem('userPassword', userData.password);
+    localStorage.setItem('userEmail', userData.email);
   };
 
   async function login(loginData) {
@@ -77,6 +78,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null;
     token.value = null;
     localStorage.clear();
+    router.push({ name: 'landing' }); // 추가요.
   }
 
   return { user, token, isAuthenticated, login, register, logout };

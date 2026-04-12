@@ -4,41 +4,48 @@
       <h5 class="fw-bold mb-0">
         <i class="fas fa-plane-departure me-2 text-primary"></i>여행 목표
       </h5>
-      <div class="d-flex gap-2">
+      <button
+        v-if="!isEditing"
+        @click="startEdit"
+        class="btn btn-sm btn-outline-primary px-3 border-2 fw-bold"
+      >
+        수정하기
+      </button>
+    </div>
+
+    <div v-if="isEditing">
+      <TravelGoalForm v-model="tempData" />
+
+      <div class="d-flex gap-2 mt-4 pt-3 border-top">
         <button
-          v-if="isEditing"
           @click="cancelEdit"
-          class="btn btn-sm btn-light px-3"
+          class="btn btn-light flex-grow-1 py-2 fw-bold"
         >
           취소
         </button>
         <button
-          @click="isEditing ? saveEdit() : startEdit()"
-          class="btn btn-sm px-3"
-          :class="isEditing ? 'btn-success' : 'btn-primary'"
+          @click="saveEdit"
+          class="btn btn-primary flex-grow-1 py-2 fw-bold"
         >
-          {{ isEditing ? '저장' : '수정' }}
+          설정 저장하기
         </button>
       </div>
     </div>
 
-    <TravelGoalForm v-if="isEditing" v-model="tempData" />
-    <TravelGoalDisplay v-else :goal="goal" />
+    <div v-else>
+      <TravelGoalDisplay :goal="goal" />
 
-    <div
-      class="d-flex justify-content-between align-items-center mt-3 border-top pt-3"
-    >
-      <span class="text-muted">총 여행 경비</span>
-      <span class="fw-bold" style="color: var(--color-primary)">
-        {{ totalExpense.toLocaleString() }}원
-      </span>
+      <div
+        class="d-flex justify-content-between align-items-center mt-3 border-top pt-3"
+      >
+        <span class="text-muted">총 여행 경비</span>
+        <span class="fw-bold fs-5" style="color: var(--color-primary)">
+          {{ totalExpense.toLocaleString() }}원
+        </span>
+      </div>
+
+      <GoalBudgetCalculationDisplay :budget="budgetCalculation" />
     </div>
-
-    <!-- 예산 계산 결과 표시 -->
-    <GoalBudgetCalculationDisplay
-      v-if="!isEditing"
-      :budget="budgetCalculation"
-    />
   </div>
 </template>
 
@@ -104,7 +111,7 @@ const budgetCalculation = computed(() => {
     departureDate: props.goal.startDate || '',
     returnDate: props.goal.endDate || '',
     dayExpense: (props.goal.etcExpense || 0) / Math.max(1, travelDays),
-    nightly: ((props.goal.hotelExpense || 0) / Math.max(1, travelDays - 1)) || 0,
+    nightly: (props.goal.hotelExpense || 0) / Math.max(1, travelDays - 1) || 0,
     flightExpense: props.goal.flightExpense || 0,
   });
 });

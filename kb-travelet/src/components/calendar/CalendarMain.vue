@@ -4,13 +4,58 @@
       class="align-items-center mb-4 gap-3"
       style="display: grid; width: 100%"
       :style="{
+        // PC(lg 이상)는 3열 / 모바일은 1열로 쌓기
         gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr',
+        rowGap: isMobile ? '1.5rem' : '0',
       }"
     >
-      <div class="d-none d-lg-block"></div>
+      <div class="d-none d-lg-block">
+        <div v-if="myTravelGoal" class="d-flex gap-2" style="min-width: 160px">
+          <div
+            class="p-2 px-3 rounded-3 text-end border-4 shadow-sm"
+            style="min-width: 120px; background-color: var(--color-primary)"
+          >
+            <div class="text-white extra-small fw-bold">고정 수입</div>
+            <div class="fw-bold text-white" style="font-size: 0.9rem">
+              + {{ (monthlyIncomeTotal || 0).toLocaleString() }}원
+            </div>
+          </div>
+          <div
+            class="p-2 px-3 bg-danger rounded-3 text-end border-4 shadow-sm"
+            style="min-width: 120px"
+          >
+            <div class="text-white extra-small fw-bold">고정 지출</div>
+            <div class="fw-bold text-white" style="font-size: 0.9rem">
+              - {{ (monthlyExpensesTotal || 0).toLocaleString() }}원
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-else
+          style="
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            background-color: var(--color-primary-soft);
+            opacity: 0.6;
+          "
+        >
+          <span
+            style="
+              font-size: 0.7rem;
+              font-weight: bold;
+              color: var(--color-primary-deep);
+            "
+          >
+            데이터 로딩 중...
+          </span>
+        </div>
+      </div>
 
       <div
         class="d-flex align-items-center justify-content-center order-1 order-lg-2"
+        :style="{ order: isMobile ? 1 : 2 }"
       >
         <button
           @click="prevMonth"
@@ -31,21 +76,63 @@
           <i class="fas fa-chevron-right fa-xs"></i>
         </button>
       </div>
-
       <div
-        class="d-flex gap-2 justify-content-center justify-content-lg-end order-2 order-lg-3 flex-wrap"
+        class="d-flex gap-1 gap-md-2 order-2 order-lg-3 justify-content-center justify-content-lg-end"
+        style="flex-wrap: nowrap; overflow: hidden"
+        :style="{
+          order: isMobile ? 2 : 3,
+          width: '100%',
+        }"
       >
-        <div class="summary-box border-primary text-primary">
-          <div class="label">수익</div>
-          <div class="price">+ 2,678,123원</div>
+        <div
+          class="p-2 px-md-3 bg-white rounded-3 text-end border-top border-primary border-4 shadow-sm"
+          style="min-width: 85px; flex: 1"
+        >
+          <div class="text-muted extra-small fw-bold" style="font-size: 0.6rem">
+            수익
+          </div>
+          <div
+            class="fw-bold text-primary"
+            style="font-size: 0.8rem; white-space: nowrap"
+          >
+            +{{ monthlySummary.income.toLocaleString() }}원
+          </div>
         </div>
-        <div class="summary-box border-danger text-danger">
-          <div class="label">지출</div>
-          <div class="price">- 1,678,000원</div>
+
+        <div
+          class="p-2 px-md-3 bg-white rounded-3 text-end border-top border-danger border-4 shadow-sm"
+          style="min-width: 85px; flex: 1"
+        >
+          <div class="text-muted extra-small fw-bold" style="font-size: 0.6rem">
+            지출
+          </div>
+          <div
+            class="fw-bold text-danger"
+            style="font-size: 0.8rem; white-space: nowrap"
+          >
+            -{{ monthlySummary.expense.toLocaleString() }}원
+          </div>
         </div>
-        <div class="summary-box total-bg">
-          <div class="label text-white-50">총 잔액</div>
-          <div class="price text-white">+ 1,000,123원</div>
+
+        <div
+          class="p-2 px-md-3 rounded-3 text-end shadow-sm d-flex flex-column justify-content-center"
+          style="
+            background-color: var(--color-primary);
+            min-width: 95px;
+            flex: 1.2;
+          "
+        >
+          <div class="text-white extra-small fw-bold" style="font-size: 0.6rem">
+            총 잔액
+          </div>
+          <div
+            class="fw-bold text-white"
+            style="font-size: 0.85rem; white-space: nowrap"
+          >
+            {{
+              (monthlySummary.income - monthlySummary.expense).toLocaleString()
+            }}원
+          </div>
         </div>
       </div>
     </div>
@@ -86,12 +173,36 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import CalendarDayBar from './CalendarDayBar.vue';
 import TransactionModal from '../modal/TransactionModal.vue';
 import { useAccountStore } from '@/stores/account';
+import { useProfileStore } from '@/stores/profile';
+import { storeToRefs } from 'pinia';
 
+const profileStore = useProfileStore();
+const { myTravelGoal, monthlyIncomeTotal } = storeToRefs(profileStore);
 const store = useAccountStore();
+
+// script setup 내부
+const monthlySummary = computed(() => {
+  const summary = {
+    income: 0,
+    expense: 0,
+  };
+
+  const yearMonthPrefix = `${currentYear.value}-${String(currentMonth.value).padStart(2, '0')}`;
+
+  // 🚩 오직 실제 거래 내역만 합산!
+  store.transactions.forEach((t) => {
+    if (t.date.startsWith(yearMonthPrefix)) {
+      if (t.type === 'income') summary.income += t.amount;
+      else summary.expense += t.amount;
+    }
+  });
+
+  return summary;
+});
 
 const days = ['일', '월', '화', '수', '목', '금', '토'];
 const today = new Date();
@@ -172,15 +283,20 @@ const dailySummary = computed(() => {
 
   return result;
 });
-</script>
 
-<style scoped>
-/* 7열 그리드를 위한 커스텀 스타일 */
-.col-1-7 {
-  flex: 0 0 14.285%;
-  max-width: 14.285%;
-}
-</style>
+const isMobile = ref(window.innerWidth < 992);
+
+const updateWidth = () => {
+  isMobile.value = window.innerWidth < 992;
+};
+
+onMounted(() => {
+  window.addEventListener('resize', updateWidth);
+
+  console.log('myTravelGoal:', myTravelGoal.value);
+  profileStore.fetchTravelGoal();
+});
+</script>
 
 <style scoped>
 /* 1. 상단 컨테이너 레이아웃 */
@@ -297,11 +413,5 @@ const dailySummary = computed(() => {
 .price {
   font-size: 0.85rem;
   font-weight: bold;
-}
-
-/* 7열 그리드는 이미 잘 짜셔서 그대로 두셔도 됩니다! */
-.col-1-7 {
-  flex: 0 0 14.285%;
-  max-width: 14.285%;
 }
 </style>
