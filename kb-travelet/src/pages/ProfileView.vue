@@ -55,9 +55,8 @@ import ProgressBar from '@/components/common/ProgressBar.vue';
 import ProfileSection from '@/components/profile/ProfileSection.vue';
 import TravelGoalSection from '@/components/profile/TravelGoalSection.vue';
 import FinishGoalSection from '@/components/profile/FinishGoalSection.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 

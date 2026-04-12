@@ -68,12 +68,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function register(userData) {
     try {
-      const check = await axios.get(`${API_URL}?email=${userData.email}`);
-      if (check.data.length > 0) {
+      const check = await api.get(API_URL, {
+        params: { email: userData.email },
+      });
+      if (check.length > 0) {
         return { success: false, message: '이미 가입된 이메일입니다.' };
       }
 
-      const { data } = await axios.post(API_URL, {
+      const data = await api.post(API_URL, {
         name: userData.name,
         email: userData.email,
         password: userData.password,

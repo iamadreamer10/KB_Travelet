@@ -233,8 +233,8 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { computed, onMounted, ref, watch } from 'vue';
+import api from '@/api';
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
@@ -243,8 +243,8 @@ const props = defineProps({
 const continentList = ref([]); // 데이터를 담을 반응형 변수
 const getContinents = async () => {
   try {
-    const response = await axios.get('/api/continents');
-    continentList.value = response.data;
+    const response = await api.get('/continents');
+    continentList.value = response;
 
     console.log('성공적으로 가져온 대륙들:', continentList.value);
   } catch (error) {
