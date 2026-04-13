@@ -311,7 +311,7 @@ async function confirmSchedule() {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 18px 18px 14px;
+  padding: 14px 18px 10px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -320,12 +320,12 @@ async function confirmSchedule() {
 
 .step-schedule-stage {
   width: 100%;
-  max-width: 980px;
+  max-width: 1040px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 10px;
-  transform: translateY(-8px);
+  transform: translateY(-12px);
 }
 
 .onboarding-card {
@@ -334,8 +334,8 @@ async function confirmSchedule() {
   --color-primary-soft: #e6f0ff;
   --color-text-muted: #64748b;
 
-  width: min(100%, 680px);
-  flex: 1 1 680px;
+  width: min(100%, 740px);
+  flex: 1 1 740px;
   background: #fff;
   border-radius: 2rem;
   overflow: hidden;
@@ -343,8 +343,8 @@ async function confirmSchedule() {
 }
 
 .schedule-summary-card {
-  width: 328px;
-  flex: 0 0 328px;
+  width: 340px;
+  flex: 0 0 340px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -428,6 +428,7 @@ async function confirmSchedule() {
 
 .schedule-copy {
   max-width: 540px;
+  margin-bottom: 1rem !important;
 }
 
 .copy-kicker,
@@ -446,7 +447,7 @@ async function confirmSchedule() {
 
 .section-title {
   color: var(--color-primary-deep);
-  font-size: clamp(1.65rem, 1.8vw, 2.05rem);
+  font-size: clamp(1.5rem, 1.7vw, 1.9rem);
   font-weight: 800;
   line-height: 1.12;
 }
@@ -454,12 +455,14 @@ async function confirmSchedule() {
 .section-description {
   color: var(--color-text-muted);
   max-width: 500px;
-  font-size: 0.93rem;
-  line-height: 1.58;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 .calendar-card {
-  padding: 14px;
+  width: 100%;
+  max-width: 590px;
+  padding: 12px;
   border: 1.5px solid rgba(7, 102, 255, 0.22);
   border-radius: 1.75rem;
   background: #fff;
@@ -473,13 +476,13 @@ async function confirmSchedule() {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .month-nav-btn {
-  min-width: 40px;
-  width: 40px;
-  min-height: 34px;
+  min-width: 36px;
+  width: 36px;
+  min-height: 32px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 999px;
   background: #fff;
@@ -512,7 +515,7 @@ async function confirmSchedule() {
 
 .month-title {
   color: var(--color-primary-deep);
-  font-size: 0.96rem;
+  font-size: 0.92rem;
   font-weight: 800;
 }
 
@@ -524,26 +527,29 @@ async function confirmSchedule() {
 .weekday-row {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 5px;
+  margin-bottom: 5px;
+  min-height: 22px;
 }
 
 .weekday-label {
   text-align: center;
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  grid-auto-rows: minmax(42px, 1fr);
+  gap: 5px;
+  min-height: 289px;
 }
 
 .calendar-day {
   position: relative;
-  min-height: 46px;
+  min-height: 42px;
   border: 1px solid transparent;
   border-radius: 0.95rem;
   background: #fff;
@@ -584,7 +590,7 @@ async function confirmSchedule() {
 }
 
 .day-number {
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -715,7 +721,7 @@ async function confirmSchedule() {
 @media (max-width: 991px) {
   .step-schedule-stage {
     flex-direction: column;
-    transform: translateY(-4px);
+    transform: translateY(-8px);
   }
 
   .onboarding-card,
@@ -739,7 +745,12 @@ async function confirmSchedule() {
   }
 
   .calendar-day {
-    min-height: 48px;
+    min-height: 40px;
+  }
+
+  .calendar-grid {
+    grid-auto-rows: minmax(40px, 1fr);
+    min-height: 275px;
   }
 }
 

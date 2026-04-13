@@ -809,7 +809,7 @@
       "type": "expense",
       "category": "쇼핑",
       "amount": 22100,
-      "memo": "쿠팡 - 휴대폰 케이스 구매 ",
+      "memo": "쿠팡 - 휴대폰 케이스 구매",
       "id": 1776042072493,
       "userId": "1"
     },
@@ -1206,7 +1206,9 @@
       "monthlyPhone": 60000,
       "monthlyTransport": 60000,
       "monthlySubscription": 45000,
-      "monthlyOtherFixed": 0
+      "monthlyOtherFixed": 0,
+      "country": "일본",
+      "continent": "아시아"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

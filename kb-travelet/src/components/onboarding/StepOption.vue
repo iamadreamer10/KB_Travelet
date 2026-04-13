@@ -515,7 +515,7 @@ onBeforeUnmount(() => {
 .onboarding-page-bg {
   min-height: 100dvh;
   background-color: #0766ff;
-  padding: 10px 20px 12px;
+  padding: 8px 18px 10px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -526,7 +526,7 @@ onBeforeUnmount(() => {
   --color-text-muted: #64748b;
 
   width: 100%;
-  max-width: 780px;
+  max-width: 750px;
   background: #fff;
   border-radius: 2rem;
   overflow: visible;
@@ -534,7 +534,7 @@ onBeforeUnmount(() => {
 }
 
 .content-section {
-  padding-bottom: 10px;
+  padding-bottom: 6px;
 }
 
 .progress-container {
@@ -645,7 +645,7 @@ onBeforeUnmount(() => {
 }
 
 .summary-chip-card {
-  padding: 12px 14px;
+  padding: 10px 13px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.4rem;
   background: #f8fbff;
@@ -669,12 +669,12 @@ onBeforeUnmount(() => {
 .option-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .option-card {
-  min-height: 156px;
-  padding: 14px;
+  min-height: 146px;
+  padding: 12px;
   border: 1px solid var(--color-primary-soft);
   border-radius: 1.5rem;
   background: #fff;
@@ -701,7 +701,7 @@ onBeforeUnmount(() => {
 
 .option-badge {
   display: inline-flex;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   background: rgba(7, 102, 255, 0.1);
@@ -721,17 +721,17 @@ onBeforeUnmount(() => {
 
 .option-total {
   display: block;
-  margin-bottom: 5px;
-  font-size: 1.06rem;
+  margin-bottom: 4px;
+  font-size: 1rem;
   font-weight: 800;
   line-height: 1.35;
 }
 
 .option-meta {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
@@ -746,7 +746,7 @@ onBeforeUnmount(() => {
 }
 
 .option-breakdown-item {
-  padding: 8px 7px;
+  padding: 7px 6px;
   border-radius: 0.95rem;
   background: #f8fbff;
   border: 1px solid rgba(7, 102, 255, 0.08);
@@ -764,29 +764,29 @@ onBeforeUnmount(() => {
 .option-breakdown-value {
   display: block;
   color: var(--color-primary-deep);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 800;
   line-height: 1.3;
 }
 
 .option-budget-result {
-  margin-top: 10px;
-  padding-top: 8px;
+  margin-top: 8px;
+  padding-top: 7px;
   border-top: 1px solid rgba(7, 102, 255, 0.12);
 }
 
 .option-budget-result-label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .option-budget-result-value {
   display: block;
   color: var(--color-primary-deep);
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   font-weight: 800;
   line-height: 1.4;
 }
@@ -1041,7 +1041,7 @@ onBeforeUnmount(() => {
 
 @media (max-width: 767px) {
   .onboarding-page-bg {
-    padding: 10px 12px;
+    padding: 8px 10px;
   }
 
   .section-title {

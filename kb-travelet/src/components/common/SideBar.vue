@@ -123,7 +123,7 @@
     <div class="mt-auto border-top border-white-50 pt-3">
       <button
         @click="handleLogout"
-        class="btn btn-link text-white-50 p-0 text-decoration-none small"
+        class="btn btn-link logout-btn p-0 text-decoration-none small"
       >
         <i class="fas fa-sign-out-alt me-1"></i> 로그아웃
       </button>
@@ -178,5 +178,14 @@ const handleLogout = () => {
   color: var(--color-primary) !important;
   background-color: white !important;
   box-shadow: 0 6px 14px rgba(7, 102, 255, 0.16);
+}
+
+.logout-btn {
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  color: #ffffff !important;
 }
 </style>
