@@ -237,7 +237,7 @@ const visibleCountries = computed(() => {
 
 const selectedCountrySummary = computed(() => {
   if (!selectedCountry.value) {
-    return '아직 선택된 국가가 없습니다';
+    return '아직 선택된 국가가 없습니다.';
   }
 
   return `${selectedCountry.value.name} (${selectedContinent.value})`;

@@ -26,7 +26,7 @@
             <span class="copy-kicker">Schedule</span>
             <h2 class="section-title mb-2">언제 떠나볼까요?</h2>
             <p class="section-description mb-0">
-              달력에서 출발일과 도착일을 순서대로 선택해주세요
+              달력에서 출발일과 도착일을 순서대로 선택해주세요.
             </p>
           </div>
 

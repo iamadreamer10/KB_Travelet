@@ -123,7 +123,8 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100dvh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: linear-gradient(180deg, #0766ff 0%, #0a5be0 100%);
 }
 
@@ -173,5 +174,20 @@ onMounted(async () => {
 .step-forward-leave-active,
 .step-backward-leave-active {
   z-index: 1;
+}
+
+@media (max-width: 767px) {
+  .onboarding-transition-shell {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .step-forward-enter-active,
+  .step-forward-leave-active,
+  .step-backward-enter-active,
+  .step-backward-leave-active {
+    position: relative;
+    inset: auto;
+  }
 }
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="row g-3 g-md-4 mb-4">
     <div class="col-12 col-md-6">
       <div class="text-muted small">목적지</div>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="col-12 col-md-6">
-      <div class="text-muted small">귀국일</div>
+      <div class="text-muted small">도착일</div>
       <div class="fw-bold fs-5" style="white-space: nowrap">
         {{ goal.endDate }}
       </div>
@@ -24,43 +24,35 @@
   <div>
     <hr class="text-muted opacity-25" />
 
-    <!-- 여행 경비 내역 -->
     <div class="vstack gap-2">
       <div class="d-flex justify-content-between align-items-center">
-        <span class="text-muted">일일 경비</span>
+        <span class="text-muted">하루경비</span>
         <span class="fw-bold">{{ formatNumber(goal.dailyTravelExpense) }}원</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="text-muted">숙소비(1박)</span>
+        <span class="text-muted">숙소비</span>
         <span class="fw-bold">{{ formatNumber(goal.hotelExpense) }}원</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="text-muted">비행기값</span>
+        <span class="text-muted">항공비</span>
         <span class="fw-bold">{{ formatNumber(goal.flightExpense) }}원</span>
       </div>
     </div>
 
     <hr class="text-muted opacity-25" />
 
-    <!-- 재정 정보 요약 -->
     <div v-if="hasFinanceInfo" class="vstack gap-2 mt-2">
       <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted small">현재 자산</span>
-        <span class="fw-bold small"
-          >{{ formatNumber(goal.currentAsset) }}원</span
-        >
+        <span class="fw-bold small">{{ formatNumber(goal.currentAsset) }}원</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted small">월 수입</span>
-        <span class="fw-bold small"
-          >{{ formatNumber(goal.monthlyIncome) }}원</span
-        >
+        <span class="fw-bold small">{{ formatNumber(goal.monthlyIncome) }}원</span>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <span class="text-muted small">월 고정지출</span>
-        <span class="fw-bold small"
-          >{{ formatNumber(totalMonthlyFixed) }}원</span
-        >
+        <span class="text-muted small">월 고정지출 합계</span>
+        <span class="fw-bold small">{{ formatNumber(totalMonthlyFixed) }}원</span>
       </div>
     </div>
   </div>

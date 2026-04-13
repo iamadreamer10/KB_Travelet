@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div
     class="d-flex flex-column p-3 text-white h-100"
     style="background-color: var(--color-primary)"
@@ -7,8 +7,8 @@
       <div class="d-flex justify-content-between align-items-start mb-2">
         <span class="fw-bold small text-primary" style="letter-spacing: 1px">
           <i class="fa-solid fa-ticket" style="color: var(--color-primary)"></i>
-          TRAVEL PASS</span
-        >
+          TRAVEL PASS
+        </span>
       </div>
       <h4 class="fw-bold mb-0">{{ userName }}</h4>
       <p class="text-muted small mb-3">{{ userEmail }}</p>
@@ -17,10 +17,9 @@
         class="d-flex border-top pt-2 justify-content-between"
       >
         <div class="d-flex flex-column gap-1">
-          <span
-            class="text-muted extra-small fw-bold text-uppercase tracking-wider"
-            >Destination</span
-          >
+          <span class="text-muted extra-small fw-bold text-uppercase tracking-wider">
+            Destination
+          </span>
           <div class="d-flex align-items-center gap-2">
             <div
               class="bg-light rounded-3 p-1 text-center border"
@@ -29,31 +28,30 @@
               <span
                 class="d-block fw-black text-primary lh-1"
                 style="font-size: 0.6rem"
-                >{{ myTravelGoal?.destinationCode }}</span
               >
+                {{ myTravelGoal?.destinationCode }}
+              </span>
             </div>
 
             <div class="flex-grow-1" style="max-width: 150px">
-              <span class="fw-bold fs-6 lh-sm d-block">{{
-                myTravelGoal?.destination
-              }}</span>
+              <span class="fw-bold fs-6 lh-sm d-block">
+                {{ myTravelGoal?.destination }}
+              </span>
             </div>
           </div>
         </div>
         <div>
           <span class="text-muted extra-small d-block">일정</span>
-          <span class="fs-7 fw-bold"
-            >{{ myTravelGoal?.startDate }} <br />-{{
-              myTravelGoal?.endDate
-            }}</span
-          >
+          <span class="fs-7 fw-bold">
+            {{ myTravelGoal?.startDate }} <br />-{{ myTravelGoal?.endDate }}
+          </span>
         </div>
       </div>
       <div v-else class="text-center py-3">
         <hr />
-        <span class="fw-bold text-muted ms-2"
-          >다음 여행지는 이미 당신을 기다리고 있어요.</span
-        >
+        <span class="fw-bold text-muted ms-2">
+          다음 여행지가 당신을 기다리고 있어요
+        </span>
       </div>
     </div>
 
@@ -77,6 +75,7 @@
         </RouterLink>
       </li>
     </ul>
+
     <div
       v-if="myTravelGoal && myTravelGoal.id"
       class="flex-grow-1 rounded-3 p-3 my-3 bg-white d-flex flex-column align-items-center justify-content-center"
@@ -92,10 +91,11 @@
         style="color: var(--color-primary-deep); line-height: 1.5"
       >
         <i class="fa-solid fa-circle-info me-1"></i>
-        {{ myTravelGoal?.destination }} 여행을 위해 <br />하루에
-        <span class="text-primary"
-          >{{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원</span
-        >씩 사용할 수 있어요
+        {{ myTravelGoal?.destination }} 여행을 위해 <br />하루
+        <span class="text-primary">
+          {{ myTravelGoal?.dailyAvailableBudget?.toLocaleString() }}원
+        </span>
+        까지는 사용할 수 있어요
       </p>
     </div>
     <div
@@ -109,7 +109,7 @@
         ></i>
       </p>
       <p class="fw-bold text-black-50 m-3 fs-7 text-center">
-        텅 빈 여행 가방을 꿈으로 채워보세요.
+        텅 빈 여행 가방을 꿈으로 채워보세요
       </p>
       <button
         @click="createNewGoal()"
@@ -148,10 +148,8 @@ const userEmail = localStorage.getItem('userEmail') || '이메일 정보 없음'
 
 const handleLogout = () => {
   if (confirm('로그아웃 하시겠습니까?')) {
-    // 1. auth 스토어의 logout 실행 (localStorage 비우기 및 상태 초기화)
     authStore.logout();
 
-    // 2. 로그인(랜딩) 페이지로 이동 및 페이지 새로고침(완전한 초기화)
     router.push('/').then(() => {
       window.location.reload();
     });
@@ -163,15 +161,22 @@ const handleLogout = () => {
 .extra-small {
   font-size: 0.7rem;
 }
+
 .nav-link:hover {
   color: white !important;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 .router-link-active {
-  background-color: white !important; /* 버튼 배경을 흰색으로 확 밝게! */
-  color: var(--color-primary) !important; /* 글자색은 메인 파란색으로 반전 */
-  font-weight: 800 !important; /* 글씨도 아주 진하게 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 약간의 그림자로 튀어나온 느낌 */
+  background-color: white !important;
+  color: var(--color-primary) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.router-link-active:hover {
+  color: var(--color-primary) !important;
+  background-color: white !important;
+  box-shadow: 0 6px 14px rgba(7, 102, 255, 0.16);
 }
 </style>

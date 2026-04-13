@@ -1,6 +1,5 @@
-<template>
+﻿<template>
   <div class="row g-3">
-    <!-- 여행 정보 섹션 -->
     <div class="col-12">
       <div class="section-header mb-3">
         <i class="fas fa-plane-departure me-2 text-primary"></i>여행 정보
@@ -35,6 +34,7 @@
         </option>
       </select>
     </div>
+
     <div class="col-6">
       <label class="text-muted small mb-1">출발일</label>
       <input
@@ -47,7 +47,7 @@
     </div>
 
     <div class="col-6">
-      <label class="text-muted small mb-1">귀국일</label>
+      <label class="text-muted small mb-1">도착일</label>
       <input
         v-model="modelValue.endDate"
         type="date"
@@ -57,7 +57,6 @@
       />
     </div>
 
-    <!-- 재정 정보 섹션 -->
     <div class="col-12 mt-4">
       <div class="section-header mb-3">
         <i class="fas fa-wallet me-2 text-success"></i>재정 정보
@@ -65,7 +64,6 @@
     </div>
 
     <div class="col-12 p-3 bg-light rounded-4">
-      <!-- 기본 자산 정보 -->
       <div class="mb-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="small fw-bold">현재 자산</span>
@@ -91,10 +89,9 @@
 
       <hr class="my-3 opacity-25" />
 
-      <!-- 고정지출 항목들 -->
       <div class="mb-3">
         <div class="label-group mb-2">
-          <small class="fw-bold text-muted">월별 고정지출</small>
+          <small class="fw-bold text-muted">월 고정지출</small>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -158,12 +155,13 @@
           />
         </div>
       </div>
+
       <div class="col-12 mb-3">
         <button
           @click="toggleOptions"
           class="btn btn-sm btn-outline-primary w-100 border-2 fw-bold mb-2"
         >
-          <i class="fas fa-magic me-1"></i> 여행 옵션 추천 (가이드 보기)
+          <i class="fas fa-magic me-1"></i> 여행 옵션 추천 보기
         </button>
 
         <div v-if="showOptions" class="row g-2">
@@ -173,7 +171,7 @@
               class="recommend-card p-2 border rounded-4 h-100 shadow-sm transition-all position-relative"
               :class="{
                 'bg-white': opt.isSelectable,
-                'bg-danger-subtle border-danger opacity-75': !opt.isSelectable, // 🚩 예산 부족 시 빨간 배경
+                'bg-danger-subtle border-danger opacity-75': !opt.isSelectable,
                 'cursor-not-allowed': !opt.isSelectable,
               }"
               :style="
@@ -187,16 +185,15 @@
                 <span
                   class="badge rounded-pill bg-danger"
                   style="font-size: 0.6rem"
-                  >예산 부족</span
                 >
+                  예산 부족
+                </span>
               </div>
 
               <div class="text-center mb-2">
                 <span
                   class="badge"
-                  :class="
-                    opt.isSelectable ? opt.class : 'bg-secondary text-white'
-                  "
+                  :class="opt.isSelectable ? opt.class : 'bg-secondary text-white'"
                 >
                   {{ opt.title }}
                 </span>
@@ -207,33 +204,24 @@
                 :class="opt.isSelectable ? 'text-muted' : 'text-danger'"
               >
                 <div class="d-flex justify-content-between">
-                  <span>🍕 식비/일</span>
+                  <span>경비</span>
                   <span>{{ opt.dailyTravelExpense / 10000 }}만</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                  <span>🏨 숙소/박</span>
+                  <span>숙소비</span>
                   <span>{{ opt.hotelExpense / 10000 }}만</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                  <span>✈️ 항공</span>
+                  <span>항공비</span>
                   <span>{{ opt.flightExpense / 10000 }}만</span>
                 </div>
 
                 <hr class="my-1 opacity-25" />
 
                 <div class="text-center mt-1">
-                  <div class="fw-bold" style="font-size: 0.7rem">
-                    여행 중 하루에
-                  </div>
-                  <div
-                    class="fw-extrabold text-dark"
-                    style="font-size: 0.85rem"
-                  >
-                    {{
-                      opt.isSelectable
-                        ? opt.dailyAvailable.toLocaleString()
-                        : '0'
-                    }}원
+                  <div class="fw-bold" style="font-size: 0.7rem">여행 중 하루</div>
+                  <div class="fw-extrabold text-dark" style="font-size: 0.85rem">
+                    {{ opt.isSelectable ? opt.dailyAvailable.toLocaleString() : '0' }}원
                   </div>
                   <div class="small">사용 가능</div>
                 </div>
@@ -245,7 +233,7 @@
 
       <div class="col-12 mt-2 vstack gap-2 bg-light p-3 rounded-4">
         <div class="d-flex justify-content-between align-items-center">
-          <span class="small fw-bold">하루경비(1일)</span>
+          <span class="small fw-bold">하루경비</span>
           <input
             v-model.number="modelValue.dailyTravelExpense"
             type="text"
@@ -254,7 +242,7 @@
           />
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <span class="small fw-bold">숙소비(1박)</span>
+          <span class="small fw-bold">숙소비</span>
           <input
             v-model.number="modelValue.hotelExpense"
             type="text"
@@ -263,7 +251,7 @@
           />
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <span class="small fw-bold">비행기값</span>
+          <span class="small fw-bold">항공비</span>
           <input
             v-model.number="modelValue.flightExpense"
             type="text"
@@ -302,10 +290,9 @@ const continentNameMap = {
   Oceania: '오세아니아',
 };
 
-// --- Computed ---
 const continentOptions = computed(() => {
   return Object.keys(continentList.value).map((key) => ({
-    key: key,
+    key,
     label: continentNameMap[key] || key,
   }));
 });
@@ -369,17 +356,17 @@ const recommendOptions = computed(() => {
   const optionConfig = [
     {
       key: 'eco',
-      title: '알뜰 가성비',
+      title: '절약형',
       class: 'bg-success-subtle text-success',
     },
     {
       key: 'std',
-      title: '평범한 표준',
+      title: '표준형',
       class: 'bg-primary-subtle text-primary',
     },
     {
       key: 'lux',
-      title: '플렉스 럭셔리',
+      title: '럭셔리',
       class: 'bg-danger-subtle text-danger',
     },
   ];
@@ -404,10 +391,9 @@ const recommendOptions = computed(() => {
   });
 });
 
-// --- Methods ---
 const toggleOptions = () => {
   if (!props.modelValue.startDate || !props.modelValue.country) {
-    alert('여행지와 날짜를 먼저 선택해야 정확한 예산 가이드를 드릴 수 있어요!');
+    alert('여행지와 날짜를 먼저 선택해야 정확한 예산 가이드를 볼 수 있어요.');
     return;
   }
   showOptions.value = !showOptions.value;
@@ -426,7 +412,7 @@ const validateDates = () => {
   const end = props.modelValue.endDate;
   if (!start) return;
   if (end && start > end) {
-    alert('귀국일은 출발일보다 빠를 수 없습니다!');
+    alert('도착일은 출발일보다 빠를 수 없어요.');
     props.modelValue.endDate = start;
   }
 };
@@ -434,7 +420,7 @@ const validateDates = () => {
 const updateDestinationCode = () => {
   const selectedCountryName = props.modelValue.country;
   const countryObj = filteredCountries.value.find(
-    (c) => c.name === selectedCountryName,
+    (country) => country.name === selectedCountryName,
   );
   if (countryObj) {
     props.modelValue.destination = countryObj.name;
@@ -442,10 +428,9 @@ const updateDestinationCode = () => {
   }
 };
 
-// --- Watch & Lifecycle ---
 watch(
   () => props.modelValue.continent,
-  (newContinent, oldContinent) => {
+  (_newContinent, oldContinent) => {
     if (oldContinent) {
       props.modelValue.country = '';
       props.modelValue.destination = '';
@@ -472,27 +457,33 @@ onMounted(() => {
   transition: all 0.2s ease-in-out;
   background: white;
 }
+
 .recommend-card:hover {
   transform: translateY(-3px);
   border-color: var(--color-primary) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
 }
+
 .extra-small {
   font-size: 0.65rem;
 }
+
 .badge {
   font-size: 0.7rem;
 }
+
 .section-header {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--color-text);
+  color: var(--color-text-main, #020817);
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 0.5rem;
 }
+
 .label-group {
   display: block;
 }
+
 .w-40 {
   width: 40% !important;
 }

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="bg-white rounded-4 shadow-sm p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h5 class="fw-bold mb-0">
@@ -26,7 +26,7 @@
           @click="saveEdit"
           class="btn btn-primary flex-grow-1 py-2 fw-bold"
         >
-          설정 저장하기
+          수정 완료하기
         </button>
       </div>
     </div>
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import TravelGoalDisplay from './TravelGoalDisplay.vue';
 import TravelGoalForm from '../form/TravelGoalForm.vue';
 import GoalBudgetCalculationDisplay from './GoalBudgetCalculationDisplay.vue';
@@ -69,29 +69,29 @@ const emit = defineEmits(['update-goal']);
 const isEditing = ref(false);
 const tempData = ref({});
 
-const calculatePeriod = (start, end) => {
+const calculateNights = (start, end) => {
   if (!start || !end) return 0;
 
   const startDate = new Date(start);
   const endDate = new Date(end);
-
   const diffInMs = endDate - startDate;
   const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-  return Math.floor(diffInDays);
+  return Math.max(Math.floor(diffInDays), 0);
 };
 
 const totalExpense = computed(() => {
-  const period = calculatePeriod(props.goal.startDate, props.goal.endDate);
   const target = isEditing.value ? tempData.value : props.goal;
+  const nights = calculateNights(target.startDate, target.endDate);
+  const days = nights + 1;
+
   return (
-    (target.dailyExpense || 0) * (period + 1) +
+    (target.dailyTravelExpense || 0) * days +
     (target.flightExpense || 0) +
-    (target.hotelExpense || 0) * period
+    (target.hotelExpense || 0) * nights
   );
 });
 
-// 여행일수 계산 헬퍼
 function computeTravelDays(goal) {
   if (!goal.startDate || !goal.endDate) return 1;
   const start = new Date(goal.startDate);
@@ -101,9 +101,10 @@ function computeTravelDays(goal) {
   return days > 0 ? days : 1;
 }
 
-// 예산 계산 composable - computed로 감싸서 실시간 업데이트
 const budgetCalculation = computed(() => {
   const travelDays = computeTravelDays(props.goal);
+  const nightlyDays = Math.max(travelDays - 1, 0);
+
   return useGoalBudgetCalculation({
     currentAsset: props.goal.currentAsset || 0,
     monthlyIncome: props.goal.monthlyIncome || 0,
@@ -115,8 +116,8 @@ const budgetCalculation = computed(() => {
     monthlyOtherFixed: props.goal.monthlyOtherFixed || 0,
     departureDate: props.goal.startDate || '',
     returnDate: props.goal.endDate || '',
-    dayExpense: (props.goal.etcExpense || 0) / Math.max(1, travelDays),
-    nightly: (props.goal.hotelExpense || 0) / Math.max(1, travelDays - 1) || 0,
+    dayExpense: props.goal.dailyTravelExpense || 0,
+    nightly: nightlyDays > 0 ? props.goal.hotelExpense || 0 : 0,
     flightExpense: props.goal.flightExpense || 0,
   });
 });
@@ -130,24 +131,21 @@ const startEdit = async () => {
     오세아니아: 'Oceania',
   };
 
-  // 1. 데이터가 없으면 가져올 때까지 대기
   if (!continentList.value || Object.keys(continentList.value).length === 0) {
     await fetchContinents();
   }
 
   const initialData = { ...props.goal };
 
-  // 2. destination -> country 매핑
   if (initialData.destination && !initialData.country) {
     initialData.country = initialData.destination;
   }
 
-  // 3. continent 변환 및 역추적
   if (initialData.continent && reverseMap[initialData.continent]) {
     initialData.continent = reverseMap[initialData.continent];
   } else if (!initialData.continent && initialData.country) {
     const foundKey = Object.keys(continentList.value).find((key) =>
-      continentList.value[key].some((c) => c.name === initialData.country),
+      continentList.value[key].some((country) => country.name === initialData.country),
     );
     if (foundKey) initialData.continent = foundKey;
   }
@@ -157,18 +155,16 @@ const startEdit = async () => {
 };
 
 const saveEdit = () => {
-  // 1. 변환용 맵 (Section에서 정의)
   const continentNameMap = {
     Asia: '아시아',
     Europe: '유럽',
     Americas: '아메리카',
     Africa: '아프리카',
+    Oceania: '오세아니아',
   };
 
-  // 2. 서버로 보낼 데이터 복사본 생성
   const finalData = { ...tempData.value };
 
-  // 3. 영문 Key가 있으면 한글 Label로 교체
   if (finalData.continent && continentNameMap[finalData.continent]) {
     finalData.continent = continentNameMap[finalData.continent];
   }
@@ -177,7 +173,6 @@ const saveEdit = () => {
     finalData.destination = finalData.country;
   }
 
-  // 4. 변환된 데이터를 부모(ProfileView 등)로 전달
   emit('update-goal', finalData);
   isEditing.value = false;
 };
@@ -185,10 +180,6 @@ const saveEdit = () => {
 const cancelEdit = () => {
   isEditing.value = false;
 };
-
-onMounted(() => {
-  // console.log('초기 여행 목표 데이터:', props.goal);
-});
 </script>
 
 <style scoped></style>

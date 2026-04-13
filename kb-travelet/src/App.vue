@@ -23,7 +23,10 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-const isOnboardingRoute = computed(() => route.path.startsWith('/check-in'));
+const isOnboardingRoute = computed(
+  () =>
+    route.path.startsWith('/onboarding') || route.path.startsWith('/check-in'),
+);
 const appContainerClasses = computed(() => [
   'app-container',
   'min-h-screen',
@@ -72,7 +75,8 @@ const isLoading = computed(() => false);
 .onboarding-shell {
   width: 100%;
   max-width: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   box-shadow: none;
   border-left: 0;
   border-right: 0;
@@ -80,7 +84,8 @@ const isLoading = computed(() => false);
 
 .onboarding-main {
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 </style>
