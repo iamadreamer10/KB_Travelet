@@ -1,12 +1,13 @@
 ﻿<template>
   <div class="modal">
     <div class="modal-content">
-      <button class="close" @click="$emit('close')" aria-label="닫기">
-        <i class="fas fa-xmark" aria-hidden="true"></i>
-      </button>
+      <!-- 닫기 -->
+      <button class="close" @click="$emit('close')">✕</button>
 
+      <!-- 날짜 -->
       <h2 class="title">{{ formattedDate }}</h2>
 
+      <!-- 요약 카드 -->
       <div class="summary">
         <div class="card income">
           <div class="label">수입</div>
@@ -17,24 +18,24 @@
           <div class="label">지출</div>
           <div class="value">-{{ totalExpense.toLocaleString() }}원</div>
         </div>
-
         <div class="card balance">
           <div class="label">잔액</div>
           <div class="value">{{ balance.toLocaleString() }}원</div>
         </div>
       </div>
 
-      <button class="add-btn" @click="showForm = !showForm">
-        + 거래 추가
-      </button>
+      <!-- 거래 추가 버튼 -->
+      <button class="add-btn" @click="showForm = !showForm">+ 거래 추가</button>
 
+      <!-- form -->
       <div v-if="showForm" class="form-card">
         <div class="form-title">
-          {{ editingId ? '거래 수정' : '거래 추가' }}
-          <span class="close-mini" @click="showForm = false">닫기</span>
+          새 거래
+          <span class="close-mini" @click="showForm = false">✕</span>
         </div>
 
         <div class="row">
+          <!-- 유형 -->
           <div class="col">
             <label>유형</label>
             <select v-model="type" class="input">
@@ -43,6 +44,7 @@
             </select>
           </div>
 
+          <!-- 카테고리 (지출일 때만) -->
           <div class="col" v-if="type === 'expense'">
             <label>카테고리</label>
             <select v-model="category" class="input">
@@ -55,13 +57,14 @@
           </div>
         </div>
 
+        <!-- 금액 + 메모 -->
         <div class="col-full">
           <label>금액 (원)</label>
           <input
             v-model="amount"
             type="text"
             class="input"
-            placeholder="금액을 입력해 주세요"
+            placeholder="금액을 입력하세요(숫자만)"
             @keydown="blockInvalidKeys"
             @input="sanitizeAmount"
           />
@@ -69,17 +72,18 @@
 
         <div class="col-full">
           <label>메모</label>
-          <input v-model="memo" class="input" placeholder="메모를 입력해 주세요" />
+          <input v-model="memo" class="input" />
         </div>
 
         <div class="form-actions">
           <button class="submit" @click="add">
-            {{ editingId ? '수정하기' : '추가하기' }}
+            {{ editingId ? '수정' : '추가' }}
           </button>
           <button class="cancel" @click="showForm = false">취소</button>
         </div>
       </div>
 
+      <!-- 거래 내역 -->
       <h3 class="second-title">거래 내역</h3>
 
       <div v-if="filtered.length === 0" class="empty">
@@ -95,12 +99,13 @@
             >
               {{ t.type === 'income' ? '수입' : t.category }}
             </span>
-            <div class="memo">{{ t.memo || '메모 없음' }}</div>
+            <div class="memo">{{ t.memo }}</div>
           </div>
 
           <div class="right">
             <span :class="t.type === 'income' ? 'income-text' : 'expense-text'">
-              {{ t.type === 'income' ? '+' : '-' }}{{ t.amount.toLocaleString() }}원
+              {{ t.type === 'income' ? '+' : '-'
+              }}{{ t.amount.toLocaleString() }}원
             </span>
             <button class="icon-btn" @click="editTransaction(t)">
               <i class="fa-solid fa-pen"></i>
@@ -117,88 +122,107 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAccountStore } from '@/stores/account';
 
 const props = defineProps({
+  // props: 부모에서 날짜 전달받음
   date: String,
 });
 
-const store = useAccountStore();
+const store = useAccountStore(); // store 연결
 
+// 날짜 포맷
 const formattedDate = computed(() => {
+  console.log(props.date);
   const d = new Date(props.date);
   const week = ['일', '월', '화', '수', '목', '금', '토'];
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${week[d.getDay()]})`;
 });
 
+// 입력 상태
 const showForm = ref(false);
 const type = ref('expense');
 const category = ref('식비/카페');
 const amount = ref('');
 const memo = ref('');
-const editingId = ref(null);
 
-const filtered = computed(() =>
-  store.transactions.filter((t) => t.date === props.date),
-);
-
-const totalIncome = computed(() =>
-  filtered.value
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0),
-);
-
-const totalExpense = computed(() =>
-  filtered.value
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0),
-);
-
-const balance = computed(() => totalIncome.value - totalExpense.value);
-
+// 거래 추가
 const add = async () => {
   if (!amount.value) return;
 
   if (editingId.value) {
+    // 수정
     await store.updateTransaction({
       id: editingId.value,
       date: props.date,
       type: type.value,
-      category: type.value === 'income' ? '수입' : category.value,
+      category: category.value,
       amount: Number(amount.value),
       memo: memo.value,
     });
 
     editingId.value = null;
   } else {
+    // 추가
     await store.addTransaction({
       date: props.date,
       type: type.value,
-      category: type.value === 'income' ? '수입' : category.value,
+      category: category.value,
       amount: Number(amount.value),
       memo: memo.value,
     });
   }
 
+  // DB 기준으로 다시 불러오기
   await store.fetchTransactions();
 
+  // 입력 초기화
   amount.value = '';
   memo.value = '';
   category.value = '식비/카페';
   type.value = 'expense';
+
   showForm.value = false;
 };
 
+// 날짜 기준 필터링
+const filtered = computed(() =>
+  store.transactions.filter((t) => t.date === props.date),
+);
+
+// 수입 합계
+const totalIncome = computed(() =>
+  filtered.value
+    .filter((t) => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0),
+);
+
+// 지출 합계
+const totalExpense = computed(() =>
+  filtered.value
+    .filter((t) => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0),
+);
+
+// 잔액
+const balance = computed(() => totalIncome.value - totalExpense.value);
+
+// 거래내역에서 편집 아이콘
+const editingId = ref(null);
+
+// 내역 수정 함수
 const editTransaction = (t) => {
   type.value = t.type;
-  category.value = t.type === 'income' ? '식비/카페' : t.category;
+  category.value = t.category;
   amount.value = t.amount;
   memo.value = t.memo;
+
   editingId.value = t.id;
   showForm.value = true;
 };
 
+// 내역 삭제 확인 함수
 const handleDelete = (id) => {
   const ok = confirm('정말로 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');
 
@@ -207,14 +231,18 @@ const handleDelete = (id) => {
   }
 };
 
-const blockInvalidKeys = (event) => {
-  if (['-', '+', 'e', 'E', '.'].includes(event.key)) {
-    event.preventDefault();
+/* 금액 입력 시 부적절한 값 처리 */
+const blockInvalidKeys = (e) => {
+  const invalidKeys = ['-', '+', 'e', 'E'];
+
+  if (invalidKeys.includes(e.key)) {
+    e.preventDefault();
   }
 };
 
+// 붙여넣기 값 방어
 const sanitizeAmount = () => {
-  amount.value = String(amount.value).replace(/[^\d]/g, '');
+  amount.value = String(amount.value).replace(/[^0-9]/g, '');
 };
 </script>
 
@@ -254,40 +282,25 @@ const sanitizeAmount = () => {
   border-radius: 10px;
 }
 
+/* 닫기 */
 .close {
   position: absolute;
   right: 16px;
   top: 16px;
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(7, 102, 255, 0.12);
-  border-radius: 999px;
-  background: #fff;
-  color: var(--color-primary-deep);
+  border: none;
+  background: none;
   font-size: 18px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 20px rgba(7, 102, 255, 0.08);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
 }
 
-.close:hover {
-  transform: translateY(-1px);
-  background: #f8fbff;
-  box-shadow: 0 12px 24px rgba(7, 102, 255, 0.14);
-}
-
+/* 제목 */
 .title {
   text-align: center;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
+/* 요약 */
 .summary {
   display: flex;
   gap: 10px;
@@ -325,6 +338,7 @@ const sanitizeAmount = () => {
   color: #2563eb;
 }
 
+/* 버튼 */
 .add-btn {
   width: 100%;
   padding: 12px;
@@ -333,6 +347,14 @@ const sanitizeAmount = () => {
   border-radius: 10px;
   border: none;
   margin-bottom: 20px;
+}
+
+/* 폼 */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
 }
 
 .form-actions {
@@ -355,6 +377,12 @@ const sanitizeAmount = () => {
   border-radius: 8px;
 }
 
+/* 리스트 */
+.section-title {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 .item {
   display: flex;
   justify-content: space-between;
@@ -362,6 +390,13 @@ const sanitizeAmount = () => {
   padding: 12px;
   border-radius: 10px;
   background: #eee;
+}
+
+.category {
+  background: #fde2e2;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
 .memo {
@@ -409,6 +444,24 @@ const sanitizeAmount = () => {
   font-size: 14px;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form label {
+  font-size: 13px;
+  color: #555;
+}
+
+.form input,
+.form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
 .form-actions {
   display: flex;
   gap: 10px;
@@ -435,19 +488,12 @@ const sanitizeAmount = () => {
 .row {
   display: flex;
   gap: 12px;
-  margin-bottom: 10px;
 }
 
 .col {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.col-full {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
 }
 
 .input {
@@ -461,6 +507,24 @@ const sanitizeAmount = () => {
 .input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.col-full {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
 .badge {
