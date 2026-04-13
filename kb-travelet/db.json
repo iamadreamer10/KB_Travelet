@@ -812,15 +812,6 @@
       "memo": "월급",
       "id": 1776042933381,
       "userId": "1"
-    },
-    {
-      "date": "2026-03-03",
-      "type": "expense",
-      "category": "식비/카페",
-      "amount": 333333,
-      "memo": "",
-      "id": 1776043616121,
-      "userId": "1"
     }
   ],
   "profiles": [
