@@ -803,6 +803,24 @@
       "memo": "다이소",
       "id": 1776042750482,
       "userId": "1"
+    },
+    {
+      "date": "2026-03-10",
+      "type": "income",
+      "category": "식비/카페",
+      "amount": 3000000,
+      "memo": "월급",
+      "id": 1776042933381,
+      "userId": "1"
+    },
+    {
+      "date": "2026-03-03",
+      "type": "expense",
+      "category": "식비/카페",
+      "amount": 333333,
+      "memo": "",
+      "id": 1776043616121,
+      "userId": "1"
     }
   ],
   "profiles": [
@@ -826,7 +844,7 @@
       "monthlyRent": 0,
       "monthlyInsurance": 150000,
       "monthlyPhone": 60000,
-      "monthlyTransport": 60000,
+      "monthlyTransport": 50000,
       "monthlySubscription": 45000,
       "monthlyOtherFixed": 0,
       "country": "일본",
